@@ -1,0 +1,467 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>OData Version 4.0</title>
+</head>
+<body>
+    <small>Internal Document</small>
+
+    <h2>Documentation</h2>
+    <hr />
+    <ul>
+        <li><a href="http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html">Part 1: Protocol </a></li>
+    </ul>
+
+    <h4>11.2.5.1.1 Built-in Filter Operations</h4>
+    <table border="1" cellpadding="3" cellspacing="0" style="width:100%">
+        <thead>
+            <tr>
+                <th>Operator</th>
+                <th>Description</th>
+                <th>Example</th>
+                <th>SQL Server</th>
+                <th>Oracle</th>
+                <th>MySQL</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="3">Comparison Operators</td>
+            </tr>
+            <tr>
+                <td>eq</td>
+                <td>Equal</td>
+                <td>Address/City eq 'Redmond'</td>
+                <td>=</td>
+                <td>=</td>
+                <td>=</td>
+            </tr>
+            <tr>
+                <td>ne</td>
+                <td>Not equal</td>
+                <td>Address/City ne 'London'</td>
+                <td>!=</td>
+                <td>!=</td>
+                <td>!=</td>
+            </tr>
+            <tr>
+                <td>gt</td>
+                <td>Greater than</td>
+                <td>Price gt 20</td>
+                <td>&gt;</td>
+                <td>&gt;</td>
+                <td>&gt;</td>
+            </tr>
+            <tr>
+                <td>ge</td>
+                <td>Greater than or equal</td>
+                <td>Price ge 10</td>
+                <td>&gt;=</td>
+                <td>&gt;=</td>
+                <td>&gt;=</td>
+            </tr>
+            <tr>
+                <td>lt</td>
+                <td>Less than</td>
+                <td>Price lt 20</td>
+                <td>&lt;</td>
+                <td>&lt;</td>
+                <td>&lt;</td>
+            </tr>
+            <tr>
+                <td>le</td>
+                <td>Less than or equal</td>
+                <td>Price le 100</td>
+                <td>&lt;=</td>
+                <td>&lt;=</td>
+                <td>&lt;=</td>
+            </tr>
+            <tr>
+                <td>has</td>
+                <td>Has flags</td>
+                <td>Style has Sales.Color'Yellow'</td>
+                <td>X</td>
+                <td>X</td>
+                <td>X</td>
+            </tr>
+            <tr>
+                <td colspan="3">Logical Operators</td>
+            </tr>
+            <tr>
+                <td>and</td>
+                <td>Logical and</td>
+                <td>Price le 200 and Price gt 3.5</td>
+                <td>AND</td>
+                <td>AND</td>
+                <td>AND</td>
+            </tr>
+            <tr>
+                <td>or</td>
+                <td>Logical or</td>
+                <td>Price le 3.5 or Price gt 200</td>
+                <td>OR</td>
+                <td>OR</td>
+                <td>OR</td>
+            </tr>
+            <tr>
+                <td>not</td>
+                <td>Logical negation</td>
+                <td>not endswith(Description,'milk')</td>
+                <td>NOT</td>
+                <td>NOT</td>
+                <td>NOT</td>
+            </tr>
+            <tr>
+                <td colspan="3">Arithmetic Operators</td>
+            </tr>
+            <tr>
+                <td>add</td>
+                <td>Addition</td>
+                <td>Price add 5 gt 10</td>
+                <td>+</td>
+                <td>+</td>
+                <td>+</td>
+            </tr>
+            <tr>
+                <td>sub</td>
+                <td>Subtraction</td>
+                <td>Price sub 5 gt 10</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>mul</td>
+                <td>Multiplication</td>
+                <td>Price mul 2 gt 2000</td>
+                <td>*</td>
+                <td>*</td>
+                <td>*</td>
+            </tr>
+            <tr>
+                <td>div</td>
+                <td>Division</td>
+                <td>Price div 2 gt 4</td>
+                <td>/</td>
+                <td>/</td>
+                <td>/</td>
+            </tr>
+            <tr>
+                <td>mod</td>
+                <td>Modulo</td>
+                <td>Price mod 2 eq 0</td>
+                <td>%</td>
+                <td>MOD(Price,2)</td>
+                <td>%</td>
+            </tr>
+            <tr>
+                <td colspan="3">Grouping Operators</td>
+            </tr>
+            <tr>
+                <td>( )</td>
+                <td>Precedence grouping</td>
+                <td>(Price sub 5) gt 10</td>
+                <td>( )</td>
+                <td>( )</td>
+                <td>( )</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4>11.2.5.1.2 Built-in Query Functions</h4>
+    <p>OData does not define an ISNULL or COALESCE operator. Instead, there is a null literal that can be used in comparisons.</p>
+    <table border="1" cellpadding="3" cellspacing="0" style="width:100%">
+        <thead>
+            <tr>
+                <th>Function</th>
+                <th>Example</th>
+                <th>SQL Server</th>
+                <th>Oracle</th>
+                <th>MySQL</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="5">String Functions</td>
+            </tr>
+            <tr>
+                <td>contains</td>
+                <td>contains(CompanyName,'freds')</td>
+                <td>CompanyName LIKE '%' + 'freds' + '%'</td>
+                <td>CompanyName LIKE '%' || 'freds' || '%'</td>
+                <td>CompanyName LIKE concat('%', 'freds', '%')</td>
+            </tr>
+            <tr>
+                <td>endswith</td>
+                <td>endswith(CompanyName,'Futterkiste')</td>
+                <td>CompanyName LIKE '%' + 'Alfr'</td>
+                <td>CompanyName LIKE '%' || 'Alfr'</td>
+                <td>CompanyName LIKE concat('%', 'Alfr')</td>
+            </tr>
+            <tr>
+                <td>startswith</td>
+                <td>startswith(CompanyName,'Alfr')</td>
+                <td>CompanyName LIKE 'Alfr' + '%'</td>
+                <td>CompanyName LIKE 'Alfr' || '%'</td>
+                <td>CompanyName LIKE concat('Alfr', '%')</td>
+            </tr>
+            <tr>
+                <td>length</td>
+                <td>length(CompanyName) eq 19</td>
+                <td>LEN(CompanyName)</td>
+                <td>LENGTH(CompanyName)</td>
+                <td>char_length(CompanyName)</td>
+            </tr>
+            <tr>
+                <td>indexof</td>
+                <td>indexof(CompanyName,'lfreds') eq 1</td>
+                <td>(CHARINDEX(CompanyName, 'lfreds') - 1)</td>
+                <td>(INSTR(CompanyName, 'lfreds') - 1)</td>
+                <td>(locate(CompanyName, 'lfreds') - 1)</td>
+            </tr>
+            <tr>
+                <td>substring</td>
+                <td>substring(CompanyName,1) eq 'lfreds Futterkiste'</td>
+                <td>SUBSTRING(CompanyName, 1 + 1, 2147483647)</td>
+                <td>SUBSTR(CompanyName, 1 + 1, 2147483647)</td>
+                <td>substring(CompanyName, 1 + 1, 2147483647)</td>
+            </tr>
+            <tr>
+                <td>tolower</td>
+                <td>tolower(CompanyName) eq 'alfreds futterkiste'</td>
+                <td>LOWER(CompanyName)</td>
+                <td>LOWER(CompanyName)</td>
+                <td>lower(CompanyName)</td>
+            </tr>
+            <tr>
+                <td>toupper</td>
+                <td>toupper(CompanyName) eq 'ALFREDS FUTTERKISTE'</td>
+                <td>UPPER(CompanyName)</td>
+                <td>UPPER(CompanyName)</td>
+                <td>upper(CompanyName)</td>
+            </tr>
+            <tr>
+                <td>trim</td>
+                <td>trim(CompanyName) eq 'Alfreds Futterkiste'</td>
+                <td>LTRIM(RTRIM(CompanyName))</td>
+                <td>TRIM(CompanyName)</td>
+                <td>trim(CompanyName)</td>
+            </tr>
+            <tr>
+                <td>concat</td>
+                <td>concat(concat(City,', '), Country) eq 'Berlin, Germany'</td>
+                <td>(City + ', ')</td>
+                <td>(City || ', ')</td>
+                <td>concat(City, ', ')</td>
+            </tr>
+            <tr>
+                <td colspan="5">Date Functions</td>
+            </tr>
+            <tr>
+                <td>year</td>
+                <td>year(BirthDate) eq 0</td>
+                <td>DATEPART(YEAR, BirthDate)</td>
+                <td>TO_NUMBER(TO_CHAR(BirthDate,'YYYY'))</td>
+                <td>year(BirthDate)</td>
+            </tr>
+            <tr>
+                <td>month</td>
+                <td>month(BirthDate) eq 12</td>
+                <td>DATEPART(MONTH, BirthDate)</td>
+                <td>TO_NUMBER(TO_CHAR(BirthDate,'MM'))</td>
+                <td>month(BirthDate)</td>
+            </tr>
+            <tr>
+                <td>day</td>
+                <td>day(StartTime) eq 8</td>
+                <td>DATEPART(DAY, StartTime)</td>
+                <td>TO_NUMBER(TO_CHAR(StartTime,'DD'))</td>
+                <td>day(BirthDate)</td>
+            </tr>
+            <tr>
+                <td>hour</td>
+                <td>hour(StartTime) eq 1</td>
+                <td>DATEPART(HOUR, StartTime)</td>
+                <td>TO_NUMBER(TO_CHAR(StartTime,'HH24'))</td>
+                <td>hour(BirthDate)</td>
+            </tr>
+            <tr>
+                <td>minute</td>
+                <td>minute(StartTime) eq 0</td>
+                <td>DATEPART(MINUTE, StartTime)</td>
+                <td>TO_NUMBER(TO_CHAR(StartTime,'MI'))</td>
+                <td>minute(BirthDate)</td>
+            </tr>
+            <tr>
+                <td>second</td>
+                <td>second(StartTime) eq 0</td>
+                <td>DATEPART(SECOND, StartTime)</td>
+                <td>TO_NUMBER(TO_CHAR(StartTime,'SS'))</td>
+                <td>second(BirthDate)</td>
+            </tr>
+            <tr>
+                <td>fractionalseconds</td>
+                <td>fractionalseconds(StartTime) eq 0</td>
+                <td>DATEPART(MILLISECOND, StartTime)</td>
+                <td>TO_NUMBER(TO_CHAR(StartTime,'FF9'))</td>
+                <td>date_format(StartTime, '%f') + 0</td>
+            </tr>
+            <tr>
+                <td>date</td>
+                <td>date(StartTime) ne date(EndTime)</td>
+                <td>CONVERT(date, StartTime)</td>
+                <td>TO_DATE(TO_CHAR(StartTime, 'YYYY-MM-DD'),'YYYY-MM-DD')</td>
+                <td>str_to_date(date_format(StartTime, '%Y-%m-%d'), '%Y-%m-%d')</td>
+            </tr>
+            <tr>
+                <td>time</td>
+                <td>time(StartTime) le StartOfDay</td>
+                <td>CONVERT(time, StartTime)</td>
+                <td>TO_DATE('0001-01-01 '|| TO_CHAR(StartTime,'HH24:MI:SS'), 'YYYY-MM-DD HH24:MI:SS')</td>
+                <td>maketime(hour(StartTime), minute(StartTime), second(StartTime))</td>
+            </tr>
+            <tr>
+                <td>totaloffsetminutes</td>
+                <td>totaloffsetminutes(StartTime) eq 60</td>
+                <td>DATEPART(TZOFFSET, StartTime)</td>
+                <td>
+                    DECODE(
+                    SIGN(TO_CHAR(StartTime,'TZH')),
+                    -1, TO_NUMBER(TO_CHAR(StartTime,'TZH')) * 60 - TO_NUMBER(TO_CHAR(StartTime,'TZM')),
+                    TO_NUMBER(TO_CHAR(StartTime,'TZH')) * 60 + TO_NUMBER(TO_CHAR(StartTime,'TZM')))
+                </td>
+                <td>X</td>
+            </tr>
+            <tr>
+                <td>now</td>
+                <td>StartTime ge now()</td>
+                <td>GETDATE()</td>
+                <td>SYSDATE</td>
+                <td>current_timestamp()</td>
+            </tr>
+            <tr>
+                <td>mindatetime</td>
+                <td>StartTime eq mindatetime()</td>
+                <td>X</td>
+                <td>TO_DATE('-4713-01-01 00:00:00', '-YYYY-MM-DD HH24:MI:SS')</td>
+                <td>X</td>
+            </tr>
+            <tr>
+                <td>maxdatetime</td>
+                <td>EndTime eq maxdatetime()</td>
+                <td>X</td>
+                <td>TO_DATE('9999-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS')</td>
+                <td>str_to_date('9999-12-31 23:59:59.999999','%Y-%m-%d %H:%i:%s.%f')</td>
+            </tr>
+            <tr>
+                <td colspan="5">Math Functions</td>
+            </tr>
+            <tr>
+                <td>round</td>
+                <td>round(Freight) eq 32</td>
+                <td>ROUND(Freight, 0)</td>
+                <td>ROUND(Freight, 0)</td>
+                <td>round(Freight)</td>
+            </tr>
+            <tr>
+                <td>floor</td>
+                <td>floor(Freight) eq 32</td>
+                <td>FLOOR(Freight)</td>
+                <td>FLOOR(Freight)</td>
+                <td>floor(Freight)</td>
+            </tr>
+            <tr>
+                <td>ceiling</td>
+                <td>ceiling(Freight) eq 33</td>
+                <td>CEILING(Freight)</td>
+                <td>CEIL(Freight)</td>
+                <td>ceiling(Freight)</td>
+            </tr>
+            <tr>
+                <td colspan="5">Type Functions</td>
+            </tr>
+            <tr>
+                <td>cast</td>
+                <td>cast(ShipCountry,Edm.String)</td>
+                <td>X</td>
+                <td>X</td>
+                <td>X</td>
+            </tr>
+            <tr>
+                <td>isof</td>
+                <td>isof(NorthwindModel.Order)</td>
+                <td>X</td>
+                <td>X</td>
+                <td>X</td>
+            </tr>
+            <tr>
+                <td>isof</td>
+                <td>isof(ShipCountry,Edm.String)</td>
+                <td>X</td>
+                <td>X</td>
+                <td>X</td>
+            </tr>
+            <tr>
+                <td>Geo Functions</td>
+            </tr>
+            <tr>
+                <td>geo.distance</td>
+                <td>geo.distance(CurrentPosition,TargetPosition)</td>
+                <td>X</td>
+                <td>X</td>
+                <td>X</td>
+            </tr>
+            <tr>
+                <td>geo.length</td>
+                <td>geo.length(DirectRoute)</td>
+                <td>X</td>
+                <td>X</td>
+                <td>X</td>
+            </tr>
+            <tr>
+                <td>geo.intersects</td>
+                <td>geo.intersects(Position,TargetArea)</td>
+                <td>X</td>
+                <td>X</td>
+                <td>X</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4>Appendix A</h4>
+    <p>Differences</p>
+    <table border="1" cellpadding="3" cellspacing="0" style="width:100%">
+        <thead>
+            <tr>
+                <th>Expression</th>
+                <th>SQL Server</th>
+                <th>Oracle</th>
+                <th>MySQL</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>11/2</td>
+                <td>5</td>
+                <td>5.5</td>
+                <td>5.5</td>
+            </tr>
+            <tr>
+                <td>11 mode 2</td>
+                <td>11%2</td>
+                <td>MOD(11,2)</td>
+                <td>11%2</td>
+            </tr>
+            <tr>
+                <td>contains((1,3,5), Id)</td>
+                <td>Id IN (1,3,5)</td>
+                <td>ID IN (1,3,5)</td>
+                <td>id IN (1,3,5)</td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>

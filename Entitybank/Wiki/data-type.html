@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Data-Type Comparisons - SQL Server</title>
+</head>
+<body>
+    <h2>Data-Type Comparisons</h2>
+
+    <table border="1" cellpadding="3" cellspacing="0" style="width:100%">
+        <thead>
+            <tr>
+                <th>SQL Server</th>
+                <th>DataTable</th>
+                <th>XSD</th>
+                <th>Entitybank</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>bigint</td>
+                <td>System.Int64</td>
+                <td>xs:long</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>binary(50)</td>
+                <td>System.Byte[]</td>
+                <td>xs:base64Binary</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>bit</td>
+                <td>System.Boolean</td>
+                <td>xs:boolean</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>char(10)</td>
+                <td>System.String</td>
+                <td>
+                    System.String;&nbsp
+                    xs:maxLength value="10"
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>date</td>
+                <td>System.DateTime</td>
+                <td>xs:dateTime</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>datetime</td>
+                <td>System.DateTime</td>
+                <td>xs:dateTime</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>datetime2(7)</td>
+                <td>System.DateTime</td>
+                <td>xs:dateTime</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>datetimeoffset(7)</td>
+                <td>System.DateTimeOffset</td>
+                <td>msdata:DataType="System.DateTimeOffset" type="xs:anyType"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>decimal(18, 0)</td>
+                <td>System.Decimal</td>
+                <td>xs:decimal</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>float</td>
+                <td>System.Double</td>
+                <td>xs:double</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>geography</td>
+                <td>Microsoft.SqlServer.Types.SqlGeography</td>
+                <td>msdata:DataType="Microsoft.SqlServer.Types.SqlGeography" type="xs:anyType"</td>
+                <td>X</td>
+            </tr>
+            <tr>
+                <td>geometry</td>
+                <td>Microsoft.SqlServer.Types.SqlGeometry</td>
+                <td>msdata:DataType="Microsoft.SqlServer.Types.SqlGeometry" type="xs:anyType"</td>
+                <td>X</td>
+            </tr>
+            <tr>
+                <td>hierarchyid</td>
+                <td>Microsoft.SqlServer.Types.SqlHierarchyId</td>
+                <td>msdata:DataType="Microsoft.SqlServer.Types.SqlHierarchyId" type="xs:anyType"</td>
+                <td>X</td>
+            </tr>
+            <tr>
+                <td>image</td>
+                <td>System.Byte[]</td>
+                <td>xs:base64Binary</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>int</td>
+                <td>System.Int32</td>
+                <td>xs:int</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>money</td>
+                <td>System.Decimal</td>
+                <td>xs:decimal</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>nchar(10)</td>
+                <td>System.String</td>
+                <td>
+                    xs:string;&nbsp
+                    xs:maxLength value="10"
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>ntext</td>
+                <td>System.String</td>
+                <td>
+                    xs:string;&nbsp
+                    xs:maxLength value="1073741823"
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>numeric(18, 0)</td>
+                <td>System.Decimal</td>
+                <td>xs:decimal</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>nvarchar(50)</td>
+                <td>System.String</td>
+                <td>
+                    xs:string;&nbsp
+                    xs:maxLength value="50"
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>nvarchar(MAX)</td>
+                <td>System.String</td>
+                <td>
+                    xs:string";&nbsp
+                    xs:maxLength value="2147483647"
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>real</td>
+                <td>System.Single</td>
+                <td>xs:float</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>smalldatetime</td>
+                <td>System.DateTime</td>
+                <td>xs:dateTime</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>smallint</td>
+                <td>System.Int16</td>
+                <td>xs:short</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>smallmoney</td>
+                <td>System.Decimal</td>
+                <td>xs:decimal</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>sql_variant</td>
+                <td>System.Object</td>
+                <td>msdata:DataType="System.Object" type="xs:anyType"</td>
+                <td>X</td>
+            </tr>
+            <tr>
+                <td>text</td>
+                <td>System.String</td>
+                <td>
+                    xs:string;&nbsp
+                    xs:maxLength value="2147483647"
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>time(7)</td>
+                <td>System.TimeSpan</td>
+                <td>xs:duration</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>timestamp</td>
+                <td>System.Byte[]</td>
+                <td>msdata:ReadOnly="true" type="xs:base64Binary"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>tinyint</td>
+                <td>System.Byte</td>
+                <td>xs:unsignedByte</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>uniqueidentifier</td>
+                <td>System.Guid</td>
+                <td>msdata:DataType="System.Guid" type="xs:string"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>varbinary(50)</td>
+                <td>System.Byte[]</td>
+                <td>xs:base64Binary</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>varbinary(MAX)</td>
+                <td>System.Byte[]</td>
+                <td>xs:base64Binary</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>varchar(50)</td>
+                <td>System.String</td>
+                <td>
+                    xs:string;&nbsp
+                    xs:maxLength value="50"
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>varchar(MAX)</td>
+                <td>System.String</td>
+                <td>
+                    xs:string;&nbsp
+                    xs:maxLength value="2147483647"
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>xml</td>
+                <td>System.String</td>
+                <td>
+                    xs:string;&nbsp
+                    xs:maxLength value="2147483647"
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

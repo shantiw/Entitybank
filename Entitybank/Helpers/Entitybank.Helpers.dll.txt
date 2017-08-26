@@ -1,0 +1,2 @@
+﻿Include="Schema\SchemaVocab.cs"
+Include="Schema\SchemaMessages.resx"

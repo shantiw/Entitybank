@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<schema>
+
+  <entity name="Location" collection="Locations" table="Locations">
+    <property name="Id" column="Id" dataType="System.Int32" allowDbNull="false">
+      <annotation name="Key" />
+    </property >
+    <property name="Name" column="Name" dataType="System.String" allowDbNull="false" />
+  </entity>
+
+  <entity name="University" collection="Universities" table="Universities">
+    <property name="Id" column="Id" dataType="System.Int32" allowDbNull="false">
+      <annotation name="Key" />
+    </property >
+    <property name="Name" column="Name" dataType="System.String" allowDbNull="false" />
+
+    <!--$expand=Colleges,Departments,Specialties-->
+    <property name="Colleges" collection="Colleges" relationship="College-University" />
+    <property name="Departments" collection="Departments" relationship="Department-College,College-University" />
+    <property name="Specialties" collection="Specialties" relationship="Specialty-Department,Department-College,College-University" />
+
+    <!--or-->
+    <!--nested $expand=Colleges($expand=Location,Departments($expand=Specialties))-->
+    <property name="Colleges" collection="Colleges" relationship="College-University">
+      <!--expand-->
+      <property name="Location" entity="Location" relationship="College-Location" />
+      <!--expand-->
+      <property name="Departments" collection="Departments" relationship="Department-College">
+        <!--expand-->
+        <property name="Specialties" collection="Specialties" relationship="Specialty-Department" />
+      </property>
+    </property>
+
+    <!--or-->
+    <!--nested $expand=Colleges.Departments($expand=Specialties)-->
+    <property name="Colleges.Departments" collection="Departments" relationship="Department-College,College-University">
+      <!--expand-->
+      <property name="Specialties" collection="Specialties" relationship="Specialty-Department" />
+    </property>
+
+    <!--or-->
+    <!--nested $expand=Colleges($expand=Location,Departments.Specialties)-->
+    <property name="Colleges" collection="Colleges" relationship="College-University">
+      <!--expand-->
+      <property name="Location" entity="Location" relationship="College-Location" />
+      <!--expand-->
+      <property name="Departments.Specialties" collection="Specialties" relationship="Specialty-Department,Department-College" />
+    </property>
+  </entity>
+
+  <entity name="College" collection="Colleges" table="Colleges">
+    <property name="Id" column="Id" dataType="System.Int32" allowDbNull="false">
+      <annotation name="Key" />
+    </property >
+    <property name="Name" column="Name" dataType="System.String" allowDbNull="false" />
+
+    <!--foreign key-->
+    <property name="UniversityId" column="UniversityId" dataType="System.Int32" allowDbNull="false" />
+    <property name="LocationId" column="LocationId" dataType="System.Int32" allowDbNull="false" />
+
+    <!--expand-->
+    <property name="University" entity="University" relationship="College-University" />
+    <property name="Location" entity="Location" relationship="College-Location" />
+    <property name="Departments" collection="Departments" relationship="Department-College" />
+
+    <!--extend-->
+    <property name="UniversityName" entity="University" property="Name" relationship="College-University" />
+  </entity>
+
+  <entity name="Department" collection="Departments" table="Departments">
+    <property name="Id" column="Id" dataType="System.Int32" allowDbNull="false">
+      <annotation name="Key" />
+    </property >
+    <property name="Name" column="Name" dataType="System.String" allowDbNull="false" />
+
+    <!--foreign key-->
+    <property name="CollegeId" column="CollegeId" dataType="System.Int32" allowDbNull="false" />
+
+    <!--expand-->
+    <property name="College" entity="College" relationship="Department-College" />
+    <property name="Specialties" collection="Specialties" relationship="Specialty-Department" />
+
+    <!--extend-->
+    <property name="CollegeName" entity="College" property="Name" relationship="Department-College" />
+    <property name="UniversityName" entity="University" property="Name" relationship="Department-College,College-University" />
+  </entity>
+
+  <entity name="Specialty" collection="Specialties" table="Specialties">
+    <property name="Id" column="Id" dataType="System.Int32" allowDbNull="false">
+      <annotation name="Key" />
+    </property >
+    <property name="Name" column="Name" dataType="System.String" allowDbNull="false" />
+
+    <!--foreign key-->
+    <property name="DepartmentId" column="DepartmentId" dataType="System.Int32" allowDbNull="false" />
+
+    <!--expand-->
+    <property name="Department" entity="Department" relationship="Specialty-Department" />
+
+    <!--extend-->
+    <property name="DepartmentName" entity="Department" property="Name" relationship="Specialty-Department" />
+    <property name="CollegeName" entity="College" property="Name" relationship="Specialty-Department,Department-College" />
+    <property name="UniversityName" entity="University" property="Name" relationship="Specialty-University" />
+    <!--or ...relationship="Specialty-Department,Department-College,College-University"-->
+    <!--or ...relationship="Specialty(DepartmentId)-Department(Id,CollegeId)-College(Id,UniversityId)-University(Id)"-->
+    <!--or ...relationship="Specialty(DepartmentId)-Department(Id),Department(CollegeId)-College(Id),College(UniversityId)-University(Id)"-->
+
+    <!--or derived-->
+    <property name="Department.College.University.Name" entity="University" property="Name"
+              relationship="Specialty(DepartmentId)-Department(Id),Department(CollegeId)-College(Id),College(UniversityId)-University(Id)" />
+  </entity>
+
+  <relationship name="College-Location" type="ManyToOne" entity="College" relatedEntity="Location">
+    <property name="LocationId" relatedProperty="Id"/>
+  </relationship>
+
+  <relationship name="College-University" type="ManyToOne" entity="College" relatedEntity="University">
+    <property name="UniversityId" relatedProperty="Id"/>
+  </relationship>
+
+  <relationship name="Department-College" type="ManyToOne" entity="Department" relatedEntity="College">
+    <property name="CollegeId" relatedProperty="Id"/>
+  </relationship>
+
+  <relationship name="Specialty-Department" type="ManyToOne" entity="Specialty" relatedEntity="Department">
+    <property name="DepartmentId" relatedProperty="Id"/>
+  </relationship>
+
+  <relationship name="Specialty-University" type="ManyToOne" entity="Specialty" relatedEntity="University">
+    <relationship entity="Specialty" relatedEntity="Department">
+      <property name="DepartmentId" relatedProperty="Id"/>
+    </relationship>
+    <relationship entity="Department" relatedEntity="College">
+      <property name="CollegeId" relatedProperty="Id"/>
+    </relationship>
+    <relationship entity="College" relatedEntity="University">
+      <property name="UniversityId" relatedProperty="Id"/>
+    </relationship>
+  </relationship>
+
+  <entity name="User" collection="Users" table="Users">
+    <property name="Id" column="Id" dataType="System.Int32" allowDbNull="false">
+      <annotation name="Key" />
+    </property >
+    <property name="UserName" column="UserName" dataType="System.String" allowDbNull="false" />
+
+    <!--expand-->
+    <property name="Roles" collection="Roles" relationship="Role-User" />
+  </entity>
+
+  <entity name="Role" collection="Roles" table="Roles">
+    <property name="Id" column="Id" dataType="System.Int32" allowDbNull="false">
+      <annotation name="Key" />
+    </property >
+    <property name="RoleName" column="RoleName" dataType="System.String" allowDbNull="false" />
+
+    <!--expand-->
+    <property name="Users" collection="Users" relationship="Role-User" />
+  </entity>
+
+  <entity name="UsersRole" collection="UsersRoles" table="UsersRoles">
+    <property name="UserId" column="UserId" dataType="System.Int32" allowDbNull="false" foreignKey="FK_UsersRoles_Users">
+      <annotation name="Key"/>
+    </property>
+    <property name="RoleId" column="RoleId" dataType="System.Int32" allowDbNull="false" foreignKey="FK_UsersRoles_Roles">
+      <annotation name="Key"/>
+    </property>
+  </entity>
+
+  <relationship name="Role-User" type="ManyToMany" entity="Role" relatedEntity="User">
+    <relationship type="OneToMany" entity="Role" relatedEntity="UsersRole">
+      <property name="Id" relatedProperty="RoleId"/>
+    </relationship>
+    <relationship type="ManyToOne" entity="UsersRole" relatedEntity="User">
+      <property name="UserId" relatedProperty="Id"/>
+    </relationship>
+  </relationship>
+
+</schema>

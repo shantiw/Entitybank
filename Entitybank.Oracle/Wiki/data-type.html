@@ -1,0 +1,229 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Data-Type Comparisons - Oracle</title>
+</head>
+<body>
+    <h2>Data-Type Comparisons</h2>
+
+    <table border="1" cellpadding="3" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Oracle Built_in Datatype</th>
+                <th>Description</th>
+                <th>DataTable</th>
+                <th>XSD</th>
+                <th>Entitybank</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td><code>VARCHAR2(</code><em><code>size</code></em> <code>[BYTE | CHAR])</code></td>
+                <td>
+                    Variable-length character string having maximum length <em><code>size</code></em> bytes or characters. Maximum <em><code>size</code></em> is 4000 bytes or characters, and minimum is 1 byte or 1 character. You must specify <em><code>size</code></em> for <code>VARCHAR2</code>.
+                    <p><code>BYTE</code> indicates that the column will have byte length semantics; <code>CHAR</code> indicates that the column will have character semantics.</p>
+                </td>
+                <td>System.String</td>
+                <td>xs:restriction base="xs:string"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td><code>NVARCHAR2(</code><em><code>size)</code></em></td>
+                <td>Variable-length character string having maximum length <em><code>size</code></em> characters. Maximum <em><code>size</code></em> is determined by the national character set definition, with an upper limit of 4000 bytes. You must specify <em><code>size</code></em> for <code>NVARCHAR2</code>.</td>
+                <td>System.String</td>
+                <td>xs:restriction base="xs:string"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td><code>NUMBER(</code><em><code>p,s</code></em><code>)</code></td>
+                <td>Number having precision <em><code>p</code></em> and scale <em><code>s</code></em>. The precision <em><code>p</code></em> can range from 1 to 38. The scale <em><code>s</code></em> can range from -84 to 127.</td>
+                <td>System.Decimal</td>
+                <td>type="xs:decimal"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td><code>LONG</code></td>
+                <td>Character data of variable length up to 2 gigabytes, or 2<sup>31</sup> -1 bytes.</td>
+                <td>System.String</td>
+                <td>xs:restriction base="xs:string" xs:maxLength value="2147483647"</td>
+                <td>X</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td><code>DATE</code></td>
+                <td>Valid date range from January 1, 4712 BC to December 31, 9999 AD.</td>
+                <td>System.DateTime</td>
+                <td>type="xs:dateTime"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td><code>BINARY_FLOAT</code></td>
+                <td>32-bit floating point number. This datatype requires 5 bytes, including the length byte.</td>
+                <td>System.Single</td>
+                <td>type="xs:float"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td><code>BINARY_DOUBLE</code></td>
+                <td>64-bit floating point number. This datatype requires 9 bytes, including the length byte.</td>
+                <td>System.Double</td>
+                <td>type="xs:double"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>180</td>
+                <td><code>TIMESTAMP</code> (<em><code>fractional_seconds_precision</code></em>)</td>
+                <td>Year, month, and day values of date, as well as hour, minute, and second values of time, where <em><code>fractional_seconds_precision</code></em> is the number of digits in the fractional part of the <code>SECOND</code> datetime field. Accepted values of <em><code>fractional_seconds_precision</code></em> are 0 to 9. The default is 6.</td>
+                <td>System.DateTime</td>
+                <td>type="xs:dateTime"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>181</td>
+                <td><code>TIMESTAMP</code> (<em><code>fractional_seconds_precision</code></em>) <code>WITH</code> <code>TIME</code> <code>ZONE</code></td>
+                <td>All values of <code>TIMESTAMP</code> as well as time zone displacement value, where <em><code>fractional_seconds_precision</code></em> is the number of digits in the fractional part of the <code>SECOND</code> datetime field. Accepted values are 0 to 9. The default is 6.</td>
+                <td>System.DateTime</td>
+                <td>type="xs:dateTime"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>231</td>
+                <td><code>TIMESTAMP</code> (<em><code>fractional_seconds_precision</code></em>) <code>WITH</code> <code>LOCAL</code> <code>TIME</code> <code>ZONE</code></td>
+                <td>
+                    All values of <code>TIMESTAMP</code> <code>WITH</code> <code>TIME</code> <code>ZONE</code>, with the following exceptions:
+                    <ul>
+                        <li type="disc">
+                            <p>Data is normalized to the database time zone when it is stored in the database.</p>
+                        </li>
+                        <li type="disc">
+                            <p>When the data is retrieved, users see the data in the session time zone.</p>
+                        </li>
+                    </ul>
+                </td>
+                <td>System.DateTime</td>
+                <td>type="xs:dateTime"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>182</td>
+                <td><code>INTERVAL</code> <code>YEAR</code> (<em><code>year_precision</code></em>) <code>TO</code> <code>MONTH</code></td>
+                <td>Stores a period of time in years and months, where <em><code>year_precision</code></em> is the number of digits in the <code>YEAR</code> datetime field. Accepted values are 0 to 9. The default is 2.</td>
+                <td>System.Int64</td>
+                <td>type="xs:long"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>183</td>
+                <td><code>INTERVAL</code> <code>DAY</code> (<em><code>day_precision</code></em>) <code>TO</code> <code>SECOND</code> (<em><code>fractional_seconds_precision</code></em>)</td>
+                <td>
+                    Stores a period of time in days, hours, minutes, and seconds, where
+                    <ul>
+                        <li type="disc">
+                            <p><em><code>day_precision</code></em> is the maximum number of digits in the <code>DAY</code> datetime field. Accepted values are 0 to 9. The default is 2.</p>
+                        </li>
+                        <li type="disc">
+                            <p><em><code>fractional_seconds_precision</code></em> is the number of digits in the fractional part of the <code>SECOND</code> field. Accepted values are 0 to 9. The default is 6.</p>
+                        </li>
+                    </ul>
+                </td>
+                <td>System.TimeSpan</td>
+                <td>type="xs:duration"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td><code>RAW(</code><em><code>size</code></em><code>)</code></td>
+                <td>Raw binary data of length <em><code>size</code></em> bytes. Maximum <em><code>size</code></em> is 2000 bytes. You must specify <em><code>size</code></em> for a <code>RAW</code> value.</td>
+                <td>System.Byte[]</td>
+                <td>type="xs:base64Binary"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td><code>LONG RAW</code></td>
+                <td>Raw binary data of variable length up to 2 gigabytes.</td>
+                <td>System.Byte[]</td>
+                <td>type="xs:base64Binary"</td>
+                <td>X</td>
+            </tr>
+            <tr>
+                <td>69</td>
+                <td><code>ROWID</code></td>
+                <td>Base 64 string representing the unique address of a row in its table. This datatype is primarily for values returned by the <code>ROWID</code> pseudocolumn.</td>
+                <td>System.String</td>
+                <td>xs:restriction base="xs:string" xs:maxLength value="18"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>208</td>
+                <td><code>UROWID [(</code><em><code>size</code></em><code>)]</code></td>
+                <td>Base 64 string representing the logical address of a row of an index-organized table. The optional <em><code>size</code></em> is the size of a column of type <code>UROWID</code>. The maximum size and default is 4000 bytes.</td>
+                <td>System.String</td>
+                <td>xs:restriction base="xs:string" xs:maxLength value="18"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>96</td>
+                <td><code>CHAR(</code><em><code>size</code></em> <code>[BYTE | CHAR])</code></td>
+                <td>
+                    Fixed-length character data of length <em><code>size</code></em> bytes. Maximum <em><code>size</code></em> is 2000 bytes or characters. Default and minimum <em><code>size</code></em> is 1 byte.
+                    <p><code>BYTE</code> and <code>CHAR</code> have the same semantics as for <code>VARCHAR2</code>.</p>
+                </td>
+                <td>System.String</td>
+                <td>xs:restriction base="xs:string"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>96</td>
+                <td><code>NCHAR(</code><em><code>size</code></em><code>)</code></td>
+                <td>Fixed-length character data of length <em><code>size</code></em> characters. Maximum <em><code>size</code></em> is determined by the national character set definition, with an upper limit of 2000 bytes. Default and minimum <em><code>size</code></em> is 1 character.</td>
+                <td>System.String</td>
+                <td>xs:restriction base="xs:string"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>112</td>
+                <td><code>CLOB</code></td>
+                <td>A character large object containing single-byte or multibyte characters. Both fixed-width and variable-width character sets are supported, both using the database character set. Maximum size is (4 gigabytes - 1) * (database block size).</td>
+                <td>System.String</td>
+                <td>xs:restriction base="xs:string" xs:maxLength value="2147483647"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>112</td>
+                <td><code>NCLOB</code></td>
+                <td>A character large object containing Unicode characters. Both fixed-width and variable-width character sets are supported, both using the database national character set. Maximum size is (4 gigabytes - 1) * (database block size). Stores national character set data.</td>
+                <td>System.String</td>
+                <td>xs:restriction base="xs:string" xs:maxLength value="2147483647"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>113</td>
+                <td><code>BLOB</code></td>
+                <td>A binary large object. Maximum size is (4 gigabytes - 1) * (database block size).</td>
+                <td>System.Byte[]</td>
+                <td>type="xs:base64Binary"</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>114</td>
+                <td><code>BFILE</code></td>
+                <td>Contains a locator to a large binary file stored outside the database. Enables byte stream I/O access to external LOBs residing on the database server. Maximum size is 4 gigabytes.</td>
+                <td>System.Byte[]</td>
+                <td>type="xs:base64Binary"</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
