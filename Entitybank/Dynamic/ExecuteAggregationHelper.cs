@@ -89,7 +89,7 @@ namespace XData.Data.Dynamic
         // json: "@original":{"property":value, ...}
         public dynamic GetOriginal(dynamic obj)
         {
-            return obj["@original"];
+            return obj[string.Format("@{0}", SchemaVocab.Original)];
         }
 
         public UpdateCommandNode<dynamic> CreateUpdateCommandNode(dynamic aggregNode, string entity, XElement schema, dynamic aggreg)

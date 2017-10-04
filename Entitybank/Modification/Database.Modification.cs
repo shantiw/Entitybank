@@ -121,8 +121,7 @@ namespace XData.Data.Objects
             SynchronizePropertyValues(executeCommand, modifier);
 
             // validate
-            List<ValidationResult> validationResults = modifier.GetValidationResults(executeCommand);
-            TryThrowValidationException(validationResults);
+            modifier.Validate(executeCommand);
 
             // GenerateInsertStatement
             string sql = ModificationGenerator.GenerateInsertStatement(executeCommand.PropertyValues, executeCommand.EntitySchema,
@@ -190,7 +189,7 @@ namespace XData.Data.Objects
                 {
                     string relatedEntityName = relatedEntitySchema.Attribute(SchemaVocab.Name).Value;
                     IEnumerable<string> relatedPropertyNames = relatedKeySchema.Elements(SchemaVocab.Property).Select(p => "'" + p.Attribute(SchemaVocab.Name).Value + "'");
-                    throw new ValidationException(string.Format(ErrorMessages.Validate_RelationshipKeyConflicted,
+                    throw new ConstraintException(string.Format(ErrorMessages.RelationshipKeyConflicted,
                         executeCommand.Entity, GetKeyValueMessage(executeCommand),
                         relatedEntityName, string.Join(",", relatedPropertyNames)));
                 }
@@ -242,12 +241,12 @@ namespace XData.Data.Objects
                     object value = executeCommand.PropertyValues[propertyName];
                     if (object.Equals(propertyValue, value)) continue;
 
-                    throw new ValidationException(string.Format(ErrorMessages.Validate_NotChangeFixedValue, propertyName, executeCommand.Entity));
+                    throw new ConstraintException(string.Format(ErrorMessages.NotChangeFixedValue, propertyName, executeCommand.Entity));
                 }
             }
 
-            List<ValidationResult> validationResults = modifier.GetValidationResults(executeCommand);
-            TryThrowValidationException(validationResults);
+            // validate
+            modifier.Validate(executeCommand);
 
             //
             foreach (SQLStatment statment in before)
@@ -305,7 +304,7 @@ namespace XData.Data.Objects
         {
             // Assert(executeCommand.GetType() == typeof(InsertCommand<T>) || executeCommand.GetType() == typeof(UpdateCommand<T>));
 
-            Dictionary<string, object> dict = modifier.GetPropertyValues(executeCommand.AggregNode, executeCommand.Entity);
+            Dictionary<string, object> dict = modifier.GetPropertyValues(executeCommand.AggregNode, executeCommand.Entity, executeCommand.Schema);
             foreach (KeyValuePair<string, object> pair in dict)
             {
                 string propertyName = pair.Key;
@@ -324,7 +323,7 @@ namespace XData.Data.Objects
                         {
                             if (object.Equals(propertyvalue, value)) continue;
 
-                            throw new ValidationException(string.Format(ErrorMessages.Validate_NotChangeUniqueKeyValue, propertyName, executeCommand.Entity));
+                            throw new ConstraintException(string.Format(ErrorMessages.NotChangeUniqueKeyValue, propertyName, executeCommand.Entity));
                         }
                     }
 
@@ -335,7 +334,7 @@ namespace XData.Data.Objects
                     {
                         if (object.Equals(propertyvalue, value)) continue;
 
-                        throw new ValidationException(string.Format(ErrorMessages.Validate_NotChangeReadonlyValue, propertyName, executeCommand.Entity));
+                        throw new ConstraintException(string.Format(ErrorMessages.NotChangeReadonlyValue, propertyName, executeCommand.Entity));
                     }
 
                     executeCommand.PropertyValues[propertyName] = propertyvalue;
@@ -366,7 +365,7 @@ namespace XData.Data.Objects
 
             IEnumerable<Dictionary<string, object>> refetchedRecords = FetchFromDb(executeCommand.PropertyValues, executeCommand.EntitySchema, executeCommand.UniqueKeySchema);
             int count = refetchedRecords.Count();
-            if (count > 1) throw new ValidationException(string.Format(ErrorMessages.MultipleRowsFound, count, executeCommand.Entity, GetKeyValueMessage(executeCommand)));
+            if (count > 1) throw new ConstraintException(string.Format(ErrorMessages.MultipleRowsFound, count, executeCommand.Entity, GetKeyValueMessage(executeCommand)));
 
             return refetchedRecords.FirstOrDefault();
         }
@@ -577,12 +576,6 @@ namespace XData.Data.Objects
                     Insert(childNode, childRelationship, insertCommand.PropertyValues, modifier);
                 }
             }
-        }
-
-        private void TryThrowValidationException(ICollection<ValidationResult> validationResults)
-        {
-            if (validationResults.Count == 0) return;
-            throw new ValidationException(validationResults.First(), null, validationResults);
         }
 
 

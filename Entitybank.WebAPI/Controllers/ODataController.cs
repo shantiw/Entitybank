@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -57,19 +58,19 @@ namespace XData.Web.Http.Controllers
         }
 
         [Route("{name}/{entity}")]
-        public HttpResponseMessage Post(string name, string entity, [FromBody]object value)
+        public HttpResponseMessage Post(string name, string entity, [FromBody]JToken value)
         {
             return ODataModel.Create(name, entity, value, Request);
         }
 
         [Route("{name}/{entity}")]
-        public void Delete(string name, string entity, [FromBody]object value)
+        public void Delete(string name, string entity, [FromBody]JToken value)
         {
             ODataModel.Delete(name, entity, value, Request);
         }
 
         [Route("{name}/{entity}")]
-        public void Put(string name, string entity, [FromBody]object value)
+        public void Put(string name, string entity, [FromBody]JToken value)
         {
             ODataModel.Update(name, entity, value, Request);
         }

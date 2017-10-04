@@ -12,14 +12,14 @@ namespace XData.Data.Xml
     public class ExecutionEntry
     {
         public Execution Execution { get; private set; }
-        public XElement Aggreg { get; private set; }
+        public XElement Element { get; private set; }
         public string Entity { get; private set; }
         public XElement Schema { get; private set; }
 
-        public ExecutionEntry(Execution execution, XElement aggreg, string entity, XElement schema)
+        public ExecutionEntry(Execution execution, XElement element, string entity, XElement schema)
         {
             Execution = execution;
-            Aggreg = aggreg;
+            Element = element;
             Entity = entity;
             Schema = schema;
         }
@@ -28,17 +28,17 @@ namespace XData.Data.Xml
     public class ValidatingEventArgs : EventArgs
     {
         public Execution Execution { get; private set; }
-        public XElement Aggreg { get; private set; }
+        public XElement Element { get; private set; }
         public string Entity { get; private set; }
         public XElement Schema { get; private set; }
         public IEnumerable<ExecutionEntry<XElement>> Context { get; private set; }
 
         public ICollection<ValidationResult> ValidationResults { get; private set; }
 
-        public ValidatingEventArgs(Execution execution, XElement aggreg, string entity, XElement schema, IEnumerable<ExecutionEntry<XElement>> context)
+        public ValidatingEventArgs(Execution execution, XElement element, string entity, XElement schema, IEnumerable<ExecutionEntry<XElement>> context)
         {
             Execution = execution;
-            Aggreg = aggreg;
+            Element = element;
             Entity = entity;
             Schema = schema;
             Context = context;

@@ -36,7 +36,7 @@ namespace XData.Data.Objects
             return new SqlDataAdapter();
         }
 
-        protected override DbParameter CreateParameter(string parameter, object value)
+        public override DbParameter CreateParameter(string parameter, object value)
         {
             return new SqlParameter(parameter, value);
         }

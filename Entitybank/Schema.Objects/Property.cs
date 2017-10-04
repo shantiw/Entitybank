@@ -118,7 +118,7 @@ namespace XData.Data.Schema
             XAttribute collectionAttr = last.Attribute(SchemaVocab.Collection);
             if (collectionAttr == null)
             {
-                return new CollectionProperty(property, lastEntity, relationship);
+                return new EntityProperty(property, lastEntity, relationship);
             }
             else
             {
@@ -156,7 +156,8 @@ namespace XData.Data.Schema
     {
         public string Entity { get; protected set; }
 
-        public EntityProperty(string name, string entity, ManyToOneRelationship relationship) : base(name, relationship)
+        public EntityProperty(string name, string entity, Relationship relationship) // ManyToOneRelationship
+            : base(name, relationship)
         {
             Entity = entity;
         }

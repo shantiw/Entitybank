@@ -99,10 +99,9 @@ namespace XData.Data.OData
                 Select = "SELECT COUNT(*)",
                 From = "FROM " + DecorateTableName(table.Name)
             };
-            if (table.ForeignKeyTrees.Count() > 0)
-            {
-                clauses.From += " " + DecorateTableAlias(table.TableAlias);
-            }
+
+            clauses.From += " " + DecorateTableAlias(table.TableAlias);
+
             clauses.LeftJoins = GenerateLeftJoins(table.ForeignKeyTrees);
             if (query.Filter != null)
             {

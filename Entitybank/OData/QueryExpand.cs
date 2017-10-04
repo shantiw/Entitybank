@@ -19,7 +19,7 @@ namespace XData.Data.OData
         public Query Query { get; private set; }
         public XElement Schema { get; private set; }
         public ParameterCollection ParameterCollection { get; private set; }
-        public QueryNode[] Nodes { get; private set; }
+        public ExpandNode[] Nodes { get; private set; }
 
         protected readonly Dictionary<string, string> StringPlaceholders;
 
@@ -37,9 +37,9 @@ namespace XData.Data.OData
         }
 
         // Trips($filter=contains(Name, {f5eac763-e025-4cf8-aa1d-9bb3a2986515}) $select=Id,Name $orderby=Id desc $expand=Hotels),Contacts($filter=Name eq {670bc07f-6b33-47fb-be01-63834e25ff21})
-        protected QueryNode[] Compose(string value, XElement parentSchema, string parentPath)
+        protected ExpandNode[] Compose(string value, XElement parentSchema, string parentPath)
         {
-            List<QueryNode> expands = new List<QueryNode>();
+            List<ExpandNode> expands = new List<ExpandNode>();
 
             string val = value;
 
@@ -66,7 +66,7 @@ namespace XData.Data.OData
                 ExpandProperty oProperty = ExpandProperty.Create(property, propertyPath, parentSchema, Schema);
 
                 string path = parentPath + "/" + property;
-                QueryNode oExpand = QueryNode.Create(oProperty, select, filter, orderby, Schema, ParameterCollection);
+                ExpandNode oExpand = ExpandNode.Create(oProperty, select, filter, orderby, Schema, ParameterCollection);
                 oExpand.Path = path;
                 expands.Add(oExpand);
 
@@ -168,6 +168,43 @@ namespace XData.Data.OData
         protected static string GetGuid()
         {
             return AnalysisHelper.GetGuid();
+        }
+
+        public QueryExpand(Query query, Expand[] expands)
+        {
+            Query = query;
+            Schema = new XElement(query.Schema);
+            ParameterCollection = query.ParameterCollection;
+
+            XElement entitySchema = Schema.GetEntitySchema(Query.Entity);
+            string collection = entitySchema.Attribute(SchemaVocab.Collection).Value;
+
+            Nodes = new ExpandNode[expands.Length];
+            for (int i = 0; i < expands.Length; i++)
+            {
+                Nodes[i] = Compose(expands[i], entitySchema, collection);
+            }
+        }
+
+        protected ExpandNode Compose(Expand expand, XElement parentSchema, string parentPath)
+        {
+            string property = expand.Property;
+
+            XElement[] propertyPath = Schema.GenerateExpandPropertyPath(parentSchema, property);
+
+            ExpandProperty oProperty = ExpandProperty.Create(property, propertyPath, parentSchema, Schema);
+
+            string path = parentPath + "/" + property;
+            ExpandNode oExpand = ExpandNode.Create(oProperty, expand.Select, expand.Filter, expand.Orderby, Schema, ParameterCollection);
+            oExpand.Path = path;
+
+            oExpand.Children = new ExpandNode[expand.Children.Length];
+            for (int i = 0; i < expand.Children.Length; i++)
+            {
+                oExpand.Children[i] = Compose(expand.Children[i], propertyPath[propertyPath.Length - 1], path);
+            }
+
+            return oExpand;
         }
 
 

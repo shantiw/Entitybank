@@ -44,7 +44,7 @@ namespace XData.Data.OData
             TempTableNode root = new CollectionTempNode(name, select, orderby, query.Entity) { Path = name };
 
             //
-            Dictionary<QueryNode, TempTableNode> childrenDict = CreateChildren(queryExpand.Nodes, root, out IEnumerable<string> relatedPropertiesForSelect);
+            Dictionary<ExpandNode, TempTableNode> childrenDict = CreateChildren(queryExpand.Nodes, root, out IEnumerable<string> relatedPropertiesForSelect);
             query.Select.Properties = query.Select.Properties.Union(relatedPropertiesForSelect).ToArray();
 
             //
@@ -58,7 +58,7 @@ namespace XData.Data.OData
             }
 
             //
-            foreach (KeyValuePair<QueryNode, TempTableNode> pair in childrenDict)
+            foreach (KeyValuePair<ExpandNode, TempTableNode> pair in childrenDict)
             {
                 pair.Value.ParentTempTableName = root.TempTableName;
                 Compose(pair.Key, pair.Value);
@@ -68,28 +68,28 @@ namespace XData.Data.OData
         }
 
         // overload
-        protected Dictionary<QueryNode, TempTableNode> CreateChildren(QueryNode queryNode, TempTableNode node,
+        protected Dictionary<ExpandNode, TempTableNode> CreateChildren(ExpandNode queryNode, TempTableNode node,
             out IEnumerable<string> relatedPropertiesForSelect)
         {
             return CreateChildren(queryNode.Children, node, out relatedPropertiesForSelect);
         }
 
-        protected Dictionary<QueryNode, TempTableNode> CreateChildren(IEnumerable<QueryNode> qChildren, TempTableNode node,
+        protected Dictionary<ExpandNode, TempTableNode> CreateChildren(IEnumerable<ExpandNode> qChildren, TempTableNode node,
             out IEnumerable<string> relatedPropertiesForSelect)
         {
-            Dictionary<QueryNode, TempTableNode> childDict = new Dictionary<QueryNode, TempTableNode>();
+            Dictionary<ExpandNode, TempTableNode> childDict = new Dictionary<ExpandNode, TempTableNode>();
 
             List<string> childrenForSelect = new List<string>();
-            foreach (QueryNode qChild in qChildren)
+            foreach (ExpandNode qChild in qChildren)
             {
                 TempTableNode child;
                 string[] select = new string[qChild.Query.Select.Properties.Length];
                 qChild.Query.Select.Properties.CopyTo(select, 0);
-                if (qChild is EntityQueryNode)
+                if (qChild is EntityExpandNode)
                 {
                     child = new EntityTempNode(qChild.Property, select, qChild.Entity);
                 }
-                else if (qChild is CollectionQueryNode)
+                else if (qChild is CollectionExpandNode)
                 {
                     Order[] orderby = GetOrders(qChild.Query);
                     child = new CollectionTempNode(qChild.Property, select, orderby, qChild.Entity);
@@ -130,11 +130,11 @@ namespace XData.Data.OData
         protected abstract void SetRootSelectStatments(TempTableNode root, QueryExpand queryExpand);
         protected abstract void SetRootPagingStatments(TempTableNode root, QueryExpand queryExpand);
 
-        protected void Compose(QueryNode queryNode, TempTableNode node)
+        protected void Compose(ExpandNode queryNode, TempTableNode node)
         {
             Query query = queryNode.Query;
 
-            Dictionary<QueryNode, TempTableNode> childrenDict = CreateChildren(queryNode, node, out IEnumerable<string> relatedPropertiesForSelect);
+            Dictionary<ExpandNode, TempTableNode> childrenDict = CreateChildren(queryNode, node, out IEnumerable<string> relatedPropertiesForSelect);
 
             IEnumerable<string> unionSelect = new List<string>(queryNode.Query.Select.Properties);
             unionSelect = unionSelect.Union(relatedPropertiesForSelect);
@@ -162,14 +162,14 @@ namespace XData.Data.OData
             SetNodeStatments(node, queryNode);
 
             //
-            foreach (KeyValuePair<QueryNode, TempTableNode> pair in childrenDict)
+            foreach (KeyValuePair<ExpandNode, TempTableNode> pair in childrenDict)
             {
                 pair.Value.ParentTempTableName = node.TempTableName;
                 Compose(pair.Key, pair.Value);
             }
         }
 
-        protected abstract void SetNodeStatments(TempTableNode node, QueryNode queryNode);
+        protected abstract void SetNodeStatments(TempTableNode node, ExpandNode queryNode);
 
         protected void Execute(TempTableNode node)
         {

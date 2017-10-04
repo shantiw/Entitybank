@@ -62,7 +62,7 @@ namespace XData.Data.Objects
     {
         //internal Func<IReadOnlyDictionary<string, object>> Refetch;
         internal Func<IReadOnlyDictionary<string, object>> Refetch = null;
-        public IReadOnlyDictionary<string, object> Refetched { get => Refetch.Invoke(); }
+        public IReadOnlyDictionary<string, object> Refetched { get => Refetch(); }
 
         // sql, parameters
         public IList<SQLStatment> Before { get; private set; } = new List<SQLStatment>();

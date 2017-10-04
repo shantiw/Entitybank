@@ -12,6 +12,7 @@ namespace XData.Web.Http.Models
     internal class ODataModel
     {
         private static readonly string XSI = "http://www.w3.org/2001/XMLSchema-instance";
+        private static readonly XNamespace XSINamespace = XSI;
 
         public HttpResponseMessage GetNow(string name, HttpRequestMessage request)
         {
@@ -23,10 +24,10 @@ namespace XData.Web.Http.Models
             switch (mediaType)
             {
                 case "application/json":
-                    string json = string.Format("{{\"Now\": {0}}}", now.ToString(FORMAT));
+                    string json = string.Format("{{\"now\": {0}}}", now.ToString(FORMAT));
                     return CreateHttpResponseMessage(json, request);
                 case "application/xml":
-                    XElement element = new XElement("Now", now.ToString(FORMAT));
+                    XElement element = new XElement("now", now.ToString(FORMAT));
                     return CreateHttpResponseMessage(element, request);
                 default:
                     throw new NotSupportedException(mediaType.ToString());
@@ -43,10 +44,10 @@ namespace XData.Web.Http.Models
             switch (mediaType)
             {
                 case "application/json":
-                    string json = string.Format("{{\"UtcNow\": {0}}}", utcNow.ToString(FORMAT));
+                    string json = string.Format("{{\"utcnow\": {0}}}", utcNow.ToString(FORMAT));
                     return CreateHttpResponseMessage(json, request);
                 case "application/xml":
-                    XElement element = new XElement("UtcNow", utcNow.ToString(FORMAT));
+                    XElement element = new XElement("utcnow", utcNow.ToString(FORMAT));
                     return CreateHttpResponseMessage(element, request);
                 default:
                     throw new NotSupportedException(mediaType.ToString());
@@ -86,7 +87,7 @@ namespace XData.Web.Http.Models
                         XElement element = new ODataService<XElement>(name, request.GetQueryNameValuePairs(), "xml").GetDefault(entity, out XElement xsd);
                         element.SetAttributeValue(XNamespace.Xmlns + "i", XSI);
 
-                        return CreateHttpResponseMessage(Pack(element, xsd), request);
+                        return CreateHttpResponseMessage(Pack(element, null, xsd), request);
                     }
                 default:
                     throw new NotSupportedException(mediaType.ToString());
@@ -111,7 +112,7 @@ namespace XData.Web.Http.Models
                         string json = string.Format("[{0}]", string.Join(",", jsonCollection));
                         if (count != null)
                         {
-                            json = string.Format("{{\"@count\":{0},\"value\":{2}}}", count, json);
+                            json = string.Format("{{\"@count\":{0},\"value\":{1}}}", count, json);
                         }
                         return CreateHttpResponseMessage(json, request);
                     }
@@ -120,13 +121,9 @@ namespace XData.Web.Http.Models
                         ODataService<XElement> service = new ODataService<XElement>(name, request.GetQueryNameValuePairs(), "xml");
                         IEnumerable<XElement> xCollection = service.GetCollection(collection, out XElement xsd);
                         XElement element = new XElement(collection, xCollection);
-                        if (count != null)
-                        {
-                            element.SetAttributeValue("count", count);
-                        }
                         element.SetAttributeValue(XNamespace.Xmlns + "i", XSI);
 
-                        return CreateHttpResponseMessage(Pack(element, xsd), request);
+                        return CreateHttpResponseMessage(Pack(element, count, xsd), request);
                     }
                 default:
                     throw new NotSupportedException(mediaType.ToString());
@@ -150,9 +147,17 @@ namespace XData.Web.Http.Models
                     {
                         ODataService<XElement> service = new ODataService<XElement>(name, request.GetQueryNameValuePairs(), "xml");
                         XElement element = service.Find(collection, key, out XElement xsd);
-                        element.SetAttributeValue(XNamespace.Xmlns + "i", XSI);
+                        if (element == null)
+                        {
+                            string entity = service.Schema.Elements("entity").First(x => x.Attribute("collection").Value == collection).Attribute("name").Value;
+                            element = new XElement(entity);
+                            element.SetAttributeValue(XNamespace.Xmlns + "i", XSI);
+                            element.SetAttributeValue(XSINamespace + "nil", "true");
+                            return CreateHttpResponseMessage(element, request);
+                        }
 
-                        return CreateHttpResponseMessage(Pack(element, xsd), request);
+                        element.SetAttributeValue(XNamespace.Xmlns + "i", XSI);
+                        return CreateHttpResponseMessage(Pack(element, null, xsd), request);
                     }
                 default:
                     throw new NotSupportedException(mediaType.ToString());
@@ -180,13 +185,14 @@ namespace XData.Web.Http.Models
             return collection;
         }
 
-        private static XElement Pack(XElement element, XElement xsd)
+        private static XElement Pack(XElement element, int? count, XElement xsd)
         {
-            if (xsd == null) return element;
+            if (count == null && xsd == null) return element;
 
             XElement xml = new XElement("xml");
-            xml.Add(new XElement("schema", xsd));
-            xml.Add(new XElement("value", element));
+            if (xsd != null) xml.Add(new XElement("schema", xsd));
+            xml.Add(new XElement("element", element));
+            if (count != null) xml.Add(new XElement("count", count));
             return xml;
         }
 
@@ -194,7 +200,7 @@ namespace XData.Web.Http.Models
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent(json, request.GetResponseEncoding(), "application/json")
+                Content = new StringContent(json ?? "{}", request.GetResponseEncoding(), "application/json")
             };
             return response;
         }
@@ -223,7 +229,6 @@ namespace XData.Web.Http.Models
                     }
                 case "application/xml":
                     {
-
                         modificationService.Create(obj, entity, out XElement element);
                         return CreateHttpResponseMessage(element, request);
                     }

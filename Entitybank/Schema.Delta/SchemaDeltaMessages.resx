@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AmbiguousDelta" xml:space="preserve">
-    <value>Ambiguous delta have been found by {0}.</value>
+    <value>Ambiguous deltas have been found by {0}.</value>
   </data>
   <data name="NotFoundDelta" xml:space="preserve">
     <value>Not found the delta by {0}.</value>

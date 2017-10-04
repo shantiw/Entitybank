@@ -81,7 +81,7 @@ namespace XData.Data.OData
             root.FetchTableStatment = new SQLStatment(fetchSql);
         }
 
-        protected override void SetNodeStatments(TempTableNode node, QueryNode queryNode)
+        protected override void SetNodeStatments(TempTableNode node, ExpandNode queryNode)
         {
             string primarySql = GeneratePrimarySql(node, queryNode.Relationship, queryNode.Query, out DbParameter[] dbParameters,
                 out string tempTableName1, out string rowNumberAlias);

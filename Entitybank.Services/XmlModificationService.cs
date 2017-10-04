@@ -12,39 +12,29 @@ namespace XData.Data.Services
     {
         public XmlModificationService(string name, IEnumerable<KeyValuePair<string, string>> keyValues) : base(name, keyValues)
         {
-            Modifier = XmlModifier.Create(name, Schema);
+            Modifier = XmlModifier.Create(name);
         }
 
-        public void Create(XElement element, out XElement result)
+        public void Create(XElement element, out XElement keys)
         {
-            (Modifier as XmlModifier).Create(element, out IEnumerable<Dictionary<string, object>> keys);
-            XElement entitySchema;
-            if (IsCollection(element))
-            {
-                entitySchema = GetEntitySchemaByCollection(Schema, element.Name.LocalName);
-            }
-            else
-            {
-                entitySchema = GetEntitySchema(Schema, element.Name.LocalName);
-            }
-            result = KeysToXml(keys, entitySchema);
+            (Modifier as XmlModifier).Create(element, Schema, out keys);
         }
 
         // json
-        public void Create(XElement element, out string result)
+        public void Create(XElement element, out string keys)
         {
-            (Modifier as XmlModifier).Create(element, out IEnumerable<Dictionary<string, object>> keys);
-            result = KeysToJson(keys);
+            (Modifier as XmlModifier).Create(element, Schema, out object result);
+            keys = (string)result;
         }
 
         public void Delete(XElement element)
         {
-            (Modifier as XmlModifier).Delete(element);
+            (Modifier as XmlModifier).Delete(element, Schema);
         }
 
         public void Update(XElement element)
         {
-            (Modifier as XmlModifier).Update(element);
+            (Modifier as XmlModifier).Update(element, Schema);
         }
 
         private static bool IsCollection(XElement element)

@@ -106,7 +106,20 @@ namespace XData.Data.Modification
             return execution;
         }
 
-        internal protected virtual List<ValidationResult> GetValidationResults(InsertCommand<T> insertCommand)
+        // in Execute(InsertCommand<T>, Modifier<T>),Database.Modification.cs
+        internal void Validate(InsertCommand<T> insertCommand)
+        {
+            ValidationResult validationResult = GetAutoIncrementValidationResult(insertCommand);
+            if (validationResult != null) throw new ConstraintException(validationResult.ErrorMessage);
+
+            List<ValidationResult> validationResults = GetReadOnlyValidationResults(insertCommand);
+            if (validationResults.Count > 0) throw new ConstraintException(validationResults.First().ErrorMessage);
+
+            validationResult = GetRelationshipValidationResult(insertCommand);
+            if (validationResult != null) throw new ConstraintException(validationResult.ErrorMessage);
+        }
+
+        protected virtual List<ValidationResult> GetValidationResults(InsertCommand<T> insertCommand)
         {
             List<ValidationResult> validationResults = new List<ValidationResult>();
 
@@ -135,7 +148,27 @@ namespace XData.Data.Modification
             return validationResults;
         }
 
-        internal protected virtual List<ValidationResult> GetValidationResults(UpdateCommand<T> updateCommand)
+        // in Execute(UpdateCommand<T>, Modifier<T>),Database.Modification.cs
+        internal void Validate(UpdateCommand<T> updateCommand)
+        {
+            if (updateCommand.ConcurrencySchema != null)
+            {
+                if (updateCommand.OriginalConcurrencyCheckPropertyValues == null)
+                {
+                    throw new ConstraintException(ErrorMessages.Validate_OriginalConcurrencyCheckRequierd);
+                }
+                else
+                {
+                    ValidationResult result = GetConcurrencyCheckValidationResult(updateCommand);
+                    if (result != null) throw new ConstraintException(result.ErrorMessage);
+                }
+
+                ValidationResult validationResult = GetRelationshipValidationResult(updateCommand);
+                if (validationResult != null) throw new ConstraintException(validationResult.ErrorMessage);
+            }
+        }
+
+        protected virtual List<ValidationResult> GetValidationResults(UpdateCommand<T> updateCommand)
         {
             List<ValidationResult> validationResults = new List<ValidationResult>();
 

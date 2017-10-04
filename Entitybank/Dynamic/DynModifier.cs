@@ -27,25 +27,25 @@ namespace XData.Data.Dynamic
 
         public DynDatabase Database { get; private set; }
 
-        //protected DynModifier(Database<dynamic> database, XElement schema) : base(database, schema)
-        protected DynModifier(DynDatabase database, XElement schema) : base(database, schema)
+        //protected DynModifier(Database<dynamic> database) : base(database)
+        protected DynModifier(DynDatabase database) : base(database)
         {
             Database = database;
         }
 
-        public override void AppendCreate(dynamic aggreg, string entity)
+        public override void AppendCreate(dynamic aggreg, string entity, XElement schema)
         {
-            ExecuteAggregations.Add(new DynCreateAggregation(aggreg, entity, Schema));
+            ExecuteAggregations.Add(new DynCreateAggregation(aggreg, entity, schema));
         }
 
-        public override void AppendDelete(dynamic aggreg, string entity)
+        public override void AppendDelete(dynamic aggreg, string entity, XElement schema)
         {
-            ExecuteAggregations.Add(new DynDeleteAggregation(aggreg, entity, Schema));
+            ExecuteAggregations.Add(new DynDeleteAggregation(aggreg, entity, schema));
         }
 
-        public override void AppendUpdate(dynamic aggreg, string entity)
+        public override void AppendUpdate(dynamic aggreg, string entity, XElement schema)
         {
-            ExecuteAggregations.Add(new DynUpdateAggregation(aggreg, entity, Schema));
+            ExecuteAggregations.Add(new DynUpdateAggregation(aggreg, entity, schema));
         }
 
         protected override bool IsCollection(dynamic obj)
@@ -72,9 +72,9 @@ namespace XData.Data.Dynamic
             return obj;
         }
 
-        internal protected override Dictionary<string, object> GetPropertyValues(dynamic obj, string entity)
+        internal protected override Dictionary<string, object> GetPropertyValues(dynamic obj, string entity, XElement schema)
         {
-            XElement entitySchema = GetEntitySchema(Schema, entity);
+            XElement entitySchema = GetEntitySchema(schema, entity);
             return new ExecuteAggregationHelper().GetPropertyValues(obj, entitySchema);
         }
 
@@ -83,6 +83,7 @@ namespace XData.Data.Dynamic
             if (value == null)
             {
                 obj[property] = null;
+                return;
             }
 
             Type type = value.GetType();
@@ -173,10 +174,10 @@ namespace XData.Data.Dynamic
             throw new NotSupportedException(type.ToString());
         }
 
-        public static DynModifier Create(string name, XElement schema)
+        public static DynModifier Create(string name)
         {
             DynDatabase database = new DynDatabase(CreateDatabase(name));
-            return new DynModifier(database, schema);
+            return new DynModifier(database);
         }
 
 

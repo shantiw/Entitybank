@@ -110,8 +110,8 @@ namespace XData.Data.Schema
         //<rename relationship="User_Employee" name="UserEmployee" />
         private static void Rename(XElement schema, XElement operation)
         {
-            XAttribute attr = operation.Attribute(SchemaVocab.Relationship);
-            if (attr != null)
+            XAttribute relAttr = operation.Attribute(SchemaVocab.Relationship);
+            if (relAttr != null)
             {
                 string relationshipName = operation.Attribute(SchemaVocab.Relationship).Value;
                 string newName = operation.Attribute(SchemaVocab.Name).Value;
@@ -147,7 +147,8 @@ namespace XData.Data.Schema
         private static void Remove(XElement schema, XElement operation)
         {
             XAttribute attr = operation.Attribute(SchemaVocab.Entity);
-            if (attr != null)
+            XAttribute relAttr = operation.Attribute(SchemaVocab.Relationship);
+            if (attr != null && relAttr == null)
             {
                 XElement xEntity = schema.Elements(SchemaVocab.Entity).FirstOrDefault(x => x.Attribute(SchemaVocab.Name).Value == attr.Value);
                 if (xEntity == null) return;
@@ -189,10 +190,9 @@ namespace XData.Data.Schema
                 //return;
             }
 
-            attr = operation.Attribute(SchemaVocab.Relationship);
-            if (attr != null)
+            if (relAttr != null)
             {
-                XElement xRelationship = schema.Elements(SchemaVocab.Relationship).FirstOrDefault(x => x.Attribute(SchemaVocab.Name).Value == attr.Value);
+                XElement xRelationship = schema.Elements(SchemaVocab.Relationship).FirstOrDefault(x => x.Attribute(SchemaVocab.Name).Value == relAttr.Value);
                 if (xRelationship == null) return;
 
                 xRelationship.Remove();
@@ -215,7 +215,8 @@ namespace XData.Data.Schema
         private static void Add(XElement schema, XElement operation)
         {
             XAttribute attr = operation.Attribute(SchemaVocab.Entity);
-            if (attr != null)
+            XAttribute relAttr = operation.Attribute(SchemaVocab.Relationship);
+            if (attr != null && relAttr == null)
             {
                 string entityName = attr.Value;
                 XElement xEntity = schema.Elements(SchemaVocab.Entity).FirstOrDefault(x => x.Attribute(SchemaVocab.Name).Value == entityName);
@@ -231,10 +232,9 @@ namespace XData.Data.Schema
                 schema.Add(xEntity);
             }
 
-            attr = operation.Attribute(SchemaVocab.Relationship);
-            if (attr != null)
+            if (relAttr != null)
             {
-                string relationshipName = attr.Value;
+                string relationshipName = relAttr.Value;
                 XElement xRelationship = schema.Elements(SchemaVocab.Relationship).FirstOrDefault(x => x.Attribute(SchemaVocab.Name).Value == relationshipName);
                 if (xRelationship != null) throw new SchemaException(string.Format(SchemaMessages.RelationshipAlreadyExists, relationshipName));
 
@@ -260,7 +260,8 @@ namespace XData.Data.Schema
         private static void Replace(XElement schema, XElement operation)
         {
             XAttribute attr = operation.Attribute(SchemaVocab.Entity);
-            if (attr != null)
+            XAttribute relAttr = operation.Attribute(SchemaVocab.Relationship);
+            if (attr != null && relAttr == null)
             {
                 string entityName = attr.Value;
                 XElement xEntity = schema.Elements(SchemaVocab.Entity).FirstOrDefault(x => x.Attribute(SchemaVocab.Name).Value == entityName);

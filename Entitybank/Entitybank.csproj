@@ -49,6 +49,7 @@
     </Compile>
     <Compile Include="Helpers\CaseFormat.cs" />
     <Compile Include="Helpers\ElementHelper.cs" />
+    <Compile Include="Helpers\InstanceConfigGetter.cs" />
     <Compile Include="Helpers\ObjectCreator.cs" />
     <Compile Include="Helpers\TypeHelper.cs" />
     <Compile Include="DataObjects\DataExtensions.cs" />
@@ -101,6 +102,9 @@
     <Compile Include="Objects\DataRowNode.cs" />
     <Compile Include="Objects\SQLStatmentException.cs" />
     <Compile Include="Helpers\AnalysisHelper.cs" />
+    <Compile Include="OData\Expand.cs" />
+    <Compile Include="Schema.Delta\ConfigSchemaDeltaFinder.cs" />
+    <Compile Include="Schema.Delta\SchemaDeltaFinder.cs" />
     <Compile Include="Schema.Delta\SchemaDeltaMessages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -109,7 +113,7 @@
     <Compile Include="OData\QueryExpandResultGetter.cs" />
     <Compile Include="DataObjects\SelectClauseCollection.cs" />
     <Compile Include="OData\TempTableResultGetter.cs" />
-    <Compile Include="OData\QueryNode.cs" />
+    <Compile Include="OData\ExpandNode.cs" />
     <Compile Include="OData\QueryExpand.cs" />
     <Compile Include="OData\QueryGenerator.Where.cs" />
     <Compile Include="OData\ODataQuerier.cs" />
@@ -188,9 +192,8 @@
     <Compile Include="Xml\XmlDatabase.cs" />
     <Compile Include="Xml\XmlDeleteAggregation.cs" />
     <Compile Include="Xml\XmlModifier.cs" />
-    <Compile Include="Xml\XmlProvider.cs" />
+    <Compile Include="Helpers\XmlProvider.cs" />
     <Compile Include="Xml\XmlUpdateAggregation.cs" />
-    <None Include="Wiki\Example.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Wiki\entitybank.config" />
@@ -226,6 +229,7 @@
     <None Include="Wiki\data-type.html" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Wiki\Example.cs" />
     <None Include="Wiki\odata.html" />
   </ItemGroup>
   <ItemGroup>

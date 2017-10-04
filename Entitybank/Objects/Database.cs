@@ -18,7 +18,7 @@ namespace XData.Data.Objects
 
         protected abstract DbConnection CreateConnection(string connectionString);
         protected abstract DbDataAdapter CreateDataAdapter();
-        protected abstract DbParameter CreateParameter(string parameter, object value);
+        public abstract DbParameter CreateParameter(string parameter, object value);
 
         public readonly DbConnection Connection;
         public DbTransaction Transaction = null;
@@ -72,11 +72,11 @@ namespace XData.Data.Objects
                 table.Rows.CopyTo(array, 0);
                 return array;
             }
-            else if (typeof(T) == typeof(string))
+            else if (typeof(T) == typeof(XElement))
             {
                 new ToXmlConverter().Convert(table, entity).ToArray().CopyTo(array, 0);
             }
-            else if (typeof(T) == typeof(XElement))
+            else if (typeof(T) == typeof(string))
             {
                 new ToJsonConverter().Convert(table, entity).ToArray().CopyTo(array, 0);
             }
@@ -161,7 +161,7 @@ namespace XData.Data.Objects
             List<DbParameter> list = new List<DbParameter>();
             foreach (KeyValuePair<string, object> pair in dbParameterValues)
             {
-                object value = (pair.Value == null) ? DBNull.Value : pair.Value;
+                object value = pair.Value ?? DBNull.Value;
                 list.Add(CreateParameter(pair.Key, value));
             }
             return list.ToArray();

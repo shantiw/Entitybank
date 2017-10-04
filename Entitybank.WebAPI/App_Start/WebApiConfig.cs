@@ -19,6 +19,9 @@ namespace XData.Web.Http
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            //
+            config.Filters.Add(new XData.Web.Http.Filters.HttpExceptionFilterAttribute());
         }
     }
 }

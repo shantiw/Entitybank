@@ -297,6 +297,8 @@ namespace XData.Data.OData
 
             protected virtual string ToSqlString(ParameterSegment segment)
             {
+                if (_paramMapping.ContainsKey(segment.Parameter)) return _paramMapping[segment.Parameter];
+
                 string decorated = Generator.DecorateParameterName(segment.Parameter, UpperParamNameMapping);
                 _paramMapping.Add(segment.Parameter, decorated);
                 return decorated;

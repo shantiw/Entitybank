@@ -121,14 +121,14 @@ namespace XData.Data.OData
 
         public void ResetParameterValues(IReadOnlyDictionary<string, object> source)
         {
-            foreach (KeyValuePair<string, object> pair in _parameterValues)
+            foreach (string key in _parameterValues.Keys.ToList())
             {
                 object value = null;
-                if (source.ContainsKey(pair.Key))
+                if (source.ContainsKey(key))
                 {
-                    value = source[pair.Key];
+                    value = source[key];
                 }
-                _parameterValues[pair.Key] = value;
+                _parameterValues[key] = value;
             }
         }
 

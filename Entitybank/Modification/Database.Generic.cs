@@ -41,6 +41,11 @@ namespace XData.Data.Objects
             return Dbase.SqlQuery<T>(entity, sql, parameters);
         }
 
+        public DbParameter CreateParameter(string parameter, object value)
+        {
+            return Dbase.CreateParameter(parameter, value);
+        }
+
 
     }
 }

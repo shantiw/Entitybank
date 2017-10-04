@@ -45,7 +45,7 @@ namespace XData.Data.Objects
             XElement schema = PrimarySchemaProvider.GetSchema(Name);
             foreach (KeyValuePair<int, Dictionary<string, string>> pair in dict)
             {
-                XElement delta = SchemaDeltaProvider.GetDelta(Name, pair.Value);
+                XElement delta = SchemaDeltaProvider.Get(Name, pair.Value);
                 schema.Modify(delta);
             }
 

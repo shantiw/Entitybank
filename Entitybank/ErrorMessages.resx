@@ -138,6 +138,15 @@
   <data name="NonNativeProperty" xml:space="preserve">
     <value>'{0}' is not a native property in '{1}'.</value>
   </data>
+  <data name="NotChangeFixedValue" xml:space="preserve">
+    <value>Cannot change fixed value for property '{0}' in '{1}'.</value>
+  </data>
+  <data name="NotChangeReadonlyValue" xml:space="preserve">
+    <value>Cannot change value for Readonly property '{0}' in '{1}'.</value>
+  </data>
+  <data name="NotChangeUniqueKeyValue" xml:space="preserve">
+    <value>Cannot change value for unique key property '{0}' in '{1}'.</value>
+  </data>
   <data name="NotFoundEntity" xml:space="preserve">
     <value>Not found the entity named '{0}'.</value>
   </data>
@@ -146,6 +155,9 @@
   </data>
   <data name="OptimisticConcurrencyException" xml:space="preserve">
     <value>optimistic concurrency exception at entity '{0}', key {1}.</value>
+  </data>
+  <data name="RelationshipKeyConflicted" xml:space="preserve">
+    <value>Conflicted relationship between entity '{0}', key:{1} and '{2}', property(s) {3}.</value>
   </data>
   <data name="Validate_IncompleteConcurrencyCheck" xml:space="preserve">
     <value>Incomplete ConcurrencyCheck, Missing value(s) of {0}.</value>
@@ -156,22 +168,10 @@
   <data name="Validate_InsertExplicitReadonly" xml:space="preserve">
     <value>Cannot insert explicit value for Readonly property '{0}' in '{1}'.</value>
   </data>
-  <data name="Validate_NotChangeFixedValue" xml:space="preserve">
-    <value>Cannot change fixed value for property '{0}' in '{1}'.</value>
-  </data>
-  <data name="Validate_NotChangeReadonlyValue" xml:space="preserve">
-    <value>Cannot change value for Readonly property '{0}' in '{1}'.</value>
-  </data>
-  <data name="Validate_NotChangeUniqueKeyValue" xml:space="preserve">
-    <value>Cannot change value for unique key property '{0}' in '{1}'.</value>
-  </data>
   <data name="Validate_OriginalConcurrencyCheckRequierd" xml:space="preserve">
     <value>The value(s) of ConcurrencyCheck from original is requierd.</value>
   </data>
   <data name="Validate_RelationshipConflicted" xml:space="preserve">
     <value>Conflicted relationship between entity '{0}', property(s) {1} and '{2}', property(s) {3}.</value>
-  </data>
-  <data name="Validate_RelationshipKeyConflicted" xml:space="preserve">
-    <value>Conflicted relationship between entity '{0}', key:{1} and '{2}', property(s) {3}.</value>
   </data>
 </root>

@@ -14,6 +14,7 @@ namespace XData.Data.Services
         private readonly string _conv;
 
         private readonly XElement _schema;
+        public XElement Schema { get => _schema; }
 
         public ODataService(string name, IEnumerable<KeyValuePair<string, string>> keyValues, string conv)
         {

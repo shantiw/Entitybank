@@ -111,13 +111,13 @@ namespace XData.Data.OData
             root.FetchTableStatment = new SQLStatment(fetchSql);
         }
 
-        protected override void SetNodeStatments(TempTableNode node, QueryNode queryNode)
+        protected override void SetNodeStatments(TempTableNode node, ExpandNode expandNode)
         {
-            string primarySql = GeneratePrimarySql(node, queryNode.Relationship, queryNode.Query, out DbParameter[] dbParameters,
+            string primarySql = GeneratePrimarySql(node, expandNode.Relationship, expandNode.Query, out DbParameter[] dbParameters,
                   out string tempTableName1, out string rowNumberAlias);
             node.BeforeExecuteStatments.Add(new SQLStatment(primarySql, dbParameters));
 
-            string distinctSql = GenerateDistinctSql(node, queryNode.Query, tempTableName1, rowNumberAlias);
+            string distinctSql = GenerateDistinctSql(node, expandNode.Query, tempTableName1, rowNumberAlias);
             node.BeforeExecuteStatments.Add(new SQLStatment(distinctSql));
 
             string fetchTableSql = string.Format("SELECT * FROM {0}", node.TempTableName);

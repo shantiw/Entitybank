@@ -87,19 +87,15 @@ namespace XData.Data.Xml
             return new UpdateCommand<XElement>(aggregNode, entity, schema, aggreg);
         }
 
-        // <element original="OriginalElementName">
+        // <element>
         // ...
-        // <OriginalElementName>
+        // <element.original>
         //  <property>value</property> ...
-        // </OriginalElementName>
-        // ...
+        // </element.original>
         // </element>
         public XElement GetOriginal(XElement element)
         {
-            XAttribute attribute = element.Attribute(SchemaVocab.Original);
-            string originalElementName = (attribute == null) ? SchemaVocab.Original : attribute.Value;
-
-            return element.Element(originalElementName);
+            return element.Element(string.Format("{0}.{1}", element.Name.LocalName, SchemaVocab.Original));
         }
 
         public UpdateCommandNode<XElement> CreateUpdateCommandNode(XElement aggregNode, string entity, XElement schema, XElement aggreg)

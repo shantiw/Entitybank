@@ -19,7 +19,7 @@ namespace XData.Data {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ErrorMessages {
@@ -124,6 +124,33 @@ namespace XData.Data {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot change fixed value for property &apos;{0}&apos; in &apos;{1}&apos;..
+        /// </summary>
+        internal static string NotChangeFixedValue {
+            get {
+                return ResourceManager.GetString("NotChangeFixedValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot change value for Readonly property &apos;{0}&apos; in &apos;{1}&apos;..
+        /// </summary>
+        internal static string NotChangeReadonlyValue {
+            get {
+                return ResourceManager.GetString("NotChangeReadonlyValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot change value for unique key property &apos;{0}&apos; in &apos;{1}&apos;..
+        /// </summary>
+        internal static string NotChangeUniqueKeyValue {
+            get {
+                return ResourceManager.GetString("NotChangeUniqueKeyValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not found the entity named &apos;{0}&apos;..
         /// </summary>
         internal static string NotFoundEntity {
@@ -147,6 +174,15 @@ namespace XData.Data {
         internal static string OptimisticConcurrencyException {
             get {
                 return ResourceManager.GetString("OptimisticConcurrencyException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conflicted relationship between entity &apos;{0}&apos;, key:{1} and &apos;{2}&apos;, property(s) {3}..
+        /// </summary>
+        internal static string RelationshipKeyConflicted {
+            get {
+                return ResourceManager.GetString("RelationshipKeyConflicted", resourceCulture);
             }
         }
         
@@ -178,33 +214,6 @@ namespace XData.Data {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot change fixed value for property &apos;{0}&apos; in &apos;{1}&apos;..
-        /// </summary>
-        internal static string Validate_NotChangeFixedValue {
-            get {
-                return ResourceManager.GetString("Validate_NotChangeFixedValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot change value for Readonly property &apos;{0}&apos; in &apos;{1}&apos;..
-        /// </summary>
-        internal static string Validate_NotChangeReadonlyValue {
-            get {
-                return ResourceManager.GetString("Validate_NotChangeReadonlyValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot change value for unique key property &apos;{0}&apos; in &apos;{1}&apos;..
-        /// </summary>
-        internal static string Validate_NotChangeUniqueKeyValue {
-            get {
-                return ResourceManager.GetString("Validate_NotChangeUniqueKeyValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The value(s) of ConcurrencyCheck from original is requierd..
         /// </summary>
         internal static string Validate_OriginalConcurrencyCheckRequierd {
@@ -219,15 +228,6 @@ namespace XData.Data {
         internal static string Validate_RelationshipConflicted {
             get {
                 return ResourceManager.GetString("Validate_RelationshipConflicted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Conflicted relationship between entity &apos;{0}&apos;, key:{1} and &apos;{2}&apos;, property(s) {3}..
-        /// </summary>
-        internal static string Validate_RelationshipKeyConflicted {
-            get {
-                return ResourceManager.GetString("Validate_RelationshipKeyConflicted", resourceCulture);
             }
         }
     }

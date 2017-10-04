@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace XData.Data.Helpers
 {
-    internal class ObjectCreator
+    public class ObjectCreator
     {
         public XElement Config { get; private set; }
         protected Type Type;

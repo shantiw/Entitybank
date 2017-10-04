@@ -117,8 +117,7 @@ ORDER BY T.CONSTRAINT_NAME, T.ORDINAL_POSITION";
                 if (columnDefault.StartsWith("('") && columnDefault.EndsWith("')"))
                 {
                     string s = columnDefault.Substring(2, columnDefault.Length - 4);
-                    DateTime result;
-                    if (DateTime.TryParse(s, out result))
+                    if (DateTime.TryParse(s, out DateTime result))
                     {
                         column.DefaultValue = result;
                         return;
@@ -130,8 +129,7 @@ ORDER BY T.CONSTRAINT_NAME, T.ORDINAL_POSITION";
                 if (columnDefault.StartsWith("('") && columnDefault.EndsWith("')"))
                 {
                     string s = columnDefault.Substring(2, columnDefault.Length - 4);
-                    DateTimeOffset result;
-                    if (DateTimeOffset.TryParse(s, out result))
+                    if (DateTimeOffset.TryParse(s, out DateTimeOffset result))
                     {
                         column.DefaultValue = result;
                         return;
@@ -143,8 +141,7 @@ ORDER BY T.CONSTRAINT_NAME, T.ORDINAL_POSITION";
                 if (columnDefault.StartsWith("('") && columnDefault.EndsWith("')"))
                 {
                     string s = columnDefault.Substring(2, columnDefault.Length - 4);
-                    TimeSpan result;
-                    if (TimeSpan.TryParse(s, out result))
+                    if (TimeSpan.TryParse(s, out TimeSpan result))
                     {
                         column.DefaultValue = result;
                         return;
@@ -179,8 +176,7 @@ ORDER BY T.CONSTRAINT_NAME, T.ORDINAL_POSITION";
                 if (columnDefault.StartsWith("('") && columnDefault.EndsWith("')"))
                 {
                     string s = columnDefault.Substring(2, columnDefault.Length - 4);
-                    Guid result;
-                    if (Guid.TryParse(s, out result))
+                    if (Guid.TryParse(s, out Guid result))
                     {
                         column.DefaultValue = result;
                         return;
@@ -197,8 +193,7 @@ ORDER BY T.CONSTRAINT_NAME, T.ORDINAL_POSITION";
                 if (columnDefault.StartsWith("((") && columnDefault.EndsWith("))"))
                 {
                     string s = columnDefault.TrimStart('(').TrimEnd(')');
-                    double result;
-                    if (double.TryParse(s, out result))
+                    if (double.TryParse(s, out double result))
                     {
                         column.DefaultValue = Convert.ChangeType(s, column.DataType);
                         return;

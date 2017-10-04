@@ -26,67 +26,112 @@ namespace XData.Data.Xml
 
         public XmlDatabase Database { get; private set; }
 
-        //protected DynModifier(Database<XElement> database, XElement schema) : base(database, schema)
-        protected XmlModifier(XmlDatabase database, XElement schema) : base(database, schema)
+        //protected XmlModifier(Database<XElement> database) : base(database)
+        protected XmlModifier(XmlDatabase database) : base(database)
         {
             Database = database;
         }
 
-        public virtual void Create(XElement element, out IEnumerable<Dictionary<string, object>> result)
+        // overload
+        public void Create(XElement element, XElement schema, out object keys)
         {
-            Create(element);
-            result = GetCreateResult();
+            Create(element, schema, out IEnumerable<Dictionary<string, object>> result);
+            keys = KeysToJson(result);
         }
 
-        public virtual void Create(XElement element)
+        // overload
+        public void Create(XElement element, XElement schema, out XElement keys)
+        {
+            Create(element, schema, out IEnumerable<Dictionary<string, object>> result);
+            XElement entitySchema;
+            if (IsCollection(element))
+            {
+                entitySchema = GetEntitySchemaByCollection(schema, element.Name.LocalName);
+            }
+            else
+            {
+                entitySchema = GetEntitySchema(schema, element.Name.LocalName);
+            }
+            keys = KeysToXml(result, entitySchema);
+        }
+
+        // overload
+        public void Create(XElement element, XElement schema, out IEnumerable<Dictionary<string, object>> keys)
+        {
+            Create(element, schema);
+            keys = GetCreateResult();
+        }
+
+        public void Create(XElement element, XElement schema)
         {
             if (IsCollection(element))
             {
                 foreach (XElement child in element.Elements())
                 {
-                    AppendCreate(child, child.Name.LocalName);
+                    AppendCreate(child, schema);
                 }
             }
             else
             {
-                AppendCreate(element, element.Name.LocalName);
+                AppendCreate(element, schema);
             }
 
+            Validate();
             Persist();
         }
 
-        public virtual void Delete(XElement element)
+        public void Delete(XElement element, XElement schema)
         {
             if (IsCollection(element))
             {
                 foreach (XElement child in element.Elements())
                 {
-                    AppendDelete(child, child.Name.LocalName);
+                    AppendDelete(child, schema);
                 }
             }
             else
             {
-                AppendDelete(element, element.Name.LocalName);
+                AppendDelete(element, schema);
             }
 
+            Validate();
             Persist();
         }
 
-        public virtual void Update(XElement element)
+        public void Update(XElement element, XElement schema)
         {
             if (IsCollection(element))
             {
                 foreach (XElement child in element.Elements())
                 {
-                    AppendUpdate(child, child.Name.LocalName);
+                    AppendUpdate(child, schema);
                 }
             }
             else
             {
-                AppendUpdate(element, element.Name.LocalName);
+                AppendUpdate(element, schema);
             }
 
+            Validate();
             Persist();
+        }
+
+        // overload
+        public void AppendCreate(XElement element, XElement schema)
+        {
+            AppendCreate(element, element.Name.LocalName, schema);
+        }
+
+        // overload
+        public void AppendDelete(XElement element, XElement schema)
+        {
+            AppendDelete(element, element.Name.LocalName, schema);
+        }
+
+        // overload
+        public void AppendUpdate(XElement element, XElement schema)
+        {
+            AppendUpdate(element, element.Name.LocalName, schema);
         }
 
         protected override bool IsCollection(XElement element)
@@ -94,19 +139,19 @@ namespace XData.Data.Xml
             return element.Elements().All(x => x.HasElements);
         }
 
-        public override void AppendCreate(XElement aggreg, string entity)
+        public override void AppendCreate(XElement aggreg, string entity, XElement schema)
         {
-            ExecuteAggregations.Add(new XmlCreateAggregation(aggreg, entity, Schema));
+            ExecuteAggregations.Add(new XmlCreateAggregation(aggreg, entity, schema));
         }
 
-        public override void AppendDelete(XElement aggreg, string entity)
+        public override void AppendDelete(XElement aggreg, string entity, XElement schema)
         {
-            ExecuteAggregations.Add(new XmlDeleteAggregation(aggreg, entity, Schema));
+            ExecuteAggregations.Add(new XmlDeleteAggregation(aggreg, entity, schema));
         }
 
-        public override void AppendUpdate(XElement aggreg, string entity)
+        public override void AppendUpdate(XElement aggreg, string entity, XElement schema)
         {
-            ExecuteAggregations.Add(new XmlUpdateAggregation(aggreg, entity, Schema));
+            ExecuteAggregations.Add(new XmlUpdateAggregation(aggreg, entity, schema));
         }
 
         internal protected override void SetObjectValue(XElement obj, string property, object value)
@@ -160,16 +205,16 @@ namespace XData.Data.Xml
             return element;
         }
 
-        internal protected override Dictionary<string, object> GetPropertyValues(XElement obj, string entity)
+        internal protected override Dictionary<string, object> GetPropertyValues(XElement obj, string entity, XElement schema)
         {
-            XElement entitySchema = GetEntitySchema(Schema, entity);
+            XElement entitySchema = GetEntitySchema(schema, entity);
             return new ExecuteAggregationHelper().GetPropertyValues(obj, entitySchema);
         }
 
-        public static XmlModifier Create(string name, XElement schema)
+        public static XmlModifier Create(string name)
         {
             XmlDatabase database = new XmlDatabase(CreateDatabase(name));
-            return new XmlModifier(database, schema);
+            return new XmlModifier(database);
         }
 
 

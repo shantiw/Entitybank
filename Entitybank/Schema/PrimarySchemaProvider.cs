@@ -39,24 +39,6 @@ namespace XData.Data.Schema
         private static Dictionary<string, CachedSchema> Cache = new Dictionary<string, CachedSchema>();
         private static object LockObj = new object();
 
-        private XElement GetConfig(string name)
-        {
-            XElement config = new XElement("configuration");
-
-            string assemblyName = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
-            string dir = Path.Combine(assemblyName, name);
-            if (!Directory.Exists(dir))
-            {
-                dir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, dir);
-            }
-            if (!Directory.Exists(dir)) return config;
-
-            string file = Path.Combine(dir, "instance.config");
-            if (!File.Exists(file)) return config;
-
-            return XElement.Load(file);
-        }
-
         // default SqlSchemaProvider
         private IDbSchemaProvider GetDbSchemaProvider(string name, XElement config)
         {
@@ -215,7 +197,7 @@ namespace XData.Data.Schema
 
         private CachedSchema NewCachedSchema(string name, SchemaSource source)
         {
-            XElement config = GetConfig(name);
+            XElement config = InstanceConfigGetter.GetConfig(name);
 
             CachedSchema cachedSchema;
             if (source == SchemaSource.DbSchemaProvider)

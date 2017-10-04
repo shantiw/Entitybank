@@ -38,7 +38,7 @@ namespace XData.Data.Objects
             return new MySqlDataAdapter();
         }
 
-        protected override DbParameter CreateParameter(string parameter, object value)
+        public override DbParameter CreateParameter(string parameter, object value)
         {
             return new MySqlParameter(parameter, value);
         }

@@ -33,7 +33,7 @@ namespace XData.Data.OData
         public static int Count(string name, XElement schema, string entity, string filter, IEnumerable<KeyValuePair<string, string>> parameterValues)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            return Count(name, schema, entity, filter, EmptyParameterValues, parameters);
+            return Count(name, schema, entity, filter, parameterValues, parameters);
         }
 
         public static int Count(string name, XElement schema, string entity, string filter,
