@@ -79,12 +79,12 @@ namespace XData.Web.Http.Models
             {
                 case "application/json":
                     {
-                        string json = new ODataService<string>(name, request.GetQueryNameValuePairs(), "json").GetDefault(entity);
+                        string json = new ODataService<string>(name, request.GetQueryNameValuePairs()).GetDefault(entity);
                         return CreateHttpResponseMessage(json, request);
                     }
                 case "application/xml":
                     {
-                        XElement element = new ODataService<XElement>(name, request.GetQueryNameValuePairs(), "xml").GetDefault(entity, out XElement xsd);
+                        XElement element = new ODataService<XElement>(name, request.GetQueryNameValuePairs()).GetDefault(entity, out XElement xsd);
                         element.SetAttributeValue(XNamespace.Xmlns + "i", XSI);
 
                         return CreateHttpResponseMessage(Pack(element, null, xsd), request);
@@ -107,7 +107,7 @@ namespace XData.Web.Http.Models
             {
                 case "application/json":
                     {
-                        ODataService<string> service = new ODataService<string>(name, request.GetQueryNameValuePairs(), "json");
+                        ODataService<string> service = new ODataService<string>(name, request.GetQueryNameValuePairs());
                         IEnumerable<string> jsonCollection = service.GetCollection(collection);
                         string json = string.Format("[{0}]", string.Join(",", jsonCollection));
                         if (count != null)
@@ -118,7 +118,7 @@ namespace XData.Web.Http.Models
                     }
                 case "application/xml":
                     {
-                        ODataService<XElement> service = new ODataService<XElement>(name, request.GetQueryNameValuePairs(), "xml");
+                        ODataService<XElement> service = new ODataService<XElement>(name, request.GetQueryNameValuePairs());
                         IEnumerable<XElement> xCollection = service.GetCollection(collection, out XElement xsd);
                         XElement element = new XElement(collection, xCollection);
                         element.SetAttributeValue(XNamespace.Xmlns + "i", XSI);
@@ -139,13 +139,13 @@ namespace XData.Web.Http.Models
             {
                 case "application/json":
                     {
-                        ODataService<string> service = new ODataService<string>(name, request.GetQueryNameValuePairs(), "json");
+                        ODataService<string> service = new ODataService<string>(name, request.GetQueryNameValuePairs());
                         string json = service.Find(collection, key);
                         return CreateHttpResponseMessage(json, request);
                     }
                 case "application/xml":
                     {
-                        ODataService<XElement> service = new ODataService<XElement>(name, request.GetQueryNameValuePairs(), "xml");
+                        ODataService<XElement> service = new ODataService<XElement>(name, request.GetQueryNameValuePairs());
                         XElement element = service.Find(collection, key, out XElement xsd);
                         if (element == null)
                         {

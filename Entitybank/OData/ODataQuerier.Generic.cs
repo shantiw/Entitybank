@@ -75,6 +75,13 @@ namespace XData.Data.OData
             return Count(entity, filter, EmptyParameterValues, parameters);
         }
 
+        // overload
+        public int Count(string entity, string filter, IReadOnlyDictionary<string, object> parameters)
+        {
+            IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
+            return Count(entity, filter, parameterValues, parameters);
+        }
+
         public int Count(string entity, string filter, IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters)
         {
             ParameterCollection parameterCollection = new ParameterCollection(parameterValues);
@@ -111,6 +118,13 @@ namespace XData.Data.OData
             return DataConverter.Convert(table, entity);
         }
 
+        // overload
+        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, IReadOnlyDictionary<string, object> parameters)
+        {
+            IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
+            return GetCollection(entity, select, filter, orderby, parameterValues, parameters);
+        }
+
         public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, IEnumerable<KeyValuePair<string, string>> parameterValues,
             IReadOnlyDictionary<string, object> parameters)
         {
@@ -133,6 +147,13 @@ namespace XData.Data.OData
             DataTable table = Database.GetCollection(query);
             xsd = DataConverter.GenerateCollectionXsd(table, entity, Schema);
             return DataConverter.Convert(table, entity);
+        }
+
+        // overload
+        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, IReadOnlyDictionary<string, object> parameters, out XElement xsd)
+        {
+            IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
+            return GetCollection(entity, select, filter, orderby, parameterValues, parameters, out xsd);
         }
 
         public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, IEnumerable<KeyValuePair<string, string>> parameterValues,
@@ -160,6 +181,14 @@ namespace XData.Data.OData
             return DataConverter.Convert(table, entity);
         }
 
+        // overload
+        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top,
+           IReadOnlyDictionary<string, object> parameters)
+        {
+            IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
+            return GetCollection(entity, select, filter, orderby, skip, top, parameterValues, parameters);
+        }
+
         public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top,
             IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters)
         {
@@ -183,6 +212,14 @@ namespace XData.Data.OData
             DataTable table = Database.GetCollection(query);
             xsd = DataConverter.GenerateCollectionXsd(table, entity, Schema);
             return DataConverter.Convert(table, entity);
+        }
+
+        // overload
+        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top,
+            IReadOnlyDictionary<string, object> parameters, out XElement xsd)
+        {
+            IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
+            return GetCollection(entity, select, filter, orderby, skip, top, parameterValues, parameters, out xsd);
         }
 
         public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top,
@@ -240,6 +277,14 @@ namespace XData.Data.OData
             return DataConverter.Convert(resultNode);
         }
 
+        // overload
+        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, string expand,
+            IReadOnlyDictionary<string, object> parameters)
+        {
+            IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
+            return GetCollection(entity, select, filter, orderby, expand, parameterValues, parameters);
+        }
+
         // expand
         public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, string expand,
             IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters)
@@ -266,6 +311,14 @@ namespace XData.Data.OData
             QueryExpand queryExpand = new QueryExpand(query, expand);
             ResultNode resultNode = Database.GetCollection(queryExpand);
             return DataConverter.Convert(resultNode);
+        }
+
+        // overload
+        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand,
+            IReadOnlyDictionary<string, object> parameters)
+        {
+            IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
+            return GetCollection(entity, select, filter, orderby, skip, top, expand, parameterValues, parameters);
         }
 
         // expand
@@ -298,6 +351,14 @@ namespace XData.Data.OData
             return DataConverter.Convert(resultNode);
         }
 
+        // overload
+        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, string expand,
+            IReadOnlyDictionary<string, object> parameters, out XElement xsd)
+        {
+            IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
+            return GetCollection(entity, select, filter, orderby, expand, parameterValues, parameters, out xsd);
+        }
+
         // expand
         public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, string expand,
             IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters, out XElement xsd)
@@ -328,6 +389,14 @@ namespace XData.Data.OData
 
             xsd = DataConverter.GenerateCollectionXsd(resultNode, Schema);
             return DataConverter.Convert(resultNode);
+        }
+
+        // overload
+        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand,
+            IReadOnlyDictionary<string, object> parameters, out XElement xsd)
+        {
+            IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
+            return GetCollection(entity, select, filter, orderby, skip, top, expand, parameterValues, parameters, out xsd);
         }
 
         // expand
@@ -379,6 +448,14 @@ namespace XData.Data.OData
             return DataConverter.Convert(resultNode);
         }
 
+        // overload
+        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, Expand[] expands,
+            IReadOnlyDictionary<string, object> parameters)
+        {
+            IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
+            return GetCollection(entity, select, filter, orderby, expands, parameterValues, parameters);
+        }
+
         // expand
         public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, Expand[] expands,
             IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters)
@@ -405,6 +482,14 @@ namespace XData.Data.OData
             QueryExpand queryExpand = new QueryExpand(query, expands);
             ResultNode resultNode = Database.GetCollection(queryExpand);
             return DataConverter.Convert(resultNode);
+        }
+
+        // overload
+        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands,
+            IReadOnlyDictionary<string, object> parameters)
+        {
+            IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
+            return GetCollection(entity, select, filter, orderby, skip, top, expands, parameterValues, parameters);
         }
 
         // expand
@@ -437,6 +522,14 @@ namespace XData.Data.OData
             return DataConverter.Convert(resultNode);
         }
 
+        // overload
+        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, Expand[] expands,
+            IReadOnlyDictionary<string, object> parameters, out XElement xsd)
+        {
+            IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
+            return GetCollection(entity, select, filter, orderby, expands, parameterValues, parameters, out xsd);
+        }
+
         // expand
         public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, Expand[] expands,
             IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters, out XElement xsd)
@@ -467,6 +560,14 @@ namespace XData.Data.OData
 
             xsd = DataConverter.GenerateCollectionXsd(resultNode, Schema);
             return DataConverter.Convert(resultNode);
+        }
+
+        // overload
+        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands,
+            IReadOnlyDictionary<string, object> parameters, out XElement xsd)
+        {
+            IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
+            return GetCollection(entity, select, filter, orderby, skip, top, expands, parameterValues, parameters, out xsd);
         }
 
         // expand
@@ -503,10 +604,42 @@ namespace XData.Data.OData
             return DataConverter.Convert(resultNode).FirstOrDefault();
         }
 
-        public static ODataQuerier<T> Create(string name, XElement schema, string dataConverter, string dateFormatter = null, string format = null)
+        protected static IEnumerable<KeyValuePair<string, string>> GetParameterValues(IReadOnlyDictionary<string, object> parameters)
         {
+            List<KeyValuePair<string, string>> parameterValues = new List<KeyValuePair<string, string>>();
+            foreach (KeyValuePair<string, object> pair in parameters)
+            {
+                parameterValues.Add(new KeyValuePair<string, string>(pair.Key, null));
+            }
+            return parameterValues;
+        }
+
+        public static ODataQuerier<T> Create(string name, XElement schema = null, string dataConverter = null, string dateFormatter = null, string format = null)
+        {
+            XElement xSchema = schema ?? new PrimarySchemaProvider().GetSchema(name);
+
+            string sConverter;
+            if (string.IsNullOrWhiteSpace(dataConverter))
+            {
+                if (typeof(T) == typeof(XElement))
+                {
+                    sConverter = "xml";
+                }
+                else if (typeof(T) == typeof(string))
+                {
+                    sConverter = "json";
+                }
+                else
+                {
+                    throw new NotSupportedException(typeof(T).ToString());
+                }
+            }
+            else
+            {
+                sConverter = dataConverter;
+            }
             Database database = new DatabaseManufacturer().Create(name);
-            return new ODataQuerier<T>(database, schema, dataConverter, dateFormatter, format);
+            return new ODataQuerier<T>(database, xSchema, sConverter, dateFormatter, format);
         }
 
 

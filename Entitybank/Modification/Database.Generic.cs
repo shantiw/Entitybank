@@ -11,39 +11,39 @@ namespace XData.Data.Objects
 {
     public partial class Database<T>
     {
-        protected readonly Database Dbase;
+        public Database UnderlyingDatabase { get; private set; }
 
         public Database(Database database)
         {
-            Dbase = database;
+            UnderlyingDatabase = database;
         }
 
         public DateTime GetNow()
         {
-            return Dbase.GetNow();
+            return UnderlyingDatabase.GetNow();
         }
 
         public DateTime GetUtcNow()
         {
-            return Dbase.GetUtcNow();
+            return UnderlyingDatabase.GetUtcNow();
         }
 
-        public DbConnection Connection { get => Dbase.Connection; }
-        public DbTransaction Transaction { get => Dbase.Transaction; set => Dbase.Transaction = value; }
+        public DbConnection Connection { get => UnderlyingDatabase.Connection; }
+        public DbTransaction Transaction { get => UnderlyingDatabase.Transaction; set => UnderlyingDatabase.Transaction = value; }
 
-        public int ExecuteSqlCommand(string sql, params object[] parameters)
+        public virtual int ExecuteSqlCommand(string sql, params object[] parameters)
         {
-            return Dbase.ExecuteSqlCommand(sql, parameters);
+            return UnderlyingDatabase.ExecuteSqlCommand(sql, parameters);
         }
 
-        public IEnumerable<T> SqlQuery(string entity, string sql, params Object[] parameters)
+        public virtual IEnumerable<T> SqlQuery(string entity, string sql, params Object[] parameters)
         {
-            return Dbase.SqlQuery<T>(entity, sql, parameters);
+            return UnderlyingDatabase.SqlQuery<T>(entity, sql, parameters);
         }
 
         public DbParameter CreateParameter(string parameter, object value)
         {
-            return Dbase.CreateParameter(parameter, value);
+            return UnderlyingDatabase.CreateParameter(parameter, value);
         }
 
 

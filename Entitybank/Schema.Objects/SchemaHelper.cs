@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace XData.Data.Schema
 {
-    internal static class SchemaHelper
+    public static class SchemaHelper
     {
         public static XElement GetEntitySchema(this XElement schema, string entity)
         {
@@ -52,7 +52,7 @@ namespace XData.Data.Schema
         }
 
         // overload
-        public static XElement GetConcurrencySchema(this XElement schema, string entity)
+        internal static XElement GetConcurrencySchema(this XElement schema, string entity)
         {
             XElement entitySchema = GetEntitySchema(schema, entity);
             return GetConcurrencySchema(entitySchema);
@@ -69,13 +69,13 @@ namespace XData.Data.Schema
             return concurrencySchema.HasElements ? concurrencySchema : null;
         }
 
-        public static XElement GetRelationshipSchema(this XElement schema, string name)
+        internal static XElement GetRelationshipSchema(this XElement schema, string name)
         {
             return schema.Elements(SchemaVocab.Relationship).FirstOrDefault(x => x.Attribute(SchemaVocab.Name).Value == name);
         }
 
         // Department.College.University.Name
-        public static XElement GenerateExtendPropertySchema(this XElement schema, string entity, string property)
+        internal static XElement GenerateExtendPropertySchema(this XElement schema, string entity, string property)
         {
             List<string> relationships = new List<string>();
 
@@ -120,7 +120,7 @@ namespace XData.Data.Schema
         }
 
         // University.Colleges.Departments
-        public static XElement[] GenerateExpandPropertyPath(this XElement schema, XElement parentSchema, string property)
+        internal static XElement[] GenerateExpandPropertyPath(this XElement schema, XElement parentSchema, string property)
         {
             List<XElement> xPropertyPath = new List<XElement>();
 
@@ -214,7 +214,7 @@ namespace XData.Data.Schema
             return string.Join("/", path);
         }
 
-        public static TimeSpan GetTimezoneOffset(this XElement schema)
+        internal static TimeSpan GetTimezoneOffset(this XElement schema)
         {
             string timezoneOffset = schema.Attribute(SchemaVocab.TimezoneOffset).Value;
             if (timezoneOffset.StartsWith("+")) timezoneOffset = timezoneOffset.Substring(1);

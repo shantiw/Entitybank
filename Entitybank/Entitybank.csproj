@@ -187,6 +187,7 @@
     <Compile Include="Schema\UnderscorePreSufMapper.cs" />
     <Compile Include="Xml\ExecuteAggregationHelper.cs" />
     <Compile Include="Xml\ExecuteEventArgs.cs" />
+    <Compile Include="Modification\ModificationExtensions.cs" />
     <Compile Include="Xml\ValidatingEventArgs.cs" />
     <Compile Include="Xml\XmlCreateAggregation.cs" />
     <Compile Include="Xml\XmlDatabase.cs" />

@@ -60,6 +60,10 @@ namespace XData.Data.Dynamic
         {
         }
 
+        public override IEnumerable<dynamic> SqlQuery(string entity, string sql, params object[] parameters)
+        {
+            throw new NotSupportedException();
+        }
 
     }
 }

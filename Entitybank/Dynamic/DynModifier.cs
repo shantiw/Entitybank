@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using XData.Data.Modification;
 using XData.Data.Objects;
+using XData.Data.Schema;
 
 namespace XData.Data.Dynamic
 {
@@ -27,8 +28,8 @@ namespace XData.Data.Dynamic
 
         public DynDatabase Database { get; private set; }
 
-        //protected DynModifier(Database<dynamic> database) : base(database)
-        protected DynModifier(DynDatabase database) : base(database)
+        //protected DynModifier(Database<dynamic> database, XElement schema) : base(database, schema)
+        protected DynModifier(DynDatabase database, XElement schema) : base(database, schema)
         {
             Database = database;
         }
@@ -174,10 +175,11 @@ namespace XData.Data.Dynamic
             throw new NotSupportedException(type.ToString());
         }
 
-        public static DynModifier Create(string name)
+        public static DynModifier Create(string name, XElement schema = null)
         {
             DynDatabase database = new DynDatabase(CreateDatabase(name));
-            return new DynModifier(database);
+            XElement xSchema = schema ?? new PrimarySchemaProvider().GetSchema(name);
+            return new DynModifier(database, xSchema);
         }
 
 

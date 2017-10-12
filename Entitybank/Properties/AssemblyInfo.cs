@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Entitybank")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Entitybank is a json/xml-database mapper")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Shanti")]
 [assembly: AssemblyProduct("Entitybank")]
-[assembly: AssemblyCopyright("Copyright ©Shanti  2017")]
+[assembly: AssemblyCopyright("Copyright © 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

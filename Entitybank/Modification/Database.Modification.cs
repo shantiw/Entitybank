@@ -55,7 +55,7 @@ namespace XData.Data.Objects
             {
                 if (_modificationGenerator == null)
                 {
-                    _modificationGenerator = Dbase.CreateModificationGenerator();
+                    _modificationGenerator = UnderlyingDatabase.CreateModificationGenerator();
                 }
                 return _modificationGenerator;
             }
@@ -96,7 +96,7 @@ namespace XData.Data.Objects
                 }
 
                 string sequenceName = propertySchema.Attribute(SchemaVocab.Sequence).Value;
-                object sequence = Dbase.FetchSequence(sequenceName);
+                object sequence = UnderlyingDatabase.FetchSequence(sequenceName);
                 if (executeCommand.PropertyValues.ContainsKey(propertyName))
                 {
                     executeCommand.PropertyValues[propertyName] = sequence;
@@ -126,7 +126,7 @@ namespace XData.Data.Objects
             // GenerateInsertStatement
             string sql = ModificationGenerator.GenerateInsertStatement(executeCommand.PropertyValues, executeCommand.EntitySchema,
                 out IReadOnlyDictionary<string, object> dbParameterValues);
-            DbParameter[] dbParameters = Dbase.CreateParameters(dbParameterValues);
+            DbParameter[] dbParameters = UnderlyingDatabase.CreateParameters(dbParameterValues);
 
             // AutoIncrement
             int affected;
@@ -134,11 +134,11 @@ namespace XData.Data.Objects
                 p.Attribute(SchemaVocab.AutoIncrement) != null && p.Attribute(SchemaVocab.AutoIncrement).Value == "true");
             if (autoPropertySchema == null)
             {
-                affected = Dbase.ExecuteSqlCommand(sql, dbParameters);
+                affected = UnderlyingDatabase.ExecuteSqlCommand(sql, dbParameters);
             }
             else
             {
-                affected = Dbase.ExecuteInsertCommand(sql, dbParameters, out object autoIncrementValue);
+                affected = UnderlyingDatabase.ExecuteInsertCommand(sql, dbParameters, out object autoIncrementValue);
 
                 string propertyName = autoPropertySchema.Attribute(SchemaVocab.Name).Value;
                 if (executeCommand.PropertyValues.ContainsKey(propertyName))
@@ -157,7 +157,7 @@ namespace XData.Data.Objects
 
             foreach (SQLStatment statment in after)
             {
-                int i = Dbase.ExecuteSqlCommand(statment.Sql, statment.Parameters);
+                int i = UnderlyingDatabase.ExecuteSqlCommand(statment.Sql, statment.Parameters);
             }
 
             return affected;
@@ -206,13 +206,13 @@ namespace XData.Data.Objects
             //foreach (SQLStatment statment in args.Before)
             foreach (SQLStatment statment in before)
             {
-                int i = Dbase.ExecuteSqlCommand(statment.Sql, statment.Parameters);
+                int i = UnderlyingDatabase.ExecuteSqlCommand(statment.Sql, statment.Parameters);
             }
 
             string sql = ModificationGenerator.GenerateDeleteStatement(executeCommand.PropertyValues, executeCommand.EntitySchema,
                 executeCommand.UniqueKeySchema, executeCommand.ConcurrencySchema, out IReadOnlyDictionary<string, object> dbParameterValues);
-            DbParameter[] dbParameters = Dbase.CreateParameters(dbParameterValues);
-            int affected = Dbase.ExecuteSqlCommand(sql, dbParameters);
+            DbParameter[] dbParameters = UnderlyingDatabase.CreateParameters(dbParameterValues);
+            int affected = UnderlyingDatabase.ExecuteSqlCommand(sql, dbParameters);
 
             if (affected > 1) throw new SQLStatmentException(string.Format(ErrorMessages.MultipleRowsAffected, affected), sql, dbParameters);
             if (affected == 0 && executeCommand.ConcurrencySchema != null)
@@ -251,7 +251,7 @@ namespace XData.Data.Objects
             //
             foreach (SQLStatment statment in before)
             {
-                int i = Dbase.ExecuteSqlCommand(statment.Sql, statment.Parameters);
+                int i = UnderlyingDatabase.ExecuteSqlCommand(statment.Sql, statment.Parameters);
             }
 
             //
@@ -274,8 +274,8 @@ namespace XData.Data.Objects
                 executeCommand.OriginalConcurrencyCheckPropertyValues,
                 executeCommand.EntitySchema, executeCommand.UniqueKeySchema, executeCommand.ConcurrencySchema,
                 out IReadOnlyDictionary<string, object> dbParameterValues);
-            DbParameter[] dbParameters = Dbase.CreateParameters(dbParameterValues);
-            int affected = Dbase.ExecuteSqlCommand(sql, dbParameters);
+            DbParameter[] dbParameters = UnderlyingDatabase.CreateParameters(dbParameterValues);
+            int affected = UnderlyingDatabase.ExecuteSqlCommand(sql, dbParameters);
 
             if (affected > 1) throw new SQLStatmentException(string.Format(ErrorMessages.MultipleRowsAffected, affected), sql, dbParameters);
             if (affected == 0)
@@ -294,7 +294,7 @@ namespace XData.Data.Objects
             //
             foreach (SQLStatment statment in after)
             {
-                int i = Dbase.ExecuteSqlCommand(statment.Sql, statment.Parameters);
+                int i = UnderlyingDatabase.ExecuteSqlCommand(statment.Sql, statment.Parameters);
             }
 
             return affected;
@@ -375,8 +375,8 @@ namespace XData.Data.Objects
         {
             string sql = ModificationGenerator.GenerateFindStatement(propertyValues, entitySchema, keySchema,
                 out IReadOnlyDictionary<string, object> dbParameterValues);
-            DbParameter[] dbParameters = Dbase.CreateParameters(dbParameterValues);
-            DataTable table = Dbase.ExecuteDataTable(sql, dbParameters);
+            DbParameter[] dbParameters = UnderlyingDatabase.CreateParameters(dbParameterValues);
+            DataTable table = UnderlyingDatabase.ExecuteDataTable(sql, dbParameters);
 
             List<Dictionary<string, object>> list = new List<Dictionary<string, object>>();
             foreach (DataRow row in table.Rows)
@@ -398,8 +398,8 @@ namespace XData.Data.Objects
         {
             string sql = ModificationGenerator.GenerateIsExistsStatement(propertyValues, entitySchema, keySchema,
                  out IReadOnlyDictionary<string, object> dbParameterValues);
-            DbParameter[] dbParameters = Dbase.CreateParameters(dbParameterValues);
-            object obj = Dbase.ExecuteScalar(sql, dbParameters);
+            DbParameter[] dbParameters = UnderlyingDatabase.CreateParameters(dbParameterValues);
+            object obj = UnderlyingDatabase.ExecuteScalar(sql, dbParameters);
             return obj != null;
         }
 

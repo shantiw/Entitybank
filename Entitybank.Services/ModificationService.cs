@@ -20,13 +20,15 @@ namespace XData.Data.Services
 
         public void Create(T obj, string entity, out XElement keys)
         {
-            Modifier.Create(obj, entity, Schema, out keys);
+            Modifier.Create(obj, entity, Schema, out IEnumerable<Dictionary<string, object>> result);
+            keys = result.CreateReturnKeysToXml(entity, Schema);
         }
 
         // json
         public void Create(T obj, string entity, out string keys)
         {
-            Modifier.Create(obj, entity, Schema, out keys);
+            Modifier.Create(obj, entity, Schema, out IEnumerable<Dictionary<string, object>> result);
+            keys = result.CreateReturnKeysToJson();
         }
 
         public void Delete(T obj, string entity)

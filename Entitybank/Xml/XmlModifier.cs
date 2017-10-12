@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using XData.Data.Helpers;
 using XData.Data.Modification;
 using XData.Data.Objects;
+using XData.Data.Schema;
 
 namespace XData.Data.Xml
 {
@@ -26,21 +27,20 @@ namespace XData.Data.Xml
 
         public XmlDatabase Database { get; private set; }
 
-        //protected XmlModifier(Database<XElement> database) : base(database)
-        protected XmlModifier(XmlDatabase database) : base(database)
+        //protected XmlModifier(Database<XElement> database, XElement schema) : base(database, schema)
+        protected XmlModifier(XmlDatabase database, XElement schema) : base(database, schema)
         {
             Database = database;
         }
 
-        // overload
-        public void Create(XElement element, XElement schema, out object keys)
-        {
-            Create(element, schema, out IEnumerable<Dictionary<string, object>> result);
-            keys = KeysToJson(result);
-        }
 
         // overload
-        public void Create(XElement element, XElement schema, out XElement keys)
+        public XElement CreateAndReturnKeys(XElement element)
+        {
+            return CreateAndReturnKeys(element, Schema);
+        }
+
+        public XElement CreateAndReturnKeys(XElement element, XElement schema)
         {
             Create(element, schema, out IEnumerable<Dictionary<string, object>> result);
             XElement entitySchema;
@@ -52,7 +52,13 @@ namespace XData.Data.Xml
             {
                 entitySchema = GetEntitySchema(schema, element.Name.LocalName);
             }
-            keys = KeysToXml(result, entitySchema);
+            return KeysToXml(result, entitySchema);
+        }
+
+        // overload
+        public void Create(XElement element, out IEnumerable<Dictionary<string, object>> keys)
+        {
+            Create(element, Schema, out keys);
         }
 
         // overload
@@ -60,6 +66,12 @@ namespace XData.Data.Xml
         {
             Create(element, schema);
             keys = GetCreateResult();
+        }
+
+        // overload
+        public void Create(XElement element)
+        {
+            Create(element, Schema);
         }
 
         public void Create(XElement element, XElement schema)
@@ -80,6 +92,12 @@ namespace XData.Data.Xml
             Persist();
         }
 
+        // overload
+        public void Delete(XElement element)
+        {
+            Delete(element, Schema);
+        }
+
         public void Delete(XElement element, XElement schema)
         {
             if (IsCollection(element))
@@ -98,6 +116,12 @@ namespace XData.Data.Xml
             Persist();
         }
 
+        // overload
+        public void Update(XElement element)
+        {
+            Update(element, Schema);
+        }
+
         public void Update(XElement element, XElement schema)
         {
             if (IsCollection(element))
@@ -114,6 +138,21 @@ namespace XData.Data.Xml
 
             Validate();
             Persist();
+        }
+
+        public void AppendCreate(XElement element)
+        {
+            AppendCreate(element, element.Name.LocalName);
+        }
+
+        public void AppendDelete(XElement element)
+        {
+            AppendDelete(element, element.Name.LocalName);
+        }
+
+        public void AppendUpdate(XElement element)
+        {
+            AppendUpdate(element, element.Name.LocalName);
         }
 
         // overload
@@ -170,6 +209,11 @@ namespace XData.Data.Xml
         protected const string XSI = TypeHelper.XSI;
         protected static readonly XNamespace XSINamespace = TypeHelper.XSINamespace;
 
+        protected static XElement KeysToXml(IEnumerable<Dictionary<string, object>> keys, XElement entitySchema)
+        {
+            return keys.CreateReturnKeysToXml(entitySchema);
+        }
+
         internal protected override XElement CreateObject(Dictionary<string, object> propertyValues, string entity)
         {
             XElement element = new XElement(entity);
@@ -211,10 +255,11 @@ namespace XData.Data.Xml
             return new ExecuteAggregationHelper().GetPropertyValues(obj, entitySchema);
         }
 
-        public static XmlModifier Create(string name)
+        public static XmlModifier Create(string name, XElement schema = null)
         {
             XmlDatabase database = new XmlDatabase(CreateDatabase(name));
-            return new XmlModifier(database);
+            XElement xSchema = schema ?? new PrimarySchemaProvider().GetSchema(name);
+            return new XmlModifier(database, xSchema);
         }
 
 

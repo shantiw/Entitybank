@@ -7,6 +7,9 @@
 
 /Entitybank/obj
 /Entitybank/bin
+/Entitybank/Entitybank.1.0.0.nupkg
+/Entitybank/Entitybank.nuspec
+/Entitybank/nuget.exe
 
 /Entitybank.Services/obj
 /Entitybank.Services/bin
@@ -23,3 +26,4 @@
 /Entitybank.Json
 /Entitybank.Json/Entitybank.Json/obj
 /Entitybank.Json/Entitybank.Json/bin
+

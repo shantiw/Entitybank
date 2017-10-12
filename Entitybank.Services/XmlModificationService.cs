@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using XData.Data.Xml;
+using XData.Data.Modification;
 
 namespace XData.Data.Services
 {
@@ -17,14 +18,14 @@ namespace XData.Data.Services
 
         public void Create(XElement element, out XElement keys)
         {
-            (Modifier as XmlModifier).Create(element, Schema, out keys);
+            keys = (Modifier as XmlModifier).CreateAndReturnKeys(element, Schema);
         }
 
         // json
         public void Create(XElement element, out string keys)
         {
-            (Modifier as XmlModifier).Create(element, Schema, out object result);
-            keys = (string)result;
+            (Modifier as XmlModifier).Create(element, Schema, out IEnumerable<Dictionary<string, object>> result);
+            keys = result.CreateReturnKeysToJson();
         }
 
         public void Delete(XElement element)
