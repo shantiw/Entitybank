@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using XData.Data.Modification;
-using XData.Data.Objects;
 using XData.Data.Schema;
 
 namespace XData.Data.Dynamic
@@ -115,6 +114,8 @@ namespace XData.Data.Dynamic
                 string val = value;
                 return val;
             }
+
+            if (string.IsNullOrWhiteSpace(value.ToString())) return null;
 
             if (conversionType == typeof(DateTime))
             {
