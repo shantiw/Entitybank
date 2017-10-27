@@ -143,7 +143,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ODataMessages.resx</DependentUpon>
     </Compile>
-    <Compile Include="OData\Select.cs" />
+    <Compile Include="Objects\Select.cs" />
     <Compile Include="OData\SqlQueryGenerator.cs" />
     <Compile Include="OData\QueryGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
