@@ -14,6 +14,8 @@ namespace XData.Data.Objects
     // not supported: LONG, LONG VARCHAR, LONG RAW
     public partial class OracleDatabase : Database
     {
+        public override string ParameterPrefix => ":";
+
         public override DateTime GetNow()
         {
             return (DateTime)ExecuteScalar("SELECT SYSDATE FROM DUAL");
@@ -40,7 +42,7 @@ namespace XData.Data.Objects
 
         public override DbParameter CreateParameter(string parameter, object value)
         {
-            return new OracleParameter(parameter, value);
+            return parameter.StartsWith(ParameterPrefix) ? new OracleParameter(parameter, value) : new OracleParameter(ParameterPrefix + parameter, value);
         }
 
         protected override ModificationGenerator CreateModificationGenerator()

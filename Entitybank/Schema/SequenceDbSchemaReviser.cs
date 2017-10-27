@@ -41,11 +41,14 @@ namespace XData.Data.Schema
                     XElement xSequence = schema.Elements(SchemaVocab.Sequence).FirstOrDefault(x => x.Attribute(SchemaVocab.Name).Value == sequenceName);
                     if (xSequence != null)
                     {
-                        string[] primaryKey = xTable.Attribute(SchemaVocab.PrimaryKey).Value.Split(new char[] { ',' });
-                        if (primaryKey.Length == 1)
+                        if (xTable.Attribute(SchemaVocab.PrimaryKey) != null)
                         {
-                            XElement xColumn = xTable.Elements(SchemaVocab.Column).First(x => x.Attribute(SchemaVocab.Name).Value == primaryKey[0]);
-                            xColumn.SetAttributeValue(SchemaVocab.Sequence, sequenceName);
+                            string[] primaryKey = xTable.Attribute(SchemaVocab.PrimaryKey).Value.Split(new char[] { ',' });
+                            if (primaryKey.Length == 1)
+                            {
+                                XElement xColumn = xTable.Elements(SchemaVocab.Column).First(x => x.Attribute(SchemaVocab.Name).Value == primaryKey[0]);
+                                xColumn.SetAttributeValue(SchemaVocab.Sequence, sequenceName);
+                            }
                         }
                     }
                 }

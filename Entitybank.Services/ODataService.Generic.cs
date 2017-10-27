@@ -90,13 +90,13 @@ namespace XData.Data.Services
                 {
                     result = (skip == 0 && top == 0)
                         ? querier.GetCollection(entity, select, filter, orderby, parameterValues, out xsd)
-                        : querier.GetCollection(entity, select, filter, orderby, skip, top, parameterValues, out xsd);
+                        : querier.GetPagingCollection(entity, select, filter, orderby, skip, top, parameterValues, out xsd);
                 }
                 else
                 {
                     result = (skip == 0 && top == 0)
                         ? querier.GetCollection(entity, select, filter, orderby, expand, parameterValues, out xsd)
-                        : querier.GetCollection(entity, select, filter, orderby, skip, top, expand, parameterValues, out xsd);
+                        : querier.GetPagingCollection(entity, select, filter, orderby, skip, top, expand, parameterValues, out xsd);
                 }
             }
             else
@@ -107,13 +107,13 @@ namespace XData.Data.Services
                 {
                     result = (skip == 0 && top == 0)
                         ? querier.GetCollection(entity, select, filter, orderby, parameterValues)
-                        : querier.GetCollection(entity, select, filter, orderby, skip, top, parameterValues);
+                        : querier.GetPagingCollection(entity, select, filter, orderby, skip, top, parameterValues);
                 }
                 else
                 {
                     result = (skip == 0 && top == 0)
                         ? querier.GetCollection(entity, select, filter, orderby, expand, parameterValues)
-                        : querier.GetCollection(entity, select, filter, orderby, skip, top, expand, parameterValues);
+                        : querier.GetPagingCollection(entity, select, filter, orderby, skip, top, expand, parameterValues);
                 }
             }
 

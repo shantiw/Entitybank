@@ -14,6 +14,8 @@ namespace XData.Data.Objects
     // not supported: GEOMETRY, POINT, LINESTRING, POLYGON, MULTIPOINT, MULTILINESTRING, MULTIPOLYGON, GEOMETRYCOLLECTION
     public partial class MySqlDatabase : Database
     {
+        public override string ParameterPrefix => "?";
+
         public override DateTime GetNow()
         {
             return (DateTime)ExecuteScalar("SELECT current_timestamp()");
@@ -40,7 +42,7 @@ namespace XData.Data.Objects
 
         public override DbParameter CreateParameter(string parameter, object value)
         {
-            return new MySqlParameter(parameter, value);
+            return parameter.StartsWith(ParameterPrefix) ? new MySqlParameter(parameter, value) : new MySqlParameter(ParameterPrefix + parameter, value);
         }
 
         protected override ModificationGenerator CreateModificationGenerator()

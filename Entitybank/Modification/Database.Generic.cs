@@ -13,6 +13,8 @@ namespace XData.Data.Objects
     {
         public Database UnderlyingDatabase { get; private set; }
 
+        public string ParameterPrefix => UnderlyingDatabase.ParameterPrefix;
+
         public Database(Database database)
         {
             UnderlyingDatabase = database;

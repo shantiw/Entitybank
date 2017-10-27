@@ -82,7 +82,7 @@ namespace XData.Data.OData
             return Count(entity, filter, parameterValues, parameters);
         }
 
-        public int Count(string entity, string filter, IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters)
+        protected int Count(string entity, string filter, IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters)
         {
             ParameterCollection parameterCollection = new ParameterCollection(parameterValues);
             Query query = new Query(entity, null, filter, null, Schema, parameterCollection);
@@ -125,7 +125,7 @@ namespace XData.Data.OData
             return GetCollection(entity, select, filter, orderby, parameterValues, parameters);
         }
 
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, IEnumerable<KeyValuePair<string, string>> parameterValues,
+        protected IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, IEnumerable<KeyValuePair<string, string>> parameterValues,
             IReadOnlyDictionary<string, object> parameters)
         {
             ParameterCollection parameterCollection = new ParameterCollection(parameterValues);
@@ -156,7 +156,7 @@ namespace XData.Data.OData
             return GetCollection(entity, select, filter, orderby, parameterValues, parameters, out xsd);
         }
 
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, IEnumerable<KeyValuePair<string, string>> parameterValues,
+        protected IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, IEnumerable<KeyValuePair<string, string>> parameterValues,
             IReadOnlyDictionary<string, object> parameters, out XElement xsd)
         {
             ParameterCollection parameterCollection = new ParameterCollection(parameterValues);
@@ -168,12 +168,12 @@ namespace XData.Data.OData
         }
 
         // overload
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top)
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top)
         {
-            return GetCollection(entity, select, filter, orderby, skip, top, EmptyParameterValues);
+            return GetPagingCollection(entity, select, filter, orderby, skip, top, EmptyParameterValues);
         }
 
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top,
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top,
             IEnumerable<KeyValuePair<string, string>> parameterValues)
         {
             Query query = new Query(entity, select, filter, orderby, skip, top, Schema, new ParameterCollection(parameterValues));
@@ -182,14 +182,14 @@ namespace XData.Data.OData
         }
 
         // overload
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top,
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top,
            IReadOnlyDictionary<string, object> parameters)
         {
             IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
-            return GetCollection(entity, select, filter, orderby, skip, top, parameterValues, parameters);
+            return GetPagingCollection(entity, select, filter, orderby, skip, top, parameterValues, parameters);
         }
 
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top,
+        protected IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top,
             IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters)
         {
             ParameterCollection parameterCollection = new ParameterCollection(parameterValues);
@@ -200,12 +200,12 @@ namespace XData.Data.OData
         }
 
         // overload
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, out XElement xsd)
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, out XElement xsd)
         {
-            return GetCollection(entity, select, filter, orderby, skip, top, EmptyParameterValues, out xsd);
+            return GetPagingCollection(entity, select, filter, orderby, skip, top, EmptyParameterValues, out xsd);
         }
 
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top,
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top,
             IEnumerable<KeyValuePair<string, string>> parameterValues, out XElement xsd)
         {
             Query query = new Query(entity, select, filter, orderby, skip, top, Schema, new ParameterCollection(parameterValues));
@@ -215,14 +215,14 @@ namespace XData.Data.OData
         }
 
         // overload
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top,
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top,
             IReadOnlyDictionary<string, object> parameters, out XElement xsd)
         {
             IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
-            return GetCollection(entity, select, filter, orderby, skip, top, parameterValues, parameters, out xsd);
+            return GetPagingCollection(entity, select, filter, orderby, skip, top, parameterValues, parameters, out xsd);
         }
 
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top,
+        protected IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top,
             IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters, out XElement xsd)
         {
             ParameterCollection parameterCollection = new ParameterCollection(parameterValues);
@@ -286,7 +286,7 @@ namespace XData.Data.OData
         }
 
         // expand
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, string expand,
+        protected IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, string expand,
             IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters)
         {
             ParameterCollection parameterCollection = new ParameterCollection(parameterValues);
@@ -298,13 +298,13 @@ namespace XData.Data.OData
         }
 
         // overload
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand)
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand)
         {
-            return GetCollection(entity, select, filter, orderby, skip, top, expand, EmptyParameterValues);
+            return GetPagingCollection(entity, select, filter, orderby, skip, top, expand, EmptyParameterValues);
         }
 
         // expand
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand,
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand,
             IEnumerable<KeyValuePair<string, string>> parameterValues)
         {
             Query query = new Query(entity, select, filter, orderby, skip, top, Schema, new ParameterCollection(parameterValues));
@@ -314,15 +314,15 @@ namespace XData.Data.OData
         }
 
         // overload
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand,
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand,
             IReadOnlyDictionary<string, object> parameters)
         {
             IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
-            return GetCollection(entity, select, filter, orderby, skip, top, expand, parameterValues, parameters);
+            return GetPagingCollection(entity, select, filter, orderby, skip, top, expand, parameterValues, parameters);
         }
 
         // expand
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand,
+        protected IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand,
             IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters)
         {
             ParameterCollection parameterCollection = new ParameterCollection(parameterValues);
@@ -360,7 +360,7 @@ namespace XData.Data.OData
         }
 
         // expand
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, string expand,
+        protected IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, string expand,
             IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters, out XElement xsd)
         {
             ParameterCollection parameterCollection = new ParameterCollection(parameterValues);
@@ -374,13 +374,13 @@ namespace XData.Data.OData
         }
 
         // overload
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand, out XElement xsd)
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand, out XElement xsd)
         {
-            return GetCollection(entity, select, filter, orderby, skip, top, expand, EmptyParameterValues, out xsd);
+            return GetPagingCollection(entity, select, filter, orderby, skip, top, expand, EmptyParameterValues, out xsd);
         }
 
         // expand
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand,
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand,
             IEnumerable<KeyValuePair<string, string>> parameterValues, out XElement xsd)
         {
             Query query = new Query(entity, select, filter, orderby, skip, top, Schema, new ParameterCollection(parameterValues));
@@ -392,15 +392,15 @@ namespace XData.Data.OData
         }
 
         // overload
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand,
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand,
             IReadOnlyDictionary<string, object> parameters, out XElement xsd)
         {
             IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
-            return GetCollection(entity, select, filter, orderby, skip, top, expand, parameterValues, parameters, out xsd);
+            return GetPagingCollection(entity, select, filter, orderby, skip, top, expand, parameterValues, parameters, out xsd);
         }
 
         // expand
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand,
+        protected IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, string expand,
             IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters, out XElement xsd)
         {
             ParameterCollection parameterCollection = new ParameterCollection(parameterValues);
@@ -457,7 +457,7 @@ namespace XData.Data.OData
         }
 
         // expand
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, Expand[] expands,
+        protected IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, Expand[] expands,
             IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters)
         {
             ParameterCollection parameterCollection = new ParameterCollection(parameterValues);
@@ -469,13 +469,13 @@ namespace XData.Data.OData
         }
 
         // overload
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands)
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands)
         {
-            return GetCollection(entity, select, filter, orderby, skip, top, expands, EmptyParameterValues);
+            return GetPagingCollection(entity, select, filter, orderby, skip, top, expands, EmptyParameterValues);
         }
 
         // expand
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands,
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands,
             IEnumerable<KeyValuePair<string, string>> parameterValues)
         {
             Query query = new Query(entity, select, filter, orderby, skip, top, Schema, new ParameterCollection(parameterValues));
@@ -485,15 +485,15 @@ namespace XData.Data.OData
         }
 
         // overload
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands,
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands,
             IReadOnlyDictionary<string, object> parameters)
         {
             IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
-            return GetCollection(entity, select, filter, orderby, skip, top, expands, parameterValues, parameters);
+            return GetPagingCollection(entity, select, filter, orderby, skip, top, expands, parameterValues, parameters);
         }
 
         // expand
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands,
+        protected IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands,
             IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters)
         {
             ParameterCollection parameterCollection = new ParameterCollection(parameterValues);
@@ -531,7 +531,7 @@ namespace XData.Data.OData
         }
 
         // expand
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, Expand[] expands,
+        protected IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, Expand[] expands,
             IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters, out XElement xsd)
         {
             ParameterCollection parameterCollection = new ParameterCollection(parameterValues);
@@ -545,13 +545,13 @@ namespace XData.Data.OData
         }
 
         // overload
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands, out XElement xsd)
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands, out XElement xsd)
         {
-            return GetCollection(entity, select, filter, orderby, skip, top, expands, EmptyParameterValues, out xsd);
+            return GetPagingCollection(entity, select, filter, orderby, skip, top, expands, EmptyParameterValues, out xsd);
         }
 
         // expand
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands,
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands,
             IEnumerable<KeyValuePair<string, string>> parameterValues, out XElement xsd)
         {
             Query query = new Query(entity, select, filter, orderby, skip, top, Schema, new ParameterCollection(parameterValues));
@@ -563,15 +563,15 @@ namespace XData.Data.OData
         }
 
         // overload
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands,
+        public IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands,
             IReadOnlyDictionary<string, object> parameters, out XElement xsd)
         {
             IEnumerable<KeyValuePair<string, string>> parameterValues = GetParameterValues(parameters);
-            return GetCollection(entity, select, filter, orderby, skip, top, expands, parameterValues, parameters, out xsd);
+            return GetPagingCollection(entity, select, filter, orderby, skip, top, expands, parameterValues, parameters, out xsd);
         }
 
         // expand
-        public IEnumerable<T> GetCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands,
+        protected IEnumerable<T> GetPagingCollection(string entity, string select, string filter, string orderby, long skip, long top, Expand[] expands,
             IEnumerable<KeyValuePair<string, string>> parameterValues, IReadOnlyDictionary<string, object> parameters, out XElement xsd)
         {
             ParameterCollection parameterCollection = new ParameterCollection(parameterValues);

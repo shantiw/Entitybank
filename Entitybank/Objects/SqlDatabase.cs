@@ -12,6 +12,8 @@ namespace XData.Data.Objects
 {
     public partial class SqlDatabase : Database
     {
+        public override string ParameterPrefix => "@";
+
         public override DateTime GetNow()
         {
             return (DateTime)ExecuteScalar("SELECT GETDATE()");
@@ -38,7 +40,7 @@ namespace XData.Data.Objects
 
         public override DbParameter CreateParameter(string parameter, object value)
         {
-            return new SqlParameter(parameter, value);
+            return parameter.StartsWith(ParameterPrefix) ? new SqlParameter(parameter, value) : new SqlParameter(ParameterPrefix + parameter, value);
         }
 
         internal protected override ModificationGenerator CreateModificationGenerator()

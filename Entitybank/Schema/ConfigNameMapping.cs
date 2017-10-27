@@ -28,7 +28,7 @@ namespace XData.Data.Schema
             XElement xMapping = GetMapping(tableName);
             if (xMapping == null) return null;
             XAttribute attr = xMapping.Attribute(SchemaVocab.Collection);
-            return (attr == null) ? null : attr.Name.ToString();
+            return attr?.Value.ToString();
         }
 
         public string GetEntityName(string tableName)
@@ -36,7 +36,7 @@ namespace XData.Data.Schema
             XElement xMapping = GetMapping(tableName);
             if (xMapping == null) return null;
             XAttribute attr = xMapping.Attribute(SchemaVocab.Entity);
-            return (attr == null) ? null : attr.Name.ToString();
+            return attr?.Value.ToString();
         }
 
         public string GetPropertyName(string tableName, string columnName)
@@ -44,8 +44,9 @@ namespace XData.Data.Schema
             XElement xMapping = GetMapping(tableName);
             if (xMapping == null) return null;
             XElement xColMapping = xMapping.Elements(SchemaVocab.Mapping).FirstOrDefault(x => x.Attribute(SchemaVocab.Column).Value == columnName);
+            if (xColMapping == null) return null;
             XAttribute attr = xColMapping.Attribute(SchemaVocab.Property);
-            return (attr == null) ? null : attr.Name.ToString();
+            return attr?.Value.ToString();
         }
 
         protected XElement GetMapping(string tableName)

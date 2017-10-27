@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using XData.Data.Objects;
 using XData.Data.Schema;
 
 namespace XData.Data.OData
@@ -38,7 +39,7 @@ namespace XData.Data.OData
             ParameterCollection = parameterCollection;
 
             //
-            Select = new Select(select, Entity, Schema);
+            Select = new Select(string.IsNullOrWhiteSpace(select) ? "*" : select, Entity, Schema);
             List<string> parameterList = new List<string>();
             IEnumerable<string> properties = Select.Properties;
             if (!string.IsNullOrWhiteSpace(filter))

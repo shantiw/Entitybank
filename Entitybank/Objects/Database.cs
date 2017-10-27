@@ -19,6 +19,7 @@ namespace XData.Data.Objects
         protected abstract DbConnection CreateConnection(string connectionString);
         protected abstract DbDataAdapter CreateDataAdapter();
         public abstract DbParameter CreateParameter(string parameter, object value);
+        public abstract string ParameterPrefix { get; }
 
         public readonly DbConnection Connection;
         public DbTransaction Transaction = null;

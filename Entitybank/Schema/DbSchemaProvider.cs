@@ -186,7 +186,7 @@ namespace XData.Data.Schema
                 {
                     if ((string)table.ExtendedProperties["TableType"] == "View")
                     {
-                        throw new SchemaException(string.Format(SchemaMessages.ErrorView, table.TableName), ex);
+                        //throw new SchemaException(string.Format(SchemaMessages.ErrorView, table.TableName), ex);
                     }
                     else
                     {
