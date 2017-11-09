@@ -38,7 +38,7 @@ namespace XData.Data.Objects
             return UnderlyingDatabase.ExecuteSqlCommand(sql, parameters);
         }
 
-        public virtual IEnumerable<T> SqlQuery(string entity, string sql, params Object[] parameters)
+        public virtual IEnumerable<T> SqlQuery(string entity, string sql, params object[] parameters)
         {
             return UnderlyingDatabase.SqlQuery<T>(entity, sql, parameters);
         }

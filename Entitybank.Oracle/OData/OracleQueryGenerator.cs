@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XData.Data.DataObjects;
+using XData.Data.Objects;
 
 namespace XData.Data.OData
 {

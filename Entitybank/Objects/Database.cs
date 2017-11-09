@@ -63,7 +63,7 @@ namespace XData.Data.Objects
         }
 
         // DataRow(entity = null), string(json)(entity = null), XElement
-        public virtual IEnumerable<T> SqlQuery<T>(string entity, string sql, params Object[] parameters)
+        public virtual IEnumerable<T> SqlQuery<T>(string entity, string sql, params object[] parameters)
         {
             DataTable table = ExecuteDataTable(sql, parameters);
 

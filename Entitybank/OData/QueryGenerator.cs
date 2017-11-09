@@ -23,19 +23,20 @@ namespace XData.Data.OData
             List<string> list = new List<string>();
             string select = GenerateSelect(query.Select, table);
             list.Add(select);
-            string form = GenerateDefaultFrom(query, table, out dbParameterValues);
+
+            XElement entitySchema = query.Schema.GetEntitySchema(query.Entity);
+            string form = GenerateDefaultFrom(entitySchema, table, out dbParameterValues);
             list.Add(form);
 
             return string.Join(" ", list);
         }
 
-        protected string GenerateDefaultFrom(Query query, Table table, out IReadOnlyDictionary<string, object> constants)
+        protected string GenerateDefaultFrom(XElement entitySchema, Table table, out IReadOnlyDictionary<string, object> constants)
         {
             List<string> list = new List<string>();
             Dictionary<string, object> dict = new Dictionary<string, object>();
 
             int parameterCount = 1;
-            XElement entitySchema = query.Schema.GetEntitySchema(query.Entity);
             foreach (XElement propertySchema in entitySchema.Elements(SchemaVocab.Property).Where(x => x.Attribute(SchemaVocab.Column) != null))
             {
                 string column = propertySchema.Attribute(SchemaVocab.Column).Value;
@@ -50,10 +51,15 @@ namespace XData.Data.OData
                     DefaultValueAttribute attribute = annotation.CreateDefaultValueAttribute(propertySchema);
                     string parameter = "@P" + parameterCount.ToString();
                     parameterCount++;
-                    list.Add(string.Format("{0} {1}", parameter, decoratedColumn));
-                    Dictionary<string, string> upperParamNameMapping = new Dictionary<string, string>();
-                    upperParamNameMapping.Add(parameter, parameter);
-                    dict.Add(DecorateParameterName(parameter, upperParamNameMapping), attribute.Value);
+
+                    Dictionary<string, string> upperParamNameMapping = new Dictionary<string, string>
+                    {
+                        { parameter, parameter }
+                    };
+                    string decoratedParameter = DecorateParameterName(parameter, upperParamNameMapping);
+
+                    list.Add(string.Format("{0} {1}", decoratedParameter, decoratedColumn));
+                    dict.Add(decoratedParameter, attribute.Value);
                 }
             }
             string tableBody = string.Format("(SELECT {0})", string.Join(",", list));

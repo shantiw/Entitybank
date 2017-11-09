@@ -22,19 +22,22 @@ namespace XData.Data.Objects
             Entity = entity;
             Schema = schema;
 
-            if (value.Trim() == "*")
+            if (!string.IsNullOrWhiteSpace(value))
             {
-                XElement entitySchema = Schema.GetEntitySchema(Entity);
-                Properties = entitySchema.Elements(SchemaVocab.Property)
-                    .Where(x => x.Attribute(SchemaVocab.Column) != null)
-                    .Select(x => x.Attribute(SchemaVocab.Name).Value).ToArray();
-            }
-            else
-            {
-                Properties = value.Split(',');
-                for (int i = 0; i < Properties.Length; i++)
+                if (value.Trim() == "*")
                 {
-                    Properties[i] = Properties[i].Trim();
+                    XElement entitySchema = Schema.GetEntitySchema(Entity);
+                    Properties = entitySchema.Elements(SchemaVocab.Property)
+                        .Where(x => x.Attribute(SchemaVocab.Column) != null)
+                        .Select(x => x.Attribute(SchemaVocab.Name).Value).ToArray();
+                }
+                else
+                {
+                    Properties = value.Split(',');
+                    for (int i = 0; i < Properties.Length; i++)
+                    {
+                        Properties[i] = Properties[i].Trim();
+                    }
                 }
             }
         }
