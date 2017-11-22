@@ -72,6 +72,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ErrorMessages.resx</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ValidationExceptionHelper.cs" />
     <Compile Include="Modification\CreateAggregation.cs" />
     <Compile Include="Modification\Database.Generic.cs" />
     <Compile Include="Modification\DeleteAggregation.cs" />

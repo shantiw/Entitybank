@@ -32,11 +32,10 @@ namespace XData.Data.Modification
 
         private void TryThrowValidationException(ICollection<ValidationResult>[] validationResultCollections)
         {
-            if (validationResultCollections.Length > 0)
-            {
-                ValidationResult first = validationResultCollections[0].First();
-                throw new ValidationException(first, null, validationResultCollections);
-            }
+            ValidationException validationException = ValidationExceptionHelper.CreateValidationException(validationResultCollections);
+            if (validationException == null) return;
+
+            throw validationException;
         }
 
         public ICollection<ValidationResult>[] GetValidationResultCollections()
