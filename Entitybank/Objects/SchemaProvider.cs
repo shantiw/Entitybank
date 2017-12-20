@@ -11,6 +11,8 @@ namespace XData.Data.Objects
     // name: ConnectionStringName
     public class SchemaProvider
     {
+        public const char Value_Separator = ',';
+
         protected PrimarySchemaProvider PrimarySchemaProvider = new PrimarySchemaProvider();
         protected SchemaDeltaProvider SchemaDeltaProvider = new SchemaDeltaProvider();
 
@@ -24,13 +26,11 @@ namespace XData.Data.Objects
         // ?key1=key1,key1&key2=,key2
         public XElement GetSchema(IEnumerable<KeyValuePair<string, string>> deltaKey)
         {
-            const char separator = ',';
-
             Dictionary<int, Dictionary<string, string>> dict = new Dictionary<int, Dictionary<string, string>>();
             foreach (KeyValuePair<string, string> item in deltaKey)
             {
                 string key = item.Key;
-                string[] values = item.Value.Split(separator);
+                string[] values = item.Value.Split(Value_Separator);
                 for (int i = 0; i < values.Length; i++)
                 {
                     if (string.IsNullOrWhiteSpace(values[i])) continue;

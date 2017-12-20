@@ -166,7 +166,7 @@ namespace XData.Data.OData
 
             protected virtual string ToSqlString(ParenthesesPairSegment segment)
             {
-                return string.Format("()", ToSqlString(segment.Inner));
+                return string.Format("({0})", ToSqlString(segment.Inner));
             }
 
             protected virtual string ToSqlString(ParamlessFuncSegment segment)

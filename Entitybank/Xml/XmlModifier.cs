@@ -33,7 +33,6 @@ namespace XData.Data.Xml
             Database = database;
         }
 
-
         // overload
         public XElement CreateAndReturnKeys(XElement element)
         {
@@ -66,15 +65,17 @@ namespace XData.Data.Xml
         {
             Create(element, schema);
             keys = GetCreateResult();
+            Clear();
         }
 
         // overload
         public void Create(XElement element)
         {
             Create(element, Schema);
+            Clear();
         }
 
-        public void Create(XElement element, XElement schema)
+        protected void Create(XElement element, XElement schema)
         {
             if (IsCollection(element))
             {
@@ -114,6 +115,7 @@ namespace XData.Data.Xml
 
             Validate();
             Persist();
+            Clear();
         }
 
         // overload
@@ -138,6 +140,7 @@ namespace XData.Data.Xml
 
             Validate();
             Persist();
+            Clear();
         }
 
         public void AppendCreate(XElement element)

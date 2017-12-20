@@ -72,7 +72,7 @@ namespace XData.Data.OData
         public int Count(string entity, string filter, IEnumerable<KeyValuePair<string, string>> parameterValues)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            return Count(entity, filter, EmptyParameterValues, parameters);
+            return Count(entity, filter, parameterValues, parameters);
         }
 
         // overload

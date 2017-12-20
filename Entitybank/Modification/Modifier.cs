@@ -35,8 +35,9 @@ namespace XData.Data.Modification
         // overload
         public void Create(T obj, string entity, out IEnumerable<Dictionary<string, object>> keys)
         {
-            Create(obj, entity);
+            Create(obj, entity, null);
             keys = GetCreateResult();
+            Clear();
         }
 
         // overload
@@ -44,9 +45,10 @@ namespace XData.Data.Modification
         {
             Create(obj, entity, schema);
             keys = GetCreateResult();
+            Clear();
         }
 
-        public virtual void Create(T obj, string entity, XElement schema = null)
+        protected void Create(T obj, string entity, XElement schema)
         {
             XElement xSchema = schema ?? Schema;
 
@@ -78,7 +80,7 @@ namespace XData.Data.Modification
                 IEnumerable<string> keyPropertyNames = executeCommand.UniqueKeySchema.Elements(SchemaVocab.Property).Select(p => p.Attribute(SchemaVocab.Name).Value);
                 foreach (string propertyName in keyPropertyNames)
                 {
-                    dict.Add(propertyName, dict[propertyName]);
+                    dict.Add(propertyName, executeCommand.PropertyValues[propertyName]);
                 }
 
                 list.Add(dict);
@@ -104,6 +106,7 @@ namespace XData.Data.Modification
 
             Validate();
             Persist();
+            Clear();
         }
 
         public virtual void Update(T obj, string entity, XElement schema = null)
@@ -124,6 +127,7 @@ namespace XData.Data.Modification
 
             Validate();
             Persist();
+            Clear();
         }
 
         public void Persist()
@@ -184,8 +188,6 @@ namespace XData.Data.Modification
                     GenericDatabase.Connection.Close();
                     GenericDatabase.Transaction = null;
                 }
-
-                ExecuteAggregations.Clear();
             }
         }
 
