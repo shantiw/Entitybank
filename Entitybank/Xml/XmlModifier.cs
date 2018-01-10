@@ -28,7 +28,7 @@ namespace XData.Data.Xml
         public XmlDatabase Database { get; private set; }
 
         //protected XmlModifier(Database<XElement> database, XElement schema) : base(database, schema)
-        protected XmlModifier(XmlDatabase database, XElement schema) : base(database, schema)
+        public XmlModifier(XmlDatabase database, XElement schema) : base(database, schema)
         {
             Database = database;
         }
@@ -260,7 +260,7 @@ namespace XData.Data.Xml
 
         public static XmlModifier Create(string name, XElement schema = null)
         {
-            XmlDatabase database = new XmlDatabase(CreateDatabase(name));
+            XmlDatabase database = XmlDatabase.Create(name);
             XElement xSchema = schema ?? new PrimarySchemaProvider().GetSchema(name);
             return new XmlModifier(database, xSchema);
         }

@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace XData.Data.Objects
 {
-    public partial class Database<T>
+    public abstract partial class Database<T>
     {
-        public Database UnderlyingDatabase { get; private set; }
-
         public string ParameterPrefix => UnderlyingDatabase.ParameterPrefix;
 
-        public Database(Database database)
+        internal protected Database UnderlyingDatabase { get; private set; }
+
+        protected Database(Database database)
         {
             UnderlyingDatabase = database;
         }

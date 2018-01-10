@@ -21,7 +21,7 @@ namespace XData.Data.Modification
 
         protected readonly IList<ExecuteAggregation<T>> ExecuteAggregations = new List<ExecuteAggregation<T>>();
 
-        protected Modifier(Database<T> database, XElement schema)
+        public Modifier(Database<T> database, XElement schema)
         {
             GenericDatabase = database;
             Schema = schema;
@@ -218,15 +218,6 @@ namespace XData.Data.Modification
         internal protected abstract void SetObjectValue(T obj, string property, object value);
 
         protected abstract bool IsCollection(T obj);
-
-        //protected static Database<T> CreateDatabase(string name)
-        //{
-        //    return new Database<T>(new DatabaseManufacturer().Create(name));
-        //}
-        protected static Database CreateDatabase(string name)
-        {
-            return new DatabaseManufacturer().Create(name);
-        }
 
         protected static XElement GetEntitySchema(XElement schema, string entity)
         {

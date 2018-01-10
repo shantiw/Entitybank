@@ -100,18 +100,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="entitybank\my\delta\delta1.config" />
-    <Content Include="entitybank\my\delta\delta2.config" />
+    <Content Include="entitybank\my\deltas\delta1.config" />
+    <Content Include="entitybank\my\deltas\delta2.config" />
     <Content Include="entitybank\my\mapping.config" />
     <Content Include="entitybank\my\revise.config" />
     <Content Include="entitybank\my\instance.config" />
-    <Content Include="entitybank\ora\delta\delta1.config" />
-    <Content Include="entitybank\ora\delta\delta2.config" />
+    <Content Include="entitybank\ora\deltas\delta1.config" />
+    <Content Include="entitybank\ora\deltas\delta2.config" />
     <Content Include="entitybank\ora\mapping.config" />
     <Content Include="entitybank\ora\revise.config" />
     <Content Include="entitybank\ora\instance.config" />
-    <Content Include="entitybank\sql\delta\delta1.config" />
-    <Content Include="entitybank\sql\delta\delta2.config" />
+    <Content Include="entitybank\sql\deltas\delta1.config" />
+    <Content Include="entitybank\sql\deltas\delta2.config" />
     <Content Include="entitybank\sql\mapping.config" />
     <Content Include="entitybank\sql\revise.config">
       <SubType>Designer</SubType>

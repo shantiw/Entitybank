@@ -56,14 +56,21 @@ namespace XData.Data.Dynamic
             after = args.After;
         }
 
-        public DynDatabase(Database database) : base(database)
-        {
-        }
-
         public override IEnumerable<dynamic> SqlQuery(string entity, string sql, params object[] parameters)
         {
             throw new NotSupportedException();
         }
+
+        protected DynDatabase(Database database) : base(database)
+        {
+        }
+
+        public static DynDatabase Create(string name)
+        {
+            Database database = new DatabaseManufacturer().Create(name);
+            return new DynDatabase(database);
+        }
+
 
     }
 }

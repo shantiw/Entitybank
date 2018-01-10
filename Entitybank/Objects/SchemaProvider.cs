@@ -23,6 +23,11 @@ namespace XData.Data.Objects
             Name = name;
         }
 
+        public XElement GetSchema()
+        {
+            return PrimarySchemaProvider.GetSchema(Name);
+        }
+
         // ?key1=key1,key1&key2=,key2
         public XElement GetSchema(IEnumerable<KeyValuePair<string, string>> deltaKey)
         {

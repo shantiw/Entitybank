@@ -29,7 +29,7 @@ namespace XData.Data.Dynamic
         public DynDatabase Database { get; private set; }
 
         //protected DynModifier(Database<dynamic> database, XElement schema) : base(database, schema)
-        protected DynModifier(DynDatabase database, XElement schema) : base(database, schema)
+        public DynModifier(DynDatabase database, XElement schema) : base(database, schema)
         {
             Database = database;
         }
@@ -177,7 +177,7 @@ namespace XData.Data.Dynamic
 
         public static DynModifier Create(string name, XElement schema = null)
         {
-            DynDatabase database = new DynDatabase(CreateDatabase(name));
+            DynDatabase database = DynDatabase.Create(name);
             XElement xSchema = schema ?? new PrimarySchemaProvider().GetSchema(name);
             return new DynModifier(database, xSchema);
         }

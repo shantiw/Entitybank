@@ -22,34 +22,9 @@ namespace XData.Data.OData
             DataConverter = conv;
         }
 
-        protected ODataQuerier(Database database, XElement schema, string dataConverter, string dateFormatter, string format)
+        public ODataQuerier(Database<T> database, XElement schema, DataConverter<T> conv)
+            : this(database.UnderlyingDatabase, schema, conv)
         {
-            Database = database;
-            Schema = schema;
-            DataConverter = new DataConverterManufacturer().Create<T>(dataConverter);
-
-            DateFormatter formatter;
-            if (string.IsNullOrWhiteSpace(dateFormatter))
-            {
-                if (DataConverter is DataConverter<XElement>)
-                {
-                    formatter = new DotNETDateFormatter();
-                }
-                else if (DataConverter is DataConverter<string>)
-                {
-                    formatter = new JsonNETFormatter() { TimezoneOffset = schema.GetTimezoneOffset() };
-                }
-                else
-                {
-                    throw new ArgumentNullException("dateFormatter");
-                }
-            }
-            else
-            {
-                formatter = new DateFormatterManufacturer().Create(dateFormatter, schema.GetTimezoneOffset(), format);
-            }
-
-            DataConverter.DateFormatter = formatter;
         }
 
         public DateTime GetNow()
@@ -616,6 +591,8 @@ namespace XData.Data.OData
 
         public static ODataQuerier<T> Create(string name, XElement schema = null, string dataConverter = null, string dateFormatter = null, string format = null)
         {
+            Database database = new DatabaseManufacturer().Create(name);
+
             XElement xSchema = schema ?? new PrimarySchemaProvider().GetSchema(name);
 
             string sConverter;
@@ -638,8 +615,31 @@ namespace XData.Data.OData
             {
                 sConverter = dataConverter;
             }
-            Database database = new DatabaseManufacturer().Create(name);
-            return new ODataQuerier<T>(database, xSchema, sConverter, dateFormatter, format);
+            DataConverter<T> oDataConverter = new DataConverterManufacturer().Create<T>(dataConverter);
+
+            DateFormatter formatter;
+            if (string.IsNullOrWhiteSpace(dateFormatter))
+            {
+                if (oDataConverter is DataConverter<XElement>)
+                {
+                    formatter = new DotNETDateFormatter();
+                }
+                else if (oDataConverter is DataConverter<string>)
+                {
+                    formatter = new JsonNETFormatter() { TimezoneOffset = schema.GetTimezoneOffset() };
+                }
+                else
+                {
+                    throw new ArgumentNullException("dateFormatter");
+                }
+            }
+            else
+            {
+                formatter = new DateFormatterManufacturer().Create(dateFormatter, schema.GetTimezoneOffset(), format);
+            }
+            oDataConverter.DateFormatter = formatter;
+
+            return new ODataQuerier<T>(database, xSchema, oDataConverter);
         }
 
 

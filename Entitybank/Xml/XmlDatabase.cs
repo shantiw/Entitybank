@@ -55,8 +55,14 @@ namespace XData.Data.Xml
             after = args.After;
         }
 
-        public XmlDatabase(Database database) : base(database)
+        protected XmlDatabase(Database database) : base(database)
         {
+        }
+
+        public static XmlDatabase Create(string name)
+        {
+            Database database = new DatabaseManufacturer().Create(name);
+            return new XmlDatabase(database);
         }
 
 
