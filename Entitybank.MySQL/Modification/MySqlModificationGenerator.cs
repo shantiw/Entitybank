@@ -9,6 +9,8 @@ namespace XData.Data.Modification
 {
     public class MySqlModificationGenerator : ModificationGenerator
     {
+        protected override int DbParamLimit => 65535;
+
         protected override string DecorateTableName(string table)
         {
             return string.Format("`{0}`", table);

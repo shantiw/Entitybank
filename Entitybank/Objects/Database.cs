@@ -172,5 +172,8 @@ namespace XData.Data.Objects
 
         internal protected abstract object FetchSequence(string sequenceName);
 
+        internal protected abstract object[] FetchSequences(string sequenceName, int size);
+
+
     }
 }

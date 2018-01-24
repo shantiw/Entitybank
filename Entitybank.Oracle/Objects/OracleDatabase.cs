@@ -61,6 +61,19 @@ namespace XData.Data.Objects
             return ExecuteScalar(sql);
         }
 
+        protected override object[] FetchSequences(string sequenceName, int size)
+        {
+            // SELECT {sequenceName}.NEXTVAL FROM DUAL CONNECT BY LEVEL/ROWNUM <= {size};
+            string sql = string.Format("SELECT \"{0}\".NEXTVAL FROM DUAL CONNECT BY LEVEL <= {1}", sequenceName, size);
+            DataTable table = ExecuteDataTable(sql);
+            List<object> list = new List<object>();
+            foreach (DataRow row in table.Rows)
+            {
+                list.Add(row[0]);
+            }
+            return list.ToArray();
+        }
+
 
     }
 }

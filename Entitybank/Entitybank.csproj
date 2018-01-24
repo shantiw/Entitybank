@@ -73,7 +73,9 @@
       <DependentUpon>ErrorMessages.resx</DependentUpon>
     </Compile>
     <Compile Include="Helpers\ValidationExceptionHelper.cs" />
+    <Compile Include="Modification\BatchStatement.cs" />
     <Compile Include="Modification\CreateAggregation.cs" />
+    <Compile Include="Modification\Database.Generic.Batch.cs" />
     <Compile Include="Modification\Database.Generic.cs" />
     <Compile Include="Modification\DeleteAggregation.cs" />
     <Compile Include="Modification\ExecuteAggregation.cs" />
@@ -81,6 +83,7 @@
     <Compile Include="Modification\ExecuteEventArgs.cs" />
     <Compile Include="Modification\ExecuteCommand.cs" />
     <Compile Include="Modification\IExecuteAggregationHelper.cs" />
+    <Compile Include="Modification\ModificationGenerator.Batch.cs" />
     <Compile Include="Modification\ModificationGenerator.cs" />
     <Compile Include="Modification\Modifier.cs" />
     <Compile Include="Modification\Modifier.Validate.cs" />
@@ -93,7 +96,7 @@
       <DependentUpon>BuiltIn.resx</DependentUpon>
     </Compile>
     <Compile Include="Objects\ConfigUpdater.cs" />
-    <Compile Include="Modification\Database.Modification.cs" />
+    <Compile Include="Modification\Database.Generic.Modification.cs" />
     <Compile Include="Objects\DatabaseManufacturer.cs" />
     <Compile Include="Objects\DataConverter.cs" />
     <Compile Include="Objects\DataConverterManufacturer.cs" />

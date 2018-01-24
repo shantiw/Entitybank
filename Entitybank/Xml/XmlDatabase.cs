@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using XData.Data.DataObjects;
 using XData.Data.Objects;
+using XData.Data.Schema;
 
 namespace XData.Data.Xml
 {
@@ -63,6 +65,12 @@ namespace XData.Data.Xml
         {
             Database database = new DatabaseManufacturer().Create(name);
             return new XmlDatabase(database);
+        }
+
+        protected override Dictionary<string, object> ToDictionary(XElement obj, XElement entitySchema)
+        {
+            ExecuteAggregationHelper helper = new ExecuteAggregationHelper();
+            return helper.GetPropertyValues(obj, entitySchema);
         }
 
 

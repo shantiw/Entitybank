@@ -88,6 +88,57 @@ namespace XData.Data.Objects
             return ExecuteScalar(sql);
         }
 
+        internal protected override object[] FetchSequences(string sequenceName, int size)
+        {
+            DbCommand cmd = Connection.CreateCommand();
+            if (Transaction != null)
+            {
+                cmd.Transaction = Transaction;
+            }
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandText = "sys.sp_sequence_get_range";
+
+            cmd.Parameters.Add(CreateParameter("@sequence_name", "Test.RangeSeq"));
+            cmd.Parameters.Add(CreateParameter("@range_size", 10));
+
+            // Specify an output parameter to retreive the first value of the generated range.
+            SqlParameter firstValueInRange = new SqlParameter("@range_first_value", SqlDbType.Variant) { Direction = ParameterDirection.Output };
+            cmd.Parameters.Add(firstValueInRange);
+
+            ConnectionState state = cmd.Connection.State;
+            if (state == ConnectionState.Closed)
+            {
+                cmd.Connection.Open();
+            }
+            try
+            {
+                // System.InvalidOperationException: SqlCommand/OleDbCommand.Prepare method requires all parameters to have an explicitly set type.
+                //cmd.Prepare();
+                int affected = cmd.ExecuteNonQuery();
+                long value = long.Parse(firstValueInRange.Value.ToString());
+                Type type = firstValueInRange.Value.GetType();
+
+                object[] result = new object[size];
+                for (int i = 0; i < size; i++)
+                {
+                    result[i] = Convert.ChangeType(value, type);
+                    value++;
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new SQLStatmentException(ex, cmd.CommandText, null);
+            }
+            finally
+            {
+                if (state == ConnectionState.Closed)
+                {
+                    cmd.Connection.Close();
+                }
+            }
+        }
+
 
     }
 }

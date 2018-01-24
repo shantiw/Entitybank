@@ -31,18 +31,28 @@ namespace XData.Data.Helpers
             return Type.GetType(type);
         }
 
-        public static bool IsNumeric(Type type)
+        public static bool IsInteger(Type type)
         {
             return (type == typeof(SByte) || type == typeof(Int16) || type == typeof(Int32) || type == typeof(Int64) ||
-                type == typeof(Byte) || type == typeof(UInt16) || type == typeof(UInt32) || type == typeof(UInt64) ||
-                type == typeof(Decimal) || type == typeof(Single) || type == typeof(Double));
+                 type == typeof(Byte) || type == typeof(UInt16) || type == typeof(UInt32) || type == typeof(UInt64));
+        }
+
+        public static bool IsNumeric(Type type)
+        {
+            if (IsInteger(type)) return true;
+            return type == typeof(Decimal) || type == typeof(Single) || type == typeof(Double);
+        }
+
+        public static bool IsIntegerArray(Type type)
+        {
+            return (type == typeof(SByte[]) || type == typeof(Int16[]) || type == typeof(Int32[]) || type == typeof(Int64[]) ||
+                type == typeof(Byte[]) || type == typeof(UInt16[]) || type == typeof(UInt32[]) || type == typeof(UInt64[]));
         }
 
         public static bool IsNumericArray(Type type)
         {
-            return (type == typeof(SByte[]) || type == typeof(Int16[]) || type == typeof(Int32[]) || type == typeof(Int64[]) ||
-                type == typeof(Byte[]) || type == typeof(UInt16[]) || type == typeof(UInt32[]) || type == typeof(UInt64[]) ||
-                type == typeof(Decimal[]) || type == typeof(Single[]) || type == typeof(Double[]));
+            if (IsIntegerArray(type)) return true;
+            return type == typeof(Decimal[]) || type == typeof(Single[]) || type == typeof(Double[]);
         }
 
         public static object ToFloatNumber(string value)

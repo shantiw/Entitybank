@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
@@ -46,6 +44,11 @@ namespace XData.Data.Objects
         public DbParameter CreateParameter(string parameter, object value)
         {
             return UnderlyingDatabase.CreateParameter(parameter, value);
+        }
+
+        protected DbParameter[] CreateParameters(IReadOnlyDictionary<string, object> dbParameterValues)
+        {
+            return UnderlyingDatabase.CreateParameters(dbParameterValues);
         }
 
 

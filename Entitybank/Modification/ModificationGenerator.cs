@@ -8,7 +8,7 @@ using XData.Data.Schema;
 
 namespace XData.Data.Modification
 {
-    public abstract class ModificationGenerator
+    public abstract partial class ModificationGenerator
     {
         public virtual string GenerateInsertStatement(Dictionary<string, object> propertyValues, XElement entitySchema, out IReadOnlyDictionary<string, object> dbParameterValues)
         {

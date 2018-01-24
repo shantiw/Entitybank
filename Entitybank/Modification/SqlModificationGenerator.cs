@@ -9,6 +9,8 @@ namespace XData.Data.Modification
 {
     public class SqlModificationGenerator : ModificationGenerator
     {
+        protected override int DbParamLimit => 2100;
+
         protected override string DecorateTableName(string table)
         {
             return string.Format("[{0}]", table);

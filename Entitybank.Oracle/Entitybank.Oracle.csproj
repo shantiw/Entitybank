@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modification\OracleModificationGenerator.Batch.cs" />
     <Compile Include="Modification\OracleModificationGenerator.cs" />
     <Compile Include="Objects\OracleDatabase.cs" />
     <Compile Include="OData\OracleDatabase.OData.cs" />

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using XData.Data.DataObjects;
 using XData.Data.Objects;
+using XData.Data.Schema;
 
 namespace XData.Data.Dynamic
 {
@@ -69,6 +70,12 @@ namespace XData.Data.Dynamic
         {
             Database database = new DatabaseManufacturer().Create(name);
             return new DynDatabase(database);
+        }
+
+        protected override Dictionary<string, object> ToDictionary(dynamic obj, XElement entitySchema)
+        {
+            ExecuteAggregationHelper helper = new ExecuteAggregationHelper();
+            return helper.GetPropertyValues(obj, entitySchema);
         }
 
 

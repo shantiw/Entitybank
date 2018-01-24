@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace XData.Data.Modification
 {
-    public class OracleModificationGenerator : ModificationGenerator
+    public partial class OracleModificationGenerator : ModificationGenerator
     {
         protected override string DecorateTableName(string table)
         {

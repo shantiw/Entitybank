@@ -89,6 +89,11 @@ namespace XData.Data.Objects
             throw new NotSupportedException();
         }
 
+        protected override object[] FetchSequences(string sequenceName, int size)
+        {
+            throw new NotSupportedException();
+        }
+
 
     }
 }
