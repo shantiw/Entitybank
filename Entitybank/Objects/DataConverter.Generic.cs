@@ -130,7 +130,8 @@ namespace XData.Data.Objects
             if (parentXsd != null)
             {
                 XElement last = parentXsd.Descendants(XSNamespace + "element").Last(x => x.Attribute("name") != null && x.Attribute("type") != null);
-                last.AddAfterSelf(xsd.Elements().First());
+                xsd = new XElement(xsd.Elements().First());
+                last.AddAfterSelf(xsd);
             }
 
             foreach (ResultNode childNode in resultNode.Children)

@@ -615,7 +615,7 @@ namespace XData.Data.OData
             {
                 sConverter = dataConverter;
             }
-            DataConverter<T> oDataConverter = new DataConverterManufacturer().Create<T>(dataConverter);
+            DataConverter<T> oDataConverter = new DataConverterManufacturer().Create<T>(sConverter);
 
             DateFormatter formatter;
             if (string.IsNullOrWhiteSpace(dateFormatter))
