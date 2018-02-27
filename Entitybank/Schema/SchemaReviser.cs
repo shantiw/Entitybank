@@ -172,7 +172,7 @@ namespace XData.Data.Schema
         }
 
         // entity property & collection property
-        protected void DeriveProperties(XElement schema)
+        private void DeriveProperties(XElement schema)
         {
             List<XElement> xRelationships = new List<XElement>(schema.Elements(SchemaVocab.Relationship));
 
@@ -208,7 +208,7 @@ namespace XData.Data.Schema
             }
         }
 
-        protected void DeriveProperties(XElement xEntity, IEnumerable<XElement> xRelationships, XElement schema)
+        private void DeriveProperties(XElement xEntity, IEnumerable<XElement> xRelationships, XElement schema)
         {
             string entity = xEntity.Attribute(SchemaVocab.Name).Value;
 
