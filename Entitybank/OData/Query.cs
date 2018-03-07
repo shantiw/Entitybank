@@ -21,7 +21,7 @@ namespace XData.Data.OData
         public long Skip { get; private set; }
         public long Top { get; private set; }
 
-        public IEnumerable<Property> Properties { get; private set; }
+        public IEnumerable<Property> Properties { get; set; }
         public IEnumerable<string> Parameters { get; private set; }
 
         public ParameterCollection ParameterCollection { get; private set; }

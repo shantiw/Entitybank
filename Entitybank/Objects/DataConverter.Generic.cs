@@ -127,6 +127,17 @@ namespace XData.Data.Objects
                 xsd = GenerateEntityXsd(resultNode.Table, resultNode.Entity, schema, resultNode.Name);
             }
 
+            //
+            IEnumerable<XElement> xs_properties = xsd.Descendants(XSNamespace + "element").Where(x => x.Attribute("name") != null && x.Attribute("type") != null);
+            foreach (XElement xs_property in xs_properties.ToList())
+            {
+                string name = xs_property.Attribute("name").Value;
+                if (resultNode.Select.Contains(name)) continue;
+
+                xs_property.Remove();
+            }
+
+            //
             if (parentXsd != null)
             {
                 XElement last = parentXsd.Descendants(XSNamespace + "element").Last(x => x.Attribute("name") != null && x.Attribute("type") != null);

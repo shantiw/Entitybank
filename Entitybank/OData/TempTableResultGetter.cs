@@ -46,6 +46,7 @@ namespace XData.Data.OData
             //
             Dictionary<ExpandNode, TempTableNode> childrenDict = CreateChildren(queryExpand.Nodes, root, out IEnumerable<string> relatedPropertiesForSelect);
             query.Select.Properties = query.Select.Properties.Union(relatedPropertiesForSelect).ToArray();
+            query.Properties = UnionProperties(query, relatedPropertiesForSelect);
 
             //
             if (query.Top != 0 || query.Skip != 0)
@@ -157,6 +158,7 @@ namespace XData.Data.OData
 
             node.DistinctKey = node.RelatedKey.Values.Union(keyProperties);
             queryNode.Query.Select.Properties = unionSelect.ToArray();
+            queryNode.Query.Properties = UnionProperties(queryNode.Query, unionSelect);
 
             //
             SetNodeStatments(node, queryNode);
@@ -167,6 +169,24 @@ namespace XData.Data.OData
                 pair.Value.ParentTempTableName = node.TempTableName;
                 Compose(pair.Key, pair.Value);
             }
+        }
+
+        protected IEnumerable<Property> UnionProperties(Query query, IEnumerable<string> properties)
+        {
+            List<Property> addRange = new List<Property>();
+            foreach (string property in properties)
+            {
+                if (query.Properties.Any(p => p.Name == property)) continue;
+
+                Property oProperty = FieldProperty.Create(property, query.Entity, query.Schema);
+                addRange.Add(oProperty);
+            }
+
+            if (addRange.Count == 0) return query.Properties;
+
+            List<Property> propertyList = new List<Property>(query.Properties);
+            propertyList.AddRange(addRange);
+            return propertyList;
         }
 
         protected abstract void SetNodeStatments(TempTableNode node, ExpandNode queryNode);
