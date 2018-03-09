@@ -7,7 +7,7 @@
 
 /Entitybank/obj
 /Entitybank/bin
-/Entitybank/Entitybank.1.0.0.nupkg
+/Entitybank/*.nupkg
 /Entitybank/Entitybank.nuspec
 /Entitybank/nuget.exe
 
