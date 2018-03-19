@@ -98,8 +98,8 @@ namespace XData.Data.Objects
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.CommandText = "sys.sp_sequence_get_range";
 
-            cmd.Parameters.Add(CreateParameter("@sequence_name", "Test.RangeSeq"));
-            cmd.Parameters.Add(CreateParameter("@range_size", 10));
+            cmd.Parameters.Add(CreateParameter("@sequence_name", sequenceName));
+            cmd.Parameters.Add(CreateParameter("@range_size", size));
 
             // Specify an output parameter to retreive the first value of the generated range.
             SqlParameter firstValueInRange = new SqlParameter("@range_first_value", SqlDbType.Variant) { Direction = ParameterDirection.Output };

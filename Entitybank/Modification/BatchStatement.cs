@@ -18,9 +18,6 @@ namespace XData.Data.Modification
             EndIndex = endIndex;
         }
 
-        public void SetSql(string sql)
-        {
-            Sql = sql;
-        }
+
     }
 }

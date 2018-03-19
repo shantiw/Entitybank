@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using XData.Data.Helpers;
 using XData.Data.Modification;
 using XData.Data.Schema;
 
@@ -11,6 +12,8 @@ namespace XData.Data.Xml
 {
     public class ExecuteAggregationHelper : IExecuteAggregationHelper<XElement>, ICreateAggregationHelper<XElement>, IDeleteAggregationHelper<XElement>, IUpdateAggregationHelper<XElement>
     {
+        protected static readonly XNamespace XSINamespace = TypeHelper.XSINamespace;
+
         public IEnumerable<XElement> GetChildren(XElement element)
         {
             return element.Elements();
@@ -29,7 +32,38 @@ namespace XData.Data.Xml
                 string dataType = propertySchema.Attribute(SchemaVocab.DataType).Value;
                 Type type = Type.GetType(dataType);
 
-                object value = ChangeType(child.Value, type);
+                object value;
+                if (type == typeof(string))
+                {
+                    if (child.Value == string.Empty)
+                    {
+                        XAttribute nil = child.Attribute(XSINamespace + "nil");
+                        bool isNull = nil != null && nil.Value == "true";
+                        if (isNull)
+                        {
+                            value = null;
+                        }
+                        else
+                        {
+                            value = child.Value; // string.Empty
+                        }
+                    }
+                    else
+                    {
+                        value = child.Value;
+                    }
+                }
+                else
+                {
+                    if (string.IsNullOrWhiteSpace(child.Value))
+                    {
+                        value = null;
+                    }
+                    else
+                    {
+                        value = ChangeType(child.Value, type);
+                    }
+                }
 
                 propertyValues.Add(child.Name.LocalName, value);
             }
@@ -61,7 +95,7 @@ namespace XData.Data.Xml
                 if (propertyValue.Value == null)
                 {
                     element.SetElementValue(propertyValue.Key, string.Empty);
-                    //element.Element(propertyValue.Key).SetAttributeValue("", "true");
+                    element.Element(propertyValue.Key).SetAttributeValue(XSINamespace + "nil", "true");
                 }
                 else
                 {
@@ -106,16 +140,7 @@ namespace XData.Data.Xml
         {
             if (dataType == typeof(string))
             {
-                if (value == string.Empty)
-                {
-                    //element.Attribute() != null && element.Attribute().Value=="true" return null;
-
-                    return value;
-                }
-                else
-                {
-                    return value;
-                }
+                return value;
             }
 
             if (string.IsNullOrWhiteSpace(value)) return null;

@@ -15,7 +15,7 @@ namespace XData.Data.Modification
             Dictionary<string, object> paramDict = new Dictionary<string, object>();
 
             List<string> columnList = new List<string>();
-            List<string> paramList = new List<string>();
+            List<string> valueList = new List<string>();
             int index = 0;
             foreach (KeyValuePair<string, object> propertyValue in propertyValues)
             {
@@ -24,15 +24,23 @@ namespace XData.Data.Modification
 
                 XElement propertySchema = entitySchema.Elements(SchemaVocab.Property).First(p => p.Attribute(SchemaVocab.Name).Value == property);
                 string column = propertySchema.Attribute(SchemaVocab.Column).Value;
-                string dbParameterName = GetDbParameterName(index);
                 columnList.Add(DecorateColumnName(column));
-                paramList.Add(dbParameterName);
-                paramDict.Add(dbParameterName, value);
 
-                index++;
+                if (value == null)
+                {
+                    valueList.Add("NULL");
+                }
+                else
+                {
+                    string dbParameterName = GetDbParameterName(index);
+                    valueList.Add(dbParameterName);
+                    paramDict.Add(dbParameterName, value);
+
+                    index++;
+                }
             }
             string insert = string.Join(",", columnList);
-            string values = string.Join(",", paramList);
+            string values = string.Join(",", valueList);
 
             //
             string table = entitySchema.Attribute(SchemaVocab.Table).Value;
@@ -80,11 +88,19 @@ namespace XData.Data.Modification
 
                 XElement propertySchema = entitySchema.Elements(SchemaVocab.Property).First(p => p.Attribute(SchemaVocab.Name).Value == property);
                 string column = propertySchema.Attribute(SchemaVocab.Column).Value;
-                string dbParameterName = GetDbParameterName(index);
-                setList.Add(string.Format("{0} = {1}", column, dbParameterName));
-                paramDict.Add(dbParameterName, value);
 
-                index++;
+                if (value == null)
+                {
+                    setList.Add(string.Format("{0} = NULL", DecorateColumnName(column)));
+                }
+                else
+                {
+                    string dbParameterName = GetDbParameterName(index);
+                    setList.Add(string.Format("{0} = {1}", DecorateColumnName(column), dbParameterName));
+                    paramDict.Add(dbParameterName, value);
+
+                    index++;
+                }
             }
             string set = string.Join(",", setList);
 

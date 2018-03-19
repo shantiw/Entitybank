@@ -20,8 +20,8 @@ namespace XData.Data.Modification
             string tableName = DecorateTableName(entitySchema.Attribute(SchemaVocab.Table).Value);
             Dictionary<string, Tuple<string, Type>> propertyColumns = Batch_GetPropertyColumns(objects[0], entitySchema);
 
-            int nonIntColCount = propertyColumns.Values.Where(v => IsInteger(v.Item2)).Count();
             int pageSize;
+            int nonIntColCount = propertyColumns.Count - propertyColumns.Values.Where(v => IsInteger(v.Item2)).Count();
             if (nonIntColCount == 0)
             {
                 pageSize = InsertRowLimit;
@@ -71,7 +71,7 @@ namespace XData.Data.Modification
             int remainder = count % pageSize;
             if (remainder != 0)
             {
-                partitions.Add(pageCount * pageSize, remainder);
+                partitions.Add(pageCount * pageSize, pageCount * pageSize + remainder - 1);
             }
 
             return partitions;
@@ -105,7 +105,7 @@ namespace XData.Data.Modification
             }
 
             //
-            string sql = string.Format("INSERT INTO {0} ({1}) VALUES({2})", tableName,
+            string sql = string.Format("INSERT INTO {0} ({1}) VALUES {2}", tableName,
                 string.Join(",", propertyColumns.Values.Select(v => v.Item1)), string.Join(",", valuesClause));
 
             return new BatchStatement(sql, paramDict, startIndex, endIndex);
@@ -149,13 +149,12 @@ namespace XData.Data.Modification
             XElement entitySchema, XElement keySchema, XElement concurrencySchema)
         {
             IEnumerable<BatchStatement> whereClauses = Batch_GenerateWhereClauses(objects, entitySchema, keySchema, concurrencySchema, DbParamLimit, out string alias);
-            IEnumerable<BatchStatement> result = whereClauses;
+            string head = string.Format("DELETE {0} ", string.IsNullOrWhiteSpace(alias) ? DecorateTableName(entitySchema.Attribute(SchemaVocab.Table).Value) : alias);
 
-            string head = string.IsNullOrWhiteSpace(alias) ? "DELETE " : "DELETE " + alias + " ";
-
-            foreach (BatchStatement statement in result)
+            List<BatchStatement> result = new List<BatchStatement>();
+            foreach (BatchStatement statement in whereClauses)
             {
-                statement.SetSql(head + statement.Sql);
+                result.Add(new BatchStatement(head + statement.Sql, statement.Parameters, statement.StartIndex, statement.EndIndex));
             }
 
             return result;
@@ -190,18 +189,29 @@ namespace XData.Data.Modification
 
             int dbParamLimit = DbParamLimit - paramDict.Count;
             IEnumerable<BatchStatement> whereClauses = Batch_GenerateWhereClauses(objects, entitySchema, keySchema, concurrencySchema, dbParamLimit, out string alias);
-            IEnumerable<BatchStatement> result = whereClauses;
 
             string tableName = DecorateTableName(entitySchema.Attribute(SchemaVocab.Table).Value);
             string head = string.IsNullOrWhiteSpace(alias) ? string.Format("UPDATE {0} ", tableName) : string.Format("UPDATE {0} ", alias);
             head += string.Format("SET {0} ", string.Join(",", valueList));
 
-            foreach (BatchStatement statement in result)
+            List<BatchStatement> statements = new List<BatchStatement>();
+            foreach (BatchStatement whereClause in whereClauses)
             {
-                statement.SetSql(head + statement.Sql);
+                Dictionary<string, object> statementParams = new Dictionary<string, object>();
+                foreach (KeyValuePair<string, object> param in whereClause.Parameters)
+                {
+                    statementParams.Add(param.Key, param.Value);
+                }
+                foreach (KeyValuePair<string, object> param in paramDict)
+                {
+                    statementParams.Add(param.Key, param.Value);
+                }
+
+                BatchStatement statement = new BatchStatement(head + whereClause.Sql, statementParams, whereClause.StartIndex, whereClause.EndIndex);
+                statements.Add(statement);
             }
 
-            return result;
+            return statements;
         }
 
         protected IEnumerable<BatchStatement> Batch_GenerateWhereClauses(Dictionary<string, object>[] array,
@@ -274,7 +284,7 @@ namespace XData.Data.Modification
             {
                 foreach (KeyValuePair<int, int> partition in partitions)
                 {
-                    int destLength = partition.Value - partition.Key;
+                    int destLength = partition.Value - partition.Key + 1;
                     Dictionary<string, object>[] destArray = new Dictionary<string, object>[destLength];
                     Array.Copy(array, partition.Key, destArray, 0, destLength);
                     IEnumerable<string> values = destArray.Select(dict => dict[property].ToString());
@@ -287,7 +297,7 @@ namespace XData.Data.Modification
             {
                 foreach (KeyValuePair<int, int> partition in partitions)
                 {
-                    int destLength = partition.Value - partition.Key;
+                    int destLength = partition.Value - partition.Key + 1;
                     Dictionary<string, object>[] destArray = new Dictionary<string, object>[destLength];
                     Array.Copy(array, partition.Key, destArray, 0, destLength);
 
@@ -300,7 +310,7 @@ namespace XData.Data.Modification
                         paramList.Add(dbParameterName);
                         paramDict.Add(dbParameterName, destArray[i][property]);
                     }
-                    string whereClause = string.Format("WHERE {0} IN {{1}}", column, string.Join(",", paramList));
+                    string whereClause = string.Format("WHERE {0} IN {{{1}}}", column, string.Join(",", paramList));
                     IReadOnlyDictionary<string, object> dbParameters = paramDict;
                     whereClauses.Add(new BatchStatement(whereClause, dbParameters, partition.Key, partition.Value));
                 }
@@ -343,8 +353,7 @@ namespace XData.Data.Modification
             string sql = string.Format("FROM {0} S, ({1}) T WHERE {2}", tableName, statement.Sql,
                 string.Join(" AND ", keyConcPropertyColumns.Select(p => string.Format("S.{0} = T.{0}", p.Value.Item1))));
 
-            statement.SetSql(sql);
-            return statement;
+            return new BatchStatement(sql, statement.Parameters, statement.StartIndex, statement.EndIndex);
         }
 
         protected BatchStatement Batch_GenerateSelectUnionAll(int startIndex, int endIndex,
@@ -364,7 +373,7 @@ namespace XData.Data.Modification
                     Type type = propertyColumn.Value.Item2;
                     object value = propertyValues[property];
                     string valueExpr = Batch_GetValueExpr(value, type, paramDict, dbParamIndex);
-                    valueList.Add(string.Format("{0} {1}", column, valueExpr));
+                    valueList.Add(string.Format("{0} {1}", valueExpr, column));
                     dbParamIndex++;
                 }
                 selects.Add(string.Format("SELECT {0}", string.Join(",", valueList)));
@@ -447,8 +456,8 @@ namespace XData.Data.Modification
             foreach (KeyValuePair<int, int> partition in partitions)
             {
                 BatchStatement statement = Batch_GenerateSelectUnionAll(partition.Key, partition.Value, objects, propertyColumns);
-                statement.SetSql(string.Format("{0} ({1}) T {2}", head, statement.Sql, tail));
-                result.Add(statement);
+                string sql = string.Format("{0} ({1}) T {2}", head, statement.Sql, tail);
+                result.Add(new BatchStatement(sql, statement.Parameters, statement.StartIndex, statement.EndIndex));
             }
 
             return result;
