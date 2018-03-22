@@ -52,10 +52,12 @@ namespace XData.Data.Modification
         {
             string tableName = DecorateTableName(entitySchema.Attribute(SchemaVocab.Table).Value);
 
-            IEnumerable<BatchStatement> result = Batch_GenerateWhereINClauses(objects, keySchema, concurrencySchema, DbParamLimit);
-            foreach (BatchStatement statement in result)
+            List<BatchStatement> result = new List<BatchStatement>();
+            IEnumerable<BatchStatement> whereInClauses = Batch_GenerateWhereINClauses(objects, keySchema, concurrencySchema, DbParamLimit);
+            foreach (BatchStatement statement in whereInClauses)
             {
-                statement.SetSql(string.Format("DELETE {0} {1}", tableName, statement.Sql));
+                string sql = string.Format("DELETE {0} {1}", tableName, statement.Sql);
+                result.Add(new BatchStatement(sql, statement.Parameters, statement.StartIndex, statement.EndIndex));
             }
             return result;
         }
@@ -82,14 +84,15 @@ namespace XData.Data.Modification
             }
 
             int dbParamLimit = DbParamLimit - paramDict.Count;
-            IEnumerable<BatchStatement> result = Batch_GenerateWhereINClauses(objects, keySchema, concurrencySchema, dbParamLimit);
+            IEnumerable<BatchStatement> whereInClauses = Batch_GenerateWhereINClauses(objects, keySchema, concurrencySchema, dbParamLimit);
 
             string tableName = DecorateTableName(entitySchema.Attribute(SchemaVocab.Table).Value);
             string head = string.Format("UPDATE {0} SET {1} ", tableName, string.Join(",", valueList));
 
-            foreach (BatchStatement statement in result)
+            List<BatchStatement> result = new List<BatchStatement>();
+            foreach (BatchStatement statement in whereInClauses)
             {
-                statement.SetSql(head + statement.Sql);
+                result.Add(new BatchStatement(head + statement.Sql, statement.Parameters, statement.StartIndex, statement.EndIndex));
             }
 
             return result;

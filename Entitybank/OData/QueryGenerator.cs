@@ -114,7 +114,7 @@ namespace XData.Data.OData
                 clauses.Where = GenerateWhere(query, table, out constants, out paramMapping);
             }
 
-            dbParameterValues = GetDbParameterValues(constants, paramMapping, query.ParameterValues);
+            dbParameterValues = GetDbParameterValues(constants, paramMapping, query.Parameters.ParameterValues);
             return clauses;
         }
 
@@ -157,7 +157,7 @@ namespace XData.Data.OData
                 clauses.OrderBy = GenerateOrderBy(query.Orderby, table);
             }
 
-            dbParameterValues = GetDbParameterValues(constants, paramMapping, query.ParameterValues);
+            dbParameterValues = GetDbParameterValues(constants, paramMapping, query.Parameters.ParameterValues);
             return clauses;
         }
 

@@ -107,6 +107,7 @@
     <Compile Include="Objects\SQLStatmentException.cs" />
     <Compile Include="Helpers\AnalysisHelper.cs" />
     <Compile Include="OData\Expand.cs" />
+    <Compile Include="OData\PropertyCollection.cs" />
     <Compile Include="Schema.Delta\ConfigSchemaDeltaFinder.cs" />
     <Compile Include="Schema.Delta\SchemaDeltaFinder.cs" />
     <Compile Include="Schema.Delta\SchemaDeltaMessages.Designer.cs">

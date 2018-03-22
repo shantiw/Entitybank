@@ -18,7 +18,7 @@ namespace XData.Data.OData
 
         public Query Query { get; private set; }
         public XElement Schema { get; private set; }
-        public ParameterCollection ParameterCollection { get; private set; }
+        public ParameterCollection Parameters { get; private set; }
         public ExpandNode[] Nodes { get; private set; }
 
         protected readonly Dictionary<string, string> StringPlaceholders;
@@ -28,7 +28,7 @@ namespace XData.Data.OData
         {
             Query = query;
             Schema = new XElement(query.Schema);
-            ParameterCollection = query.ParameterCollection;
+            Parameters = query.Parameters;
 
             string value = EncodeString(expand, out StringPlaceholders);
             XElement entitySchema = Schema.GetEntitySchema(Query.Entity);
@@ -66,7 +66,7 @@ namespace XData.Data.OData
                 ExpandProperty oProperty = ExpandProperty.Create(property, propertyPath, parentSchema, Schema);
 
                 string path = parentPath + "/" + property;
-                ExpandNode oExpand = ExpandNode.Create(oProperty, select, filter, orderby, Schema, ParameterCollection);
+                ExpandNode oExpand = ExpandNode.Create(oProperty, select, filter, orderby, Schema, Parameters);
                 oExpand.Path = path;
                 expands.Add(oExpand);
 
@@ -174,7 +174,7 @@ namespace XData.Data.OData
         {
             Query = query;
             Schema = new XElement(query.Schema);
-            ParameterCollection = query.ParameterCollection;
+            Parameters = query.Parameters;
 
             XElement entitySchema = Schema.GetEntitySchema(Query.Entity);
             string collection = entitySchema.Attribute(SchemaVocab.Collection).Value;
@@ -195,7 +195,7 @@ namespace XData.Data.OData
             ExpandProperty oProperty = ExpandProperty.Create(property, propertyPath, parentSchema, Schema);
 
             string path = parentPath + "/" + property;
-            ExpandNode oExpand = ExpandNode.Create(oProperty, expand.Select, expand.Filter, expand.Orderby, Schema, ParameterCollection);
+            ExpandNode oExpand = ExpandNode.Create(oProperty, expand.Select, expand.Filter, expand.Orderby, Schema, Parameters);
             oExpand.Path = path;
 
             oExpand.Children = new ExpandNode[expand.Children.Length];

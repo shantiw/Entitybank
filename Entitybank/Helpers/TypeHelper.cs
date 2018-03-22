@@ -55,24 +55,28 @@ namespace XData.Data.Helpers
             return type == typeof(Decimal[]) || type == typeof(Single[]) || type == typeof(Double[]);
         }
 
+        // precision: float:7, double:15-16, decimal:28-29, long:19
         public static object ToFloatNumber(string value)
         {
-            object result;
-            double d = double.Parse(value);
-            result = d;
-            if (d >= float.MinValue && d <= float.MaxValue)
+            string sValue = value.Replace(".", string.Empty);
+            if (long.TryParse(sValue, out long lResult))
             {
-                float f = float.Parse(value);
-                result = f;
-                if (f >= (float)decimal.MinValue && f <= (float)decimal.MaxValue)
+                sValue = lResult.ToString();
+                if (sValue.Length <= 7) return float.Parse(value);
+                if (sValue.Length < 16) return double.Parse(value);
+                if (sValue.Length == 16)
                 {
-                    if (decimal.TryParse(value, out decimal c))
-                    {
-                        result = c;
-                    }
+                    double val = double.Parse(value);
+                    string sVal = val.ToString().Replace(".", string.Empty);
+                    if (long.Parse(sVal) == lResult) return double.Parse(value);
                 }
             }
-            return result;
+
+            // (-7.9 x 1028 - 7.9 x 1028) / (100 - 1028)
+            if (decimal.TryParse(value, out decimal result)) return result;
+
+            // ±5.0 × 10−324 to ±1.7 × 10308
+            return double.Parse(value);
         }
 
         public static object ToIntegerNumber(string value)

@@ -41,11 +41,11 @@ namespace XData.Data.OData
             {
                 OperatorMapping = GetOperatorMapping();
 
-                GenerateNextParamName = () => query.GenerateNextParamName();
+                GenerateNextParamName = () => query.Parameters.GenerateNextParamName();
                 Schema = query.Schema;
                 Properties = query.Properties;
                 Filter = query.Filter;
-                UpperParamNameMapping = query.UpperParamNameMapping;
+                UpperParamNameMapping = query.Parameters.UpperNameMapping;
 
                 Table = table;
                 Generator = generator;

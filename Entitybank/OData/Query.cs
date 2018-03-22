@@ -21,22 +21,15 @@ namespace XData.Data.OData
         public long Skip { get; private set; }
         public long Top { get; private set; }
 
-        public IEnumerable<Property> Properties { get; set; }
-        public IEnumerable<string> Parameters { get; private set; }
+        public PropertyCollection Properties { get; private set; }
 
-        public ParameterCollection ParameterCollection { get; private set; }
+        public ParameterCollection Parameters { get; private set; }
 
-        internal IReadOnlyDictionary<string, object> ParameterValues { get => ParameterCollection.ParameterValues; }
-
-        internal IReadOnlyDictionary<string, string> UpperParamNameMapping { get => ParameterCollection.UpperNameMapping; }
-
-        internal Func<string> GenerateNextParamName { get => ParameterCollection.GenerateNextParamName; }
-
-        public Query(string entity, string select, string filter, string orderby, XElement schema, ParameterCollection parameterCollection)
+        public Query(string entity, string select, string filter, string orderby, XElement schema, ParameterCollection parameters)
         {
             Entity = entity;
             Schema = new XElement(schema);
-            ParameterCollection = parameterCollection;
+            Parameters = parameters;
 
             //
             Select = new Select(string.IsNullOrWhiteSpace(select) ? "*" : select, Entity, Schema);
@@ -76,16 +69,14 @@ namespace XData.Data.OData
                 propertyList.Add(oProperty);
             }
 
-            Properties = propertyList;
+            Properties = new PropertyCollection(propertyList, this);
 
-            Parameters = parameterList.Distinct();
-
-            ParameterCollection.AddRange(Parameters);
+            Parameters.UnionParameters(parameterList);
         }
 
         public Query(string entity, string select, string filter, string orderby, long skip, long top, XElement schema,
-            ParameterCollection parameterCollection)
-         : this(entity, select, filter, orderby, schema, parameterCollection)
+            ParameterCollection parameters)
+         : this(entity, select, filter, orderby, schema, parameters)
         {
             Skip = skip;
             Top = top;

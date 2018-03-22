@@ -7,55 +7,74 @@ namespace XData.Data.OData
 {
     public class ParameterCollection
     {
-        private Dictionary<string, object> _parameterValues = new Dictionary<string, object>();
-        public IReadOnlyDictionary<string, object> ParameterValues { get => _parameterValues; }
-
+        // case sensitive
         // ParamName, UpperParamName
         private Dictionary<string, string> _upperNameMapping = new Dictionary<string, string>();
         public IReadOnlyDictionary<string, string> UpperNameMapping { get => _upperNameMapping; }
 
-        private List<string> _upperNames = new List<string>();
-
-        private readonly IEnumerable<KeyValuePair<string, string>> _stringValues;
-
-        public ParameterCollection(IEnumerable<KeyValuePair<string, string>> parameterValues)
-        {
-            _stringValues = parameterValues;
-        }
-
-        public void AddRange(IEnumerable<string> parameters)
+        public void UnionParameters(IEnumerable<string> parameters)
         {
             foreach (string parameter in parameters.Distinct())
             {
-                if (!_parameterValues.ContainsKey(parameter))
-                {
-                    _parameterValues.Add(parameter, GetParameterValue(parameter));
-                }
-
                 if (!_upperNameMapping.ContainsKey(parameter))
                 {
                     string upperName = parameter.ToUpper();
-                    while (_upperNames.Contains(upperName))
+                    while (_upperNameMapping.Values.Contains(upperName))
                     {
                         upperName += "L";
                     }
-                    _upperNames.Add(upperName);
                     _upperNameMapping.Add(parameter, upperName);
                 }
             }
         }
 
-        private object GetParameterValue(string parameter)
+        private Dictionary<string, object> _parameterValues = new Dictionary<string, object>();
+        public IReadOnlyDictionary<string, object> ParameterValues { get => _parameterValues; }
+
+        public void SetParameterValues(IEnumerable<KeyValuePair<string, string>> parameterValues)
         {
-            return GetParameterValue(_stringValues, parameter);
+            Dictionary<string, object> dict = new Dictionary<string, object>();
+            foreach (KeyValuePair<string, string> pv in parameterValues)
+            {
+                object value = Parse(pv.Value);
+                if (dict.ContainsKey(pv.Key))
+                {
+                    dict[pv.Key] = value;
+                }
+                else
+                {
+                    dict[pv.Key] = value;
+                }
+            }
+
+            SetParameterValues(dict);
         }
 
-        private static object GetParameterValue(IEnumerable<KeyValuePair<string, string>> parameterValues, string parameter)
+        public void SetParameterValues(IReadOnlyDictionary<string, object> parameterValues)
+        {
+            foreach (KeyValuePair<string, object> pv in parameterValues)
+            {
+                if (_upperNameMapping.ContainsKey(pv.Key))
+                {
+                    if (_parameterValues.ContainsKey(pv.Key))
+                    {
+                        _parameterValues[pv.Key] = pv.Value;
+                    }
+                    else
+                    {
+                        _parameterValues.Add(pv.Key, pv.Value);
+                    }
+                }
+            }
+        }
+
+        private static object Parse(string value)
         {
             object result;
 
-            string value = GetValue(parameterValues, parameter);
-            if (string.IsNullOrWhiteSpace(value)) return null;
+            if (value == "null") return null;
+            if (value == "true") return true;
+            if (value == "false") return false;
 
             if (value.StartsWith("datetime'") && value.EndsWith("'"))
             {
@@ -80,11 +99,6 @@ namespace XData.Data.OData
             return result;
         }
 
-        private static string GetValue(IEnumerable<KeyValuePair<string, string>> nameValues, string key)
-        {
-            return TypeHelper.GetValue(nameValues, key);
-        }
-
         private static object ToIntegerNumber(string value)
         {
             return TypeHelper.ToIntegerNumber(value);
@@ -95,8 +109,8 @@ namespace XData.Data.OData
             return TypeHelper.ToFloatNumber(value);
         }
 
-        // Upper Case
-        private const string ParameterPrefix = "P";
+        //
+        private const string ParameterPrefix = "P";  // Upper Case
         private int _parameterIndex = 1;
 
         public string GenerateNextParamName()
@@ -104,32 +118,17 @@ namespace XData.Data.OData
             string paramName = string.Format("@{0}{1}", ParameterPrefix, _parameterIndex);
             _parameterIndex++;
 
-            while (_upperNames.Contains(paramName))
+            while (_upperNameMapping.Values.Contains(paramName))
             {
                 paramName = string.Format("@{0}{1}", ParameterPrefix, _parameterIndex);
                 _parameterIndex++;
             }
-
-            _upperNames.Add(paramName);
 
             _parameterValues.Add(paramName, null);
 
             _upperNameMapping.Add(paramName, paramName);
 
             return paramName;
-        }
-
-        public void ResetParameterValues(IReadOnlyDictionary<string, object> source)
-        {
-            foreach (string key in _parameterValues.Keys.ToList())
-            {
-                object value = null;
-                if (source.ContainsKey(key))
-                {
-                    value = source[key];
-                }
-                _parameterValues[key] = value;
-            }
         }
 
 

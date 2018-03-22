@@ -162,8 +162,7 @@ namespace XData.Data.Objects
             List<DbParameter> list = new List<DbParameter>();
             foreach (KeyValuePair<string, object> pair in dbParameterValues)
             {
-                object value = pair.Value ?? DBNull.Value;
-                list.Add(CreateParameter(pair.Key, value));
+                list.Add(CreateParameter(pair.Key, pair.Value));
             }
             return list.ToArray();
         }
