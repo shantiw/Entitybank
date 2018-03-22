@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace XData.Data.Objects
 {
-    public abstract partial class Database<T>
+    public partial class Database<T>
     {
         public string ParameterPrefix => UnderlyingDatabase.ParameterPrefix;
 

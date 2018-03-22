@@ -26,10 +26,10 @@ namespace XData.Data.Dynamic
             validationResults = args.ValidationResults;
         }
 
-        public DynDatabase Database { get; private set; }
+        public Database<dynamic> Database { get; private set; }
 
         //protected DynModifier(Database<dynamic> database, XElement schema) : base(database, schema)
-        public DynModifier(DynDatabase database, XElement schema) : base(database, schema)
+        public DynModifier(Database<dynamic> database, XElement schema) : base(database, schema)
         {
             Database = database;
         }
@@ -177,7 +177,7 @@ namespace XData.Data.Dynamic
 
         public static DynModifier Create(string name, XElement schema = null)
         {
-            DynDatabase database = DynDatabase.Create(name);
+            Database<dynamic> database = new _DynDatabase(new DatabaseManufacturer().Create(name));
             XElement xSchema = schema ?? new PrimarySchemaProvider().GetSchema(name);
             return new DynModifier(database, xSchema);
         }

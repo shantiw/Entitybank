@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
@@ -14,39 +13,32 @@ using XData.Data.Schema;
 namespace XData.Data.Objects
 {
     // Database.Modification.cs
-    //public partial class Database<T>
-    public abstract partial class Database<T>
+    public partial class Database<T>
     {
-        //public event InsertingEventHandler<T> Inserting;
-        //public event InsertedEventHandler<T> Inserted;
-        //public event DeletingEventHandler<T> Deleting;
-        //public event UpdatingEventHandler<T> Updating;
+        public event InsertingEventHandler<T> Inserting;
+        public event InsertedEventHandler<T> Inserted;
+        public event DeletingEventHandler<T> Deleting;
+        public event UpdatingEventHandler<T> Updating;
 
-        //protected void OnInserting(InsertingEventArgs<T> args)
-        //{
-        //    Inserting?.Invoke(this, args);
-        //}
-        protected abstract void OnInserting(T aggregNode, string entity, XElement schema, string path, T aggreg);
+        protected void OnInserting(InsertingEventArgs<T> args)
+        {
+            Inserting?.Invoke(this, args);
+        }
 
-        //protected void OnInserted(InsertedEventArgs<T> args)
-        //{
-        //    Inserted?.Invoke(this, args);
-        //}
-        protected abstract void OnInserted(T aggregNode, string entity, XElement schema, string path, T aggreg, out IList<SQLStatment> after);
+        protected void OnInserted(InsertedEventArgs<T> args)
+        {
+            Inserted?.Invoke(this, args);
+        }
 
-        //protected void OnDeleting(DeletingEventArgs<T> args)
-        //{
-        //    Deleting?.Invoke(this, args);
-        //}
-        protected abstract void OnDeleting(T aggregNode, string entity, XElement schema, string path, T aggreg,
-            IReadOnlyDictionary<string, object> refetched, out IList<SQLStatment> before);
+        protected void OnDeleting(DeletingEventArgs<T> args)
+        {
+            Deleting?.Invoke(this, args);
+        }
 
-        //protected void OnUpdating(UpdatingEventArgs<T> args)
-        //{
-        //    Updating?.Invoke(this, args);
-        //}
-        protected abstract void OnUpdating(T aggregNode, string entity, XElement schema, string path, T aggreg,
-            Func<IReadOnlyDictionary<string, object>> refetch, out IList<SQLStatment> before, out IList<SQLStatment> after);
+        protected void OnUpdating(UpdatingEventArgs<T> args)
+        {
+            Updating?.Invoke(this, args);
+        }
 
         private ModificationGenerator _modificationGenerator = null;
         protected ModificationGenerator ModificationGenerator
@@ -115,7 +107,8 @@ namespace XData.Data.Objects
             }
 
             // raise inserting event
-            OnInserting(executeCommand.AggregNode, executeCommand.Entity, executeCommand.Schema, executeCommand.Path, executeCommand.Aggreg);
+            InsertingEventArgs<T> args = new InsertingEventArgs<T>(executeCommand.AggregNode, executeCommand.Entity, executeCommand.Schema, executeCommand.Path, executeCommand.Aggreg);
+            OnInserting(args);
 
             // synchronize propertyValues with modified aggregNode OnInserting
             SynchronizePropertyValues(executeCommand, modifier);
@@ -153,9 +146,10 @@ namespace XData.Data.Objects
             }
 
             // raise inserted event
-            OnInserted(executeCommand.AggregNode, executeCommand.Entity, executeCommand.Schema, executeCommand.Path, executeCommand.Aggreg, out IList<SQLStatment> after);
+            InsertedEventArgs<T> args1 = new InsertedEventArgs<T>(executeCommand.AggregNode, executeCommand.Entity, executeCommand.Schema, executeCommand.Path, executeCommand.Aggreg);
+            OnInserted(args1);
 
-            foreach (SQLStatment statment in after)
+            foreach (SQLStatment statment in args1.After)
             {
                 int i = UnderlyingDatabase.ExecuteSqlCommand(statment.Sql, statment.Parameters);
             }
@@ -195,16 +189,14 @@ namespace XData.Data.Objects
                 }
             }
 
-            //
-            //DeletingEventArgs<T> args = new DeletingEventArgs<T>(executeCommand.AggregNode, executeCommand.Entity, executeCommand.Schema, executeCommand.Path, executeCommand.Aggreg)
-            //{
-            //    Refetched = refetched
-            //};
-            //OnDeleting(args);
-            OnDeleting(executeCommand.AggregNode, executeCommand.Entity, executeCommand.Schema, executeCommand.Path, executeCommand.Aggreg, refetched, out IList<SQLStatment> before);
+            // raise deleting event
+            DeletingEventArgs<T> args = new DeletingEventArgs<T>(executeCommand.AggregNode, executeCommand.Entity, executeCommand.Schema, executeCommand.Path, executeCommand.Aggreg)
+            {
+                Refetched = refetched
+            };
+            OnDeleting(args);
 
-            //foreach (SQLStatment statment in args.Before)
-            foreach (SQLStatment statment in before)
+            foreach (SQLStatment statment in args.Before)
             {
                 int i = UnderlyingDatabase.ExecuteSqlCommand(statment.Sql, statment.Parameters);
             }
@@ -226,8 +218,10 @@ namespace XData.Data.Objects
 
         internal protected int Execute(UpdateCommand<T> executeCommand, Modifier<T> modifier)
         {
-            OnUpdating(executeCommand.AggregNode, executeCommand.Entity, executeCommand.Schema, executeCommand.Path, executeCommand.Aggreg,
-                () => FetchSingleFromDb(executeCommand), out IList<SQLStatment> before, out IList<SQLStatment> after);
+            UpdatingEventArgs<T> args = new UpdatingEventArgs<T>(executeCommand.AggregNode, executeCommand.Entity, executeCommand.Schema, executeCommand.Path, executeCommand.Aggreg)
+            {
+                Refetch = () => FetchSingleFromDb(executeCommand)
+            };
 
             // synchronize propertyValues with modified aggregNode OnUpdating
             SynchronizePropertyValues(executeCommand, modifier);
@@ -249,7 +243,7 @@ namespace XData.Data.Objects
             modifier.Validate(executeCommand);
 
             //
-            foreach (SQLStatment statment in before)
+            foreach (SQLStatment statment in args.Before)
             {
                 int i = UnderlyingDatabase.ExecuteSqlCommand(statment.Sql, statment.Parameters);
             }
@@ -292,7 +286,7 @@ namespace XData.Data.Objects
             }
 
             //
-            foreach (SQLStatment statment in after)
+            foreach (SQLStatment statment in args.After)
             {
                 int i = UnderlyingDatabase.ExecuteSqlCommand(statment.Sql, statment.Parameters);
             }

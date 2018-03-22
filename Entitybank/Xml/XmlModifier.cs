@@ -25,10 +25,10 @@ namespace XData.Data.Xml
             validationResults = args.ValidationResults;
         }
 
-        public XmlDatabase Database { get; private set; }
+        public Database<XElement> Database { get; private set; }
 
         //protected XmlModifier(Database<XElement> database, XElement schema) : base(database, schema)
-        public XmlModifier(XmlDatabase database, XElement schema) : base(database, schema)
+        public XmlModifier(Database<XElement> database, XElement schema) : base(database, schema)
         {
             Database = database;
         }
@@ -260,7 +260,7 @@ namespace XData.Data.Xml
 
         public static XmlModifier Create(string name, XElement schema = null)
         {
-            XmlDatabase database = XmlDatabase.Create(name);
+            Database<XElement> database = new _XmlDatabase(new DatabaseManufacturer().Create(name));
             XElement xSchema = schema ?? new PrimarySchemaProvider().GetSchema(name);
             return new XmlModifier(database, xSchema);
         }
