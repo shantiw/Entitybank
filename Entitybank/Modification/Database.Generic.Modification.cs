@@ -113,8 +113,8 @@ namespace XData.Data.Objects
             // synchronize propertyValues with modified aggregNode OnInserting
             SynchronizePropertyValues(executeCommand, modifier);
 
-            // validate
-            modifier.Validate(executeCommand);
+            //
+            modifier.CheckConstraints(executeCommand);
 
             // GenerateInsertStatement
             string sql = ModificationGenerator.GenerateInsertStatement(executeCommand.PropertyValues, executeCommand.EntitySchema,
@@ -239,8 +239,8 @@ namespace XData.Data.Objects
                 }
             }
 
-            // validate
-            modifier.Validate(executeCommand);
+            //
+            modifier.CheckConstraints(executeCommand);
 
             //
             foreach (SQLStatment statment in args.Before)

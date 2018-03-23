@@ -61,10 +61,9 @@
     <Compile Include="DataObjects\ForeignKey.cs" />
     <Compile Include="Dynamic\DynCreateAggregation.cs" />
     <Compile Include="Dynamic\DynDeleteAggregation.cs" />
-    <Compile Include="Dynamic\DynModifier.cs" />
+    <Compile Include="Dynamic\_DynModifier.cs" />
     <Compile Include="Dynamic\DynUpdateAggregation.cs" />
     <Compile Include="Dynamic\ExecuteAggregationHelper.cs" />
-    <Compile Include="Dynamic\ValidatingEventArgs.cs" />
     <Compile Include="ErrorMessages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -83,12 +82,14 @@
     <Compile Include="Modification\IExecuteAggregationHelper.cs" />
     <Compile Include="Modification\ModificationGenerator.Batch.cs" />
     <Compile Include="Modification\ModificationGenerator.cs" />
+    <Compile Include="Modification\Modifier.Check.cs" />
     <Compile Include="Modification\Modifier.cs" />
     <Compile Include="Modification\Modifier.Validate.cs" />
     <Compile Include="Modification\SqlModificationGenerator.cs" />
     <Compile Include="Modification\UpdateAggregation.cs" />
     <Compile Include="Modification\ValidatingEventArgs.cs" />
     <Compile Include="Dynamic\_DynDatabase.cs" />
+    <Compile Include="Xml\XmlModifierExtensions.cs" />
     <Compile Include="Xml\_XmlDatabase.cs" />
     <Compile Include="Objects\BuiltIn.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -155,7 +156,7 @@
     <Compile Include="Schema.Objects\Property.cs" />
     <Compile Include="Schema.Objects\Relationship.cs" />
     <Compile Include="Schema.Objects\SchemaHelper.cs" />
-    <Compile Include="Schema\AttributeFactory.cs" />
+    <Compile Include="DataAnnotations\AttributeFactory.cs" />
     <Compile Include="Schema\ConfigNameMapping.cs" />
     <Compile Include="Schema\ConfigPluralMapper.cs" />
     <Compile Include="Schema\ConfigPreSufMapper.cs" />
@@ -192,10 +193,9 @@
     <Compile Include="Schema\UnderscorePreSufMapper.cs" />
     <Compile Include="Xml\ExecuteAggregationHelper.cs" />
     <Compile Include="Modification\ModificationExtensions.cs" />
-    <Compile Include="Xml\ValidatingEventArgs.cs" />
     <Compile Include="Xml\XmlCreateAggregation.cs" />
     <Compile Include="Xml\XmlDeleteAggregation.cs" />
-    <Compile Include="Xml\XmlModifier.cs" />
+    <Compile Include="Xml\_XmlModifier.cs" />
     <Compile Include="Helpers\XmlProvider.cs" />
     <Compile Include="Xml\XmlUpdateAggregation.cs" />
   </ItemGroup>

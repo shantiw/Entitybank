@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -15,15 +14,14 @@ namespace XData.Data.Modification
 {
     public abstract partial class Modifier<T>
     {
-        //public Database<T> Database { get; private set; }
-        protected Database<T> GenericDatabase { get; private set; }
-        protected XElement Schema { get; private set; } // default
+        public Database<T> Database { get; private set; }
+        internal protected XElement Schema { get; private set; } // default
 
         protected readonly IList<ExecuteAggregation<T>> ExecuteAggregations = new List<ExecuteAggregation<T>>();
 
-        public Modifier(Database<T> database, XElement schema)
+        protected Modifier(Database<T> database, XElement schema)
         {
-            GenericDatabase = database;
+            Database = database;
             Schema = schema;
         }
 
@@ -69,7 +67,7 @@ namespace XData.Data.Modification
         }
 
         // GetKeyPropertyValues
-        protected IEnumerable<Dictionary<string, object>> GetCreateResult()
+        internal protected IEnumerable<Dictionary<string, object>> GetCreateResult()
         {
             List<Dictionary<string, object>> list = new List<Dictionary<string, object>>();
             foreach (ExecuteAggregation<T> executeAggregation in ExecuteAggregations)
@@ -132,13 +130,15 @@ namespace XData.Data.Modification
 
         public void Persist()
         {
-            ConnectionState state = GenericDatabase.Connection.State;
+            CheckConstraints();
+
+            ConnectionState state = Database.Connection.State;
             try
             {
                 if (state == ConnectionState.Closed)
                 {
-                    GenericDatabase.Connection.Open();
-                    GenericDatabase.Transaction = GenericDatabase.Connection.BeginTransaction();
+                    Database.Connection.Open();
+                    Database.Transaction = Database.Connection.BeginTransaction();
                 }
 
                 foreach (ExecuteAggregation<T> executeAggregation in ExecuteAggregations)
@@ -147,21 +147,21 @@ namespace XData.Data.Modification
                     {
                         if (executeCommand is UpdateCommandNode<T>)
                         {
-                            int i = GenericDatabase.Execute(executeCommand as UpdateCommandNode<T>, this);
+                            int i = Database.Execute(executeCommand as UpdateCommandNode<T>, this);
                         }
                         else
                         {
                             if (executeCommand is InsertCommand<T>)
                             {
-                                int i = GenericDatabase.Execute(executeCommand as InsertCommand<T>, this);
+                                int i = Database.Execute(executeCommand as InsertCommand<T>, this);
                             }
                             else if (executeCommand is DeleteCommand<T>)
                             {
-                                int i = GenericDatabase.Execute(executeCommand as DeleteCommand<T>, this);
+                                int i = Database.Execute(executeCommand as DeleteCommand<T>, this);
                             }
                             else if (executeCommand is UpdateCommand<T>) // DeleteAggregation SetNull
                             {
-                                int i = GenericDatabase.Execute(executeCommand as UpdateCommand<T>, this);
+                                int i = Database.Execute(executeCommand as UpdateCommand<T>, this);
                             }
                         }
                     }
@@ -169,14 +169,14 @@ namespace XData.Data.Modification
 
                 if (state == ConnectionState.Closed)
                 {
-                    if (GenericDatabase.Transaction != null) GenericDatabase.Transaction.Commit();
+                    if (Database.Transaction != null) Database.Transaction.Commit();
                 }
             }
             catch (Exception ex)
             {
                 if (state == ConnectionState.Closed)
                 {
-                    if (GenericDatabase.Transaction != null) GenericDatabase.Transaction.Rollback();
+                    if (Database.Transaction != null) Database.Transaction.Rollback();
                 }
 
                 throw ex;
@@ -185,8 +185,8 @@ namespace XData.Data.Modification
             {
                 if (state == ConnectionState.Closed)
                 {
-                    GenericDatabase.Connection.Close();
-                    GenericDatabase.Transaction = null;
+                    Database.Connection.Close();
+                    Database.Transaction = null;
                 }
             }
         }
@@ -217,17 +217,7 @@ namespace XData.Data.Modification
         internal protected abstract Dictionary<string, object> GetPropertyValues(T obj, string entity, XElement schema);
         internal protected abstract void SetObjectValue(T obj, string property, object value);
 
-        protected abstract bool IsCollection(T obj);
-
-        protected static XElement GetEntitySchema(XElement schema, string entity)
-        {
-            return schema.GetEntitySchema(entity);
-        }
-
-        protected static XElement GetEntitySchemaByCollection(XElement schema, string collection)
-        {
-            return schema.GetEntitySchemaByCollection(collection);
-        }
+        internal protected abstract bool IsCollection(T obj);
 
 
     }

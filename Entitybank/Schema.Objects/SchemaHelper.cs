@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -281,70 +280,6 @@ namespace XData.Data.Schema
                 displayName = propertySchema.Element("Display").CreateDisplayAttribute().GetName();
             }
             return displayName;
-        }
-
-        internal static List<ValidationAttribute> CreateValidationAttributes(XElement propertySchema)
-        {
-            List<ValidationAttribute> validationAttributes = new List<ValidationAttribute>();
-            foreach (XElement annotation in propertySchema.Elements())
-            {
-                ValidationAttribute validationAttribute = null;
-                switch (annotation.Name.LocalName)
-                {
-                    case "Compare":
-                        validationAttribute = annotation.CreateCompareAttribute();
-                        break;
-                    case "CustomValidation":
-                        validationAttribute = annotation.CreateCustomValidationAttribute();
-                        break;
-                    case "DataType":
-                        validationAttribute = annotation.CreateDataTypeAttribute();
-                        break;
-                    case "Range":
-                        validationAttribute = annotation.CreateRangeAttribute();
-                        break;
-                    case "RegularExpression":
-                        validationAttribute = annotation.CreateRegularExpressionAttribute();
-                        break;
-                    case "Required":
-                        validationAttribute = annotation.CreateRequiredAttribute();
-                        break;
-                    case "StringLength":
-                        validationAttribute = annotation.CreateStringLengthAttribute();
-                        break;
-
-                    // .NET Framework 4.5
-                    case "MaxLength":
-                        validationAttribute = annotation.CreateMaxLengthAttribute();
-                        break;
-                    case "MinLength":
-                        validationAttribute = annotation.CreateMinLengthAttribute();
-                        break;
-                    case "CreditCard":
-                        validationAttribute = annotation.CreateCreditCardAttribute();
-                        break;
-                    case "EmailAddress":
-                        validationAttribute = annotation.CreateEmailAddressAttribute();
-                        break;
-                    case "Phone":
-                        validationAttribute = annotation.CreatePhoneAttribute();
-                        break;
-                    case "Url":
-                        validationAttribute = annotation.CreateUrlAttribute();
-                        break;
-                    case "EnumDataType":
-                        validationAttribute = annotation.CreateEnumDataTypeAttribute();
-                        break;
-                    case "FileExtensions":
-                        validationAttribute = annotation.CreateFileExtensionsAttribute();
-                        break;
-                }
-                if (validationAttribute != null)
-                {
-                    validationAttributes.Add(validationAttribute);
-                }
-            }
-            return validationAttributes;
         }
 
 
