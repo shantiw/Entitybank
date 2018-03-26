@@ -9,7 +9,7 @@ namespace XData.Data.Services
     {
         public DynModificationService(string name, IEnumerable<KeyValuePair<string, string>> keyValues) : base(name, keyValues)
         {
-            Modifier = DynModifier.Create(name);
+            Modifier = DynModifierFactory.Create(name);
         }
 
 

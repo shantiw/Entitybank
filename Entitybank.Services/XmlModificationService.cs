@@ -13,29 +13,29 @@ namespace XData.Data.Services
     {
         public XmlModificationService(string name, IEnumerable<KeyValuePair<string, string>> keyValues) : base(name, keyValues)
         {
-            Modifier = XmlModifier.Create(name);
+            Modifier = XmlModifierFactory.Create(name);
         }
 
         public void Create(XElement element, out XElement keys)
         {
-            keys = (Modifier as XmlModifier).CreateAndReturnKeys(element, Schema);
+            keys = Modifier.CreateAndReturnKeys(element, Schema);
         }
 
         // json
         public void Create(XElement element, out string keys)
         {
-            (Modifier as XmlModifier).Create(element, Schema, out IEnumerable<Dictionary<string, object>> result);
+            Modifier.Create(element, Schema, out IEnumerable<Dictionary<string, object>> result);
             keys = result.CreateReturnKeysToJson();
         }
 
         public void Delete(XElement element)
         {
-            (Modifier as XmlModifier).Delete(element, Schema);
+            Modifier.Delete(element, Schema);
         }
 
         public void Update(XElement element)
         {
-            (Modifier as XmlModifier).Update(element, Schema);
+            Modifier.Update(element, Schema);
         }
 
         private static bool IsCollection(XElement element)
