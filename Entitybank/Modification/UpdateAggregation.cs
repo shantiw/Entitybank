@@ -25,8 +25,8 @@ namespace XData.Data.Modification
             executeCommand.EntitySchema = entitySchema;
             executeCommand.UniqueKeySchema = uniqueKeySchema;
             executeCommand.ConcurrencySchema = concurrencySchema;
-            executeCommand.ParentPropertyValues = parentPropertyValues; // validate
-            executeCommand.ParentRelationship = parentRelationship; // validate
+            executeCommand.ParentPropertyValues = parentPropertyValues;
+            executeCommand.ParentRelationship = parentRelationship;
             executeCommand.Path = path;
 
             executeCommand.PropertyValues = GetPropertyValues(executeCommand.AggregNode, executeCommand.EntitySchema);

@@ -77,11 +77,7 @@ namespace XData.Data.Modification
             {
                 if (updateCommand.OriginalConcurrencyCheckPropertyValues == null)
                 {
-                    throw new ConstraintException(ErrorMessages.Validate_OriginalConcurrencyCheckRequierd);
-
-                    //                ErrorMessages.Validate_OriginalConcurrencyCheckRequierd,
-                    //new List<string>() { updateCommand.Path }));
-
+                    throw new ConstraintException(string.Format(ErrorMessages.Constraint_OriginalConcurrencyCheckRequierd, updateCommand.Entity));
                 }
                 else
                 {
@@ -101,9 +97,7 @@ namespace XData.Data.Modification
             string propertyName = autoPropertySchema.Attribute(SchemaVocab.Name).Value;
             if (GetValue(insertCommand.PropertyValues, propertyName) != null)
             {
-                string errorMessage = string.Format(ErrorMessages.Validate_InsertExplicitAutoIncrement, propertyName, insertCommand.Entity);
-
-                //new ValidationResult(errorMessage, new List<string>() { insertCommand.Path });
+                string errorMessage = string.Format(ErrorMessages.Constraint_InsertExplicitAutoIncrement, propertyName, insertCommand.Entity);
                 throw new ConstraintException(errorMessage);
             }
         }
@@ -117,9 +111,7 @@ namespace XData.Data.Modification
                 string propertyName = propertySchema.Attribute(SchemaVocab.Name).Value;
                 if (GetValue(insertCommand.PropertyValues, propertyName) != null)
                 {
-                    string errorMessage = string.Format(ErrorMessages.Validate_InsertExplicitReadonly, propertyName, insertCommand.Entity);
-
-                    // new ValidationResult(errorMessage, new List<string>() { insertCommand.Path });
+                    string errorMessage = string.Format(ErrorMessages.Constraint_InsertExplicitReadonly, propertyName, insertCommand.Entity);
                     throw new ConstraintException(errorMessage);
                 }
             }
@@ -141,11 +133,9 @@ namespace XData.Data.Modification
 
                 if (object.Equals(parentValue, value)) continue;
 
-                string errorMessage = string.Format(ErrorMessages.Validate_RelationshipConflicted,
+                string errorMessage = string.Format(ErrorMessages.Constraint_RelationshipConflicted,
                     executeCommand.Entity, property + ":" + value.ToString(),
                     parentEntity, parentProperty + ":" + ((parentValue == null) ? "null" : parentValue.ToString()));
-
-                // new ValidationResult(errorMessage, new List<string>() { executeCommand.Path });
                 throw new ConstraintException(errorMessage);
             }
         }
@@ -189,9 +179,7 @@ namespace XData.Data.Modification
 
             if (errors.Count == 0) return;
 
-            string errorMessage = string.Format(ErrorMessages.Validate_IncompleteConcurrencyCheck, string.Join(",", errors));
-
-            //new ValidationResult(errorMessage, new List<string>() { executeCommand.Path });
+            string errorMessage = string.Format(ErrorMessages.Constraint_IncompleteConcurrencyCheck, string.Join(",", errors));
             throw new ConstraintException(errorMessage);
         }
 

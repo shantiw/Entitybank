@@ -117,6 +117,21 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Constraint_IncompleteConcurrencyCheck" xml:space="preserve">
+    <value>Incomplete ConcurrencyCheck, Missing value(s) of {0}.</value>
+  </data>
+  <data name="Constraint_InsertExplicitAutoIncrement" xml:space="preserve">
+    <value>Cannot insert explicit value for AutoIncrement property '{0}' in '{1}'.</value>
+  </data>
+  <data name="Constraint_InsertExplicitReadonly" xml:space="preserve">
+    <value>Cannot insert explicit value for Readonly property '{0}' in '{1}'.</value>
+  </data>
+  <data name="Constraint_OriginalConcurrencyCheckRequierd" xml:space="preserve">
+    <value>The value(s) of ConcurrencyCheck from original '{0}' is requierd.</value>
+  </data>
+  <data name="Constraint_RelationshipConflicted" xml:space="preserve">
+    <value>Conflicted relationship between entity '{0}', property(s) {1} and '{2}', property(s) {3}.</value>
+  </data>
   <data name="DeletedByAnotherUser" xml:space="preserve">
     <value>Has been deleted by another user.</value>
   </data>
@@ -158,20 +173,5 @@
   </data>
   <data name="RelationshipKeyConflicted" xml:space="preserve">
     <value>Conflicted relationship between entity '{0}', key:{1} and '{2}', property(s) {3}.</value>
-  </data>
-  <data name="Validate_IncompleteConcurrencyCheck" xml:space="preserve">
-    <value>Incomplete ConcurrencyCheck, Missing value(s) of {0}.</value>
-  </data>
-  <data name="Validate_InsertExplicitAutoIncrement" xml:space="preserve">
-    <value>Cannot insert explicit value for AutoIncrement property '{0}' in '{1}'.</value>
-  </data>
-  <data name="Validate_InsertExplicitReadonly" xml:space="preserve">
-    <value>Cannot insert explicit value for Readonly property '{0}' in '{1}'.</value>
-  </data>
-  <data name="Validate_OriginalConcurrencyCheckRequierd" xml:space="preserve">
-    <value>The value(s) of ConcurrencyCheck from original is requierd.</value>
-  </data>
-  <data name="Validate_RelationshipConflicted" xml:space="preserve">
-    <value>Conflicted relationship between entity '{0}', property(s) {1} and '{2}', property(s) {3}.</value>
   </data>
 </root>

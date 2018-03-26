@@ -61,6 +61,51 @@ namespace XData.Data {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Incomplete ConcurrencyCheck, Missing value(s) of {0}..
+        /// </summary>
+        internal static string Constraint_IncompleteConcurrencyCheck {
+            get {
+                return ResourceManager.GetString("Constraint_IncompleteConcurrencyCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot insert explicit value for AutoIncrement property &apos;{0}&apos; in &apos;{1}&apos;..
+        /// </summary>
+        internal static string Constraint_InsertExplicitAutoIncrement {
+            get {
+                return ResourceManager.GetString("Constraint_InsertExplicitAutoIncrement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot insert explicit value for Readonly property &apos;{0}&apos; in &apos;{1}&apos;..
+        /// </summary>
+        internal static string Constraint_InsertExplicitReadonly {
+            get {
+                return ResourceManager.GetString("Constraint_InsertExplicitReadonly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value(s) of ConcurrencyCheck from original &apos;{0}&apos; is requierd..
+        /// </summary>
+        internal static string Constraint_OriginalConcurrencyCheckRequierd {
+            get {
+                return ResourceManager.GetString("Constraint_OriginalConcurrencyCheckRequierd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conflicted relationship between entity &apos;{0}&apos;, property(s) {1} and &apos;{2}&apos;, property(s) {3}..
+        /// </summary>
+        internal static string Constraint_RelationshipConflicted {
+            get {
+                return ResourceManager.GetString("Constraint_RelationshipConflicted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Has been deleted by another user..
         /// </summary>
         internal static string DeletedByAnotherUser {
@@ -183,51 +228,6 @@ namespace XData.Data {
         internal static string RelationshipKeyConflicted {
             get {
                 return ResourceManager.GetString("RelationshipKeyConflicted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Incomplete ConcurrencyCheck, Missing value(s) of {0}..
-        /// </summary>
-        internal static string Validate_IncompleteConcurrencyCheck {
-            get {
-                return ResourceManager.GetString("Validate_IncompleteConcurrencyCheck", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot insert explicit value for AutoIncrement property &apos;{0}&apos; in &apos;{1}&apos;..
-        /// </summary>
-        internal static string Validate_InsertExplicitAutoIncrement {
-            get {
-                return ResourceManager.GetString("Validate_InsertExplicitAutoIncrement", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot insert explicit value for Readonly property &apos;{0}&apos; in &apos;{1}&apos;..
-        /// </summary>
-        internal static string Validate_InsertExplicitReadonly {
-            get {
-                return ResourceManager.GetString("Validate_InsertExplicitReadonly", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The value(s) of ConcurrencyCheck from original is requierd..
-        /// </summary>
-        internal static string Validate_OriginalConcurrencyCheckRequierd {
-            get {
-                return ResourceManager.GetString("Validate_OriginalConcurrencyCheckRequierd", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Conflicted relationship between entity &apos;{0}&apos;, property(s) {1} and &apos;{2}&apos;, property(s) {3}..
-        /// </summary>
-        internal static string Validate_RelationshipConflicted {
-            get {
-                return ResourceManager.GetString("Validate_RelationshipConflicted", resourceCulture);
             }
         }
     }
