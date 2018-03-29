@@ -160,6 +160,7 @@ namespace XData.Data.Objects
         internal protected int Execute(DeleteCommand<T> executeCommand, Modifier<T> modifier)
         {
             IReadOnlyDictionary<string, object> refetched = FetchSingleFromDb(executeCommand);
+            if (refetched == null) return 0;
 
             // foreign key constraint check
             foreach (DirectRelationship relationship in executeCommand.ChildRelationships)
@@ -178,8 +179,8 @@ namespace XData.Data.Objects
                     relatedPropertyValues.Add(relatedProperty, refetched[property]);
                 }
 
-                bool isExists = HasChildInDb(relatedPropertyValues, relatedEntitySchema, relatedKeySchema);
-                if (isExists)
+                bool hasChild = HasChildInDb(relatedPropertyValues, relatedEntitySchema, relatedKeySchema);
+                if (hasChild)
                 {
                     string relatedEntityName = relatedEntitySchema.Attribute(SchemaVocab.Name).Value;
                     IEnumerable<string> relatedPropertyNames = relatedKeySchema.Elements(SchemaVocab.Property).Select(p => "'" + p.Attribute(SchemaVocab.Name).Value + "'");
