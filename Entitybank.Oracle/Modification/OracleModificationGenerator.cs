@@ -24,12 +24,12 @@ namespace XData.Data.Modification
             return ":" + parameter;
         }
 
-        public override string GenerateIsExistsStatement(Dictionary<string, object> propertyValues, XElement entitySchema, XElement keySchema,
+        public override string GenerateHasChildStatement(Dictionary<string, object> propertyValues, XElement entitySchema, XElement keySchema,
             out IReadOnlyDictionary<string, object> dbParameterValues)
         {
-            string select = GenerateFindStatement(propertyValues, entitySchema, keySchema, out dbParameterValues);
+            string select = GenerateFetchStatement(propertyValues, entitySchema, keySchema, out dbParameterValues);
 
-            string sql = string.Format("SELECT 1 FROM DUAL WHERE EXISTS ({select})", select);
+            string sql = string.Format("SELECT 1 FROM DUAL WHERE EXISTS ({0})", select);
             return sql;
         }
 

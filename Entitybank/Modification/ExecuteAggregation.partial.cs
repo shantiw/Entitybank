@@ -163,6 +163,39 @@ namespace XData.Data.Modification
         {
             DirectRelationship firstDirectRelationship = relationship.DirectRelationships[0];
 
+            // pure relationship-table
+            if (relationship.DirectRelationships.Length == 2)
+            {
+                DirectRelationship secondDirectRelationship = relationship.DirectRelationships[1];
+                string relationshipEntity = firstDirectRelationship.RelatedEntity;
+
+                if (relationshipEntity == secondDirectRelationship.Entity) // assert
+                {
+                    List<string> relationshipProperties = new List<string>(firstDirectRelationship.RelatedProperties);
+                    relationshipProperties.AddRange(secondDirectRelationship.Properties);
+
+                    XElement entitySchema = Schema.GetEntitySchema(relationshipEntity);
+
+                    List<string> PropertyNames = entitySchema.Elements(SchemaVocab.Property)
+                        .Where(x => x.Attribute(SchemaVocab.Column) != null)
+                        .Select(x => x.Attribute(SchemaVocab.Name).Value).ToList();
+
+                    if (PropertyNames.Count == relationshipProperties.Count)
+                    {
+                        bool pure = true;
+                        relationshipProperties.Sort();
+                        PropertyNames.Sort();
+                        for (int i = 0; i < PropertyNames.Count; i++)
+                        {
+                            if (relationshipProperties[i] == PropertyNames[i]) continue;
+                            pure = false;
+                        }
+                        if (pure) return false;
+                    }
+                }
+            }
+
+            //
             string mmEntity = firstDirectRelationship.RelatedEntity;
             XElement mmEntitySchema = GetEntitySchema(mmEntity);
 

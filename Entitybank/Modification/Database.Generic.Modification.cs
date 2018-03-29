@@ -159,9 +159,9 @@ namespace XData.Data.Objects
 
         internal protected int Execute(DeleteCommand<T> executeCommand, Modifier<T> modifier)
         {
-            // foreign key constraint check
             IReadOnlyDictionary<string, object> refetched = FetchSingleFromDb(executeCommand);
 
+            // foreign key constraint check
             foreach (DirectRelationship relationship in executeCommand.ChildRelationships)
             {
                 XElement relatedEntitySchema = executeCommand.Schema.GetEntitySchema(relationship.RelatedEntity);
@@ -178,7 +178,7 @@ namespace XData.Data.Objects
                     relatedPropertyValues.Add(relatedProperty, refetched[property]);
                 }
 
-                bool isExists = IsExistsInDb(relatedPropertyValues, relatedEntitySchema, relatedKeySchema);
+                bool isExists = HasChildInDb(relatedPropertyValues, relatedEntitySchema, relatedKeySchema);
                 if (isExists)
                 {
                     string relatedEntityName = relatedEntitySchema.Attribute(SchemaVocab.Name).Value;
@@ -207,7 +207,7 @@ namespace XData.Data.Objects
             int affected = UnderlyingDatabase.ExecuteSqlCommand(sql, dbParameters);
 
             if (affected > 1) throw new SQLStatmentException(string.Format(ErrorMessages.MultipleRowsAffected, affected), sql, dbParameters);
-            if (affected == 0 && executeCommand.ConcurrencySchema != null)
+            if (affected == 0 && executeCommand.ConcurrencySchema != null && refetched != null)
             {
                 throw new OptimisticConcurrencyException(string.Format(ErrorMessages.OptimisticConcurrencyException,
                     executeCommand.Entity, GetKeyValueMessage(executeCommand)), sql, dbParameters);
@@ -367,7 +367,7 @@ namespace XData.Data.Objects
         protected virtual IEnumerable<Dictionary<string, object>> FetchFromDb(Dictionary<string, object> propertyValues,
             XElement entitySchema, XElement keySchema)
         {
-            string sql = ModificationGenerator.GenerateFindStatement(propertyValues, entitySchema, keySchema,
+            string sql = ModificationGenerator.GenerateFetchStatement(propertyValues, entitySchema, keySchema,
                 out IReadOnlyDictionary<string, object> dbParameterValues);
             DbParameter[] dbParameters = UnderlyingDatabase.CreateParameters(dbParameterValues);
             DataTable table = UnderlyingDatabase.ExecuteDataTable(sql, dbParameters);
@@ -388,9 +388,9 @@ namespace XData.Data.Objects
             return list;
         }
 
-        protected virtual bool IsExistsInDb(Dictionary<string, object> propertyValues, XElement entitySchema, XElement keySchema)
+        protected virtual bool HasChildInDb(Dictionary<string, object> propertyValues, XElement entitySchema, XElement keySchema)
         {
-            string sql = ModificationGenerator.GenerateIsExistsStatement(propertyValues, entitySchema, keySchema,
+            string sql = ModificationGenerator.GenerateHasChildStatement(propertyValues, entitySchema, keySchema,
                  out IReadOnlyDictionary<string, object> dbParameterValues);
             DbParameter[] dbParameters = UnderlyingDatabase.CreateParameters(dbParameterValues);
             object obj = UnderlyingDatabase.ExecuteScalar(sql, dbParameters);

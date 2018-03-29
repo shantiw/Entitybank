@@ -159,7 +159,7 @@ namespace XData.Data.Modification
                             {
                                 int i = Database.Execute(executeCommand as DeleteCommand<T>, this);
                             }
-                            else if (executeCommand is UpdateCommand<T>) // DeleteAggregation SetNull
+                            else if (executeCommand is UpdateCommand<T>)
                             {
                                 int i = Database.Execute(executeCommand as UpdateCommand<T>, this);
                             }

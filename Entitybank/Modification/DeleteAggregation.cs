@@ -83,11 +83,11 @@ namespace XData.Data.Modification
             XElement mmConcurrencySchema = GetConcurrencySchema(mmEntitySchema);
 
             //
-            bool isDeleteTransSetNull = IsDeleteTransSetNull(manyToManyRelationship);
+            bool mmDeleteTransSetNull = IsDeleteTransSetNull(manyToManyRelationship);
 
             Dictionary<string, object> mmUpdatePropertyValues = null;
             IEnumerable<DirectRelationship> mmRelationships = null;
-            if (isDeleteTransSetNull)
+            if (mmDeleteTransSetNull)
             {
                 mmUpdatePropertyValues = new Dictionary<string, object>();
                 DirectRelationship oneToManyRelationship = manyToManyRelationship.DirectRelationships[0];
@@ -112,7 +112,7 @@ namespace XData.Data.Modification
                 ResetObjectValues(mmChild, mmPropertyValues);
 
                 ExecuteCommand<T> mmExecuteCommand;
-                if (isDeleteTransSetNull)
+                if (mmDeleteTransSetNull)
                 {
                     UpdateCommand<T> mmUpdateCommand = CreateUpdateCommand(mmChild, mmEntity);
                     mmUpdateCommand.FixedUpdatePropertyValues = mmUpdatePropertyValues;

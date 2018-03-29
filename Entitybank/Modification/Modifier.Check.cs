@@ -33,7 +33,7 @@ namespace XData.Data.Modification
                         {
                             CheckConstraints(executeCommand as DeleteCommand<T>);
                         }
-                        else if (executeCommand is UpdateCommand<T>) // DeleteAggregation SetNull
+                        else if (executeCommand is UpdateCommand<T>)
                         {
                             CheckConstraints(executeCommand as UpdateCommand<T>);
                         }

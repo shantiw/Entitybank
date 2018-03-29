@@ -66,7 +66,7 @@ namespace XData.Data.Modification
                         else if (executeCommand is DeleteCommand<T>)
                         {
                         }
-                        else if (executeCommand is UpdateCommand<T>) // DeleteAggregation SetNull
+                        else if (executeCommand is UpdateCommand<T>)
                         {
                             validationResults.AddRange(GetAnnotationValidationResults(executeCommand as UpdateCommand<T>));
                         }

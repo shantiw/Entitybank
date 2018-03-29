@@ -145,7 +145,7 @@ namespace XData.Data.Modification
             return DecorateDbParameterName(Parameter_Name_Prefix + index.ToString());
         }
 
-        public virtual string GenerateFindStatement(Dictionary<string, object> propertyValues, XElement entitySchema, XElement keySchema,
+        public virtual string GenerateFetchStatement(Dictionary<string, object> propertyValues, XElement entitySchema, XElement keySchema,
             out IReadOnlyDictionary<string, object> dbParameterValues)
         {
             List<string> whereList = new List<string>();
@@ -162,7 +162,7 @@ namespace XData.Data.Modification
             return sql;
         }
 
-        public abstract string GenerateIsExistsStatement(Dictionary<string, object> propertyValues, XElement entitySchema, XElement keySchema,
+        public abstract string GenerateHasChildStatement(Dictionary<string, object> propertyValues, XElement entitySchema, XElement keySchema,
              out IReadOnlyDictionary<string, object> dbParameterValues);
 
         protected abstract string DecorateTableName(string table);
