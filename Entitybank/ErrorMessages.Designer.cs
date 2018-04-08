@@ -223,6 +223,15 @@ namespace XData.Data {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The argument &apos;original&apos; does not match the argument &apos;obj&apos;..
+        /// </summary>
+        internal static string OriginalNotMatch {
+            get {
+                return ResourceManager.GetString("OriginalNotMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Conflicted relationship between entity &apos;{0}&apos;, key:{1} and &apos;{2}&apos;, property(s) {3}..
         /// </summary>
         internal static string RelationshipKeyConflicted {

@@ -41,25 +41,6 @@ namespace XData.Data.Xml
             ExecuteAggregations.Add(new XmlUpdateAggregation(aggreg, original, entity, schema));
         }
 
-        protected override void Match(XElement element, XElement original, string entity, XElement schema)
-        {
-            XElement keySchema = schema.GetKeySchema(entity);
-
-            if (IsCollection(element))
-            {
-                foreach(XElement child in original.Elements())
-                {
-                    Filter(element.Elements(), child, keySchema);
-                }
-            }
-            else
-            {
-
-            }
-
-
-        }
-
         internal protected override bool IsCollection(XElement element)
         {
             return element.Elements().All(x => x.HasElements);
@@ -120,23 +101,110 @@ namespace XData.Data.Xml
             obj.SetElementValue(property, value.ToString());
         }
 
-        protected IEnumerable<XElement> Filter(IEnumerable<XElement> elements, XElement key, XElement keySchema)
+        protected override IEnumerable<XElement> Filter(IEnumerable<XElement> elements, XElement key, XElement keySchema)
         {
-            foreach (XElement keyField in key.Elements())
+            IEnumerable<XElement> xElements = elements;
+            foreach (XElement propertySchema in keySchema.Elements())
             {
-                elements = elements.Where(p => p.Element(keyField.Name).Value == keyField.Value);
+                string property = propertySchema.Attribute(SchemaVocab.Name).Value;
+                string value = key.Element(property).Value;
+                xElements = xElements.Where(p => p.Element(property).Value == value);
             }
-            return elements;
+            return xElements;
         }
 
-        protected static IEnumerable<dynamic> Filter1(IEnumerable<dynamic> elements, dynamic key)
+        #region override
+        protected override void Create(XElement obj, string entity, XElement schema)
         {
-            foreach (XElement keyField in key)
+            XElement xSchema = schema ?? Schema;
+
+            if (IsCollection(obj))
             {
-                elements = elements.Where(p => p.Element(keyField.Name).Value == keyField.Value);
+                foreach (XElement child in obj.Elements())
+                {
+                    AppendCreate(child, entity, xSchema);
+                }
             }
-            return elements;
+            else
+            {
+                AppendCreate(obj, entity, xSchema);
+            }
+
+            Validate();
+            Persist();
         }
+
+        public override void Delete(XElement obj, string entity, XElement schema = null)
+        {
+            XElement xSchema = schema ?? Schema;
+
+            if (IsCollection(obj))
+            {
+                foreach (XElement child in obj.Elements())
+                {
+                    AppendDelete(child, entity, xSchema);
+                }
+            }
+            else
+            {
+                AppendDelete(obj, entity, xSchema);
+            }
+
+            Validate();
+            Persist();
+            Clear();
+        }
+
+        public override void Update(XElement obj, string entity, XElement schema = null)
+        {
+            XElement xSchema = schema ?? Schema;
+
+            if (IsCollection(obj))
+            {
+                foreach (XElement child in obj.Elements())
+                {
+                    AppendUpdate(child, entity, xSchema);
+                }
+            }
+            else
+            {
+                AppendUpdate(obj, entity, xSchema);
+            }
+
+            Validate();
+            Persist();
+            Clear();
+        }
+
+        public override void Update(XElement obj, XElement original, string entity, XElement schema = null)
+        {
+            XElement xSchema = schema ?? Schema;
+            XElement keySchema = schema.GetKeySchema(entity);
+
+            IEnumerable<KeyValuePair<XElement, XElement>> pairs;
+            if (IsCollection(obj))
+            {
+                if (!IsCollection(original)) throw new ArgumentException(ErrorMessages.OriginalNotMatch, "original");
+
+                pairs = Match(obj.Elements(), original.Elements(), keySchema);
+            }
+            else
+            {
+                if (IsCollection(original)) throw new ArgumentException(ErrorMessages.OriginalNotMatch, "original");
+
+                pairs = Match(new List<XElement>() { obj }, new List<XElement>() { original }, keySchema);
+            }
+
+            foreach (KeyValuePair<XElement, XElement> pair in pairs)
+            {
+                AppendUpdate(pair.Key, pair.Value, entity, xSchema);
+            }
+
+            Validate();
+            Persist();
+            Clear();
+        }
+        #endregion
     }
 
     public static class XmlModifierFactory

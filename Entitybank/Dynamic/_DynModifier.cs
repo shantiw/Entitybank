@@ -164,6 +164,17 @@ namespace XData.Data.Dynamic
             throw new NotSupportedException(type.ToString());
         }
 
+        protected override IEnumerable<dynamic> Filter(IEnumerable<dynamic> objects, dynamic key, XElement keySchema)
+        {
+            IEnumerable<dynamic> objs = objects;
+            foreach (XElement propertySchema in keySchema.Elements())
+            {
+                string property = propertySchema.Attribute(SchemaVocab.Name).Value;
+                var value = key[property];
+                objs = objs.Where(p => p[property] == value);
+            }
+            return objs;
+        }
 
     }
 

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -246,23 +247,42 @@ namespace XData.Web.Http.Models
         public void Update(string name, string entity, object value, HttpRequestMessage request)
         {
             dynamic obj = JsonConvert.DeserializeObject<dynamic>(value.ToString());
-            dynamic original = GetOriginal(obj);
+
+            dynamic original = GetOriginal(obj, out dynamic token);
 
             var service = new DynModificationService(name, request.GetQueryNameValuePairs());
+
             if (original == null)
             {
-                service.Update(obj, entity);
+                service.Update(token, entity);
             }
             else
             {
-                service.Update(obj, original, entity);
+                service.Update(token, original, entity);
             }
         }
 
-        // json: "@original":{"property":value, ...}
-        private static dynamic GetOriginal(dynamic obj)
+        // {"object":{...},"original":{...}} or {"array":[...],"original":[...]}
+        private static dynamic GetOriginal(dynamic obj, out dynamic token)
         {
-            return obj["original"];
+            if (obj is JObject)
+            {
+                var original = obj["original"];
+
+                if (original is JArray)
+                {
+                    token = obj["array"];
+                }
+                else
+                {
+                    token = obj["object"];
+                }
+
+                return original;
+            }
+
+            token = obj;
+            return null;
         }
 
         public HttpResponseMessage Create(string name, XElement value, HttpRequestMessage request)
@@ -304,16 +324,17 @@ namespace XData.Web.Http.Models
             }
             else
             {
+                original.Remove();
                 service.Update(value, original);
             }
         }
 
-        // <element>
-        // ...
-        // <element.original>
-        //  <property>value</property> ...
-        // </element.original>
-        // </element>
+        //<{element(s)}>
+        //  ...
+        //  <{element(s)}.original>
+        //    ...
+        //  </{element(s)}.original>
+        //</{element(s)}>
         private static XElement GetOriginal(XElement element)
         {
             return element.Element(string.Format("{0}.original", element.Name.LocalName));

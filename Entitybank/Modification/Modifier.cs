@@ -46,7 +46,7 @@ namespace XData.Data.Modification
             Clear();
         }
 
-        protected void Create(T obj, string entity, XElement schema)
+        protected virtual void Create(T obj, string entity, XElement schema)
         {
             XElement xSchema = schema ?? Schema;
 
@@ -127,6 +127,54 @@ namespace XData.Data.Modification
             Persist();
             Clear();
         }
+
+        public virtual void Update(T obj, T original, string entity, XElement schema = null)
+        {
+            XElement xSchema = schema ?? Schema;
+            XElement keySchema = schema.GetKeySchema(entity);
+
+            IEnumerable<KeyValuePair<T, T>> pairs;
+            if (IsCollection(obj))
+            {
+                if (!IsCollection(original)) throw new ArgumentException(ErrorMessages.OriginalNotMatch, "original");
+
+                pairs = Match(obj as IEnumerable<T>, original as IEnumerable<T>, keySchema);
+            }
+            else
+            {
+                if (IsCollection(original)) throw new ArgumentException(ErrorMessages.OriginalNotMatch, "original");
+
+                pairs = Match(new List<T>() { obj }, new List<T>() { original }, keySchema);
+            }
+
+            foreach (KeyValuePair<T, T> pair in pairs)
+            {
+                AppendUpdate(pair.Key, pair.Value, entity, xSchema);
+            }
+
+            Validate();
+            Persist();
+            Clear();
+        }
+
+        internal protected virtual IEnumerable<KeyValuePair<T, T>> Match(IEnumerable<T> collection, IEnumerable<T> origCollection, XElement keySchema)
+        {
+            List<KeyValuePair<T, T>> list = new List<KeyValuePair<T, T>>();
+
+            if (collection.Count() != origCollection.Count()) throw new ArgumentException(ErrorMessages.OriginalNotMatch, "original");
+
+            foreach (T origChild in origCollection)
+            {
+                T child = Filter(collection, origChild, keySchema).FirstOrDefault();
+                if (child == null) throw new ArgumentException(ErrorMessages.OriginalNotMatch, "original");
+
+                list.Add(new KeyValuePair<T, T>(child, origChild));
+            }
+
+            return list;
+        }
+
+        protected abstract IEnumerable<T> Filter(IEnumerable<T> elements, T key, XElement keySchema);
 
         public void Persist()
         {
@@ -212,6 +260,7 @@ namespace XData.Data.Modification
         public abstract void AppendCreate(T aggreg, string entity, XElement schema);
         public abstract void AppendDelete(T aggreg, string entity, XElement schema);
         public abstract void AppendUpdate(T aggreg, string entity, XElement schema);
+        public abstract void AppendUpdate(T aggreg, T original, string entity, XElement schema);
 
         internal protected abstract T CreateObject(Dictionary<string, object> propertyValues, string entity);
         internal protected abstract Dictionary<string, object> GetPropertyValues(T obj, string entity, XElement schema);

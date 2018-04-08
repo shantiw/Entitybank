@@ -93,6 +93,35 @@ namespace XData.Data.Xml
             modifier.Clear();
         }
 
+        public static void Update(this Modifier<XElement> modifier, XElement element, XElement original, XElement schema)
+        {
+            IEnumerable<KeyValuePair<XElement, XElement>> pairs;
+            if (modifier.IsCollection(element))
+            {
+                if (!modifier.IsCollection(original)) throw new ArgumentException(ErrorMessages.OriginalNotMatch, "original");
+
+                XElement entitySchema = schema.GetEntitySchemaByCollection(element.Name.LocalName);
+                XElement keySchema = SchemaHelper.GetKeySchema(entitySchema);
+                pairs = modifier.Match(element.Elements(), original.Elements(), keySchema);
+            }
+            else
+            {
+                if (modifier.IsCollection(original)) throw new ArgumentException(ErrorMessages.OriginalNotMatch, "original");
+
+                XElement keySchema = schema.GetKeySchema(element.Name.LocalName);
+                pairs = modifier.Match(new List<XElement>() { element }, new List<XElement>() { original }, keySchema);
+            }
+
+            foreach (KeyValuePair<XElement, XElement> pair in pairs)
+            {
+                AppendUpdate(modifier, pair.Key, pair.Value, schema);
+            }
+
+            modifier.Validate();
+            modifier.Persist();
+            modifier.Clear();
+        }
+
         public static void AppendCreate(this Modifier<XElement> modifier, XElement element, XElement schema)
         {
             modifier.AppendCreate(element, element.Name.LocalName, schema);
@@ -106,6 +135,11 @@ namespace XData.Data.Xml
         public static void AppendUpdate(this Modifier<XElement> modifier, XElement element, XElement schema)
         {
             modifier.AppendUpdate(element, element.Name.LocalName, schema);
+        }
+
+        public static void AppendUpdate(this Modifier<XElement> modifier, XElement element, XElement original, XElement schema)
+        {
+            modifier.AppendUpdate(element, original, element.Name.LocalName, schema);
         }
 
         // overload
