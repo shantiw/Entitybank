@@ -36,6 +36,30 @@ namespace XData.Data.Xml
             ExecuteAggregations.Add(new XmlUpdateAggregation(aggreg, entity, schema));
         }
 
+        public override void AppendUpdate(XElement aggreg, XElement original, string entity, XElement schema)
+        {
+            ExecuteAggregations.Add(new XmlUpdateAggregation(aggreg, original, entity, schema));
+        }
+
+        protected override void Match(XElement element, XElement original, string entity, XElement schema)
+        {
+            XElement keySchema = schema.GetKeySchema(entity);
+
+            if (IsCollection(element))
+            {
+                foreach(XElement child in original.Elements())
+                {
+                    Filter(element.Elements(), child, keySchema);
+                }
+            }
+            else
+            {
+
+            }
+
+
+        }
+
         internal protected override bool IsCollection(XElement element)
         {
             return element.Elements().All(x => x.HasElements);
@@ -71,6 +95,8 @@ namespace XData.Data.Xml
                         xProperty.Value = pair.Value.ToString();
                     }
                 }
+
+                element.Add(xProperty);
             }
 
             return element;
@@ -94,7 +120,23 @@ namespace XData.Data.Xml
             obj.SetElementValue(property, value.ToString());
         }
 
+        protected IEnumerable<XElement> Filter(IEnumerable<XElement> elements, XElement key, XElement keySchema)
+        {
+            foreach (XElement keyField in key.Elements())
+            {
+                elements = elements.Where(p => p.Element(keyField.Name).Value == keyField.Value);
+            }
+            return elements;
+        }
 
+        protected static IEnumerable<dynamic> Filter1(IEnumerable<dynamic> elements, dynamic key)
+        {
+            foreach (XElement keyField in key)
+            {
+                elements = elements.Where(p => p.Element(keyField.Name).Value == keyField.Value);
+            }
+            return elements;
+        }
     }
 
     public static class XmlModifierFactory

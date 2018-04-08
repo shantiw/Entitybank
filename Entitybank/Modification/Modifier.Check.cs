@@ -73,19 +73,8 @@ namespace XData.Data.Modification
         // in Execute(UpdateCommand<T>, Modifier<T>),Database.Modification.cs
         internal void CheckConstraints(UpdateCommand<T> updateCommand)
         {
-            if (updateCommand.ConcurrencySchema != null)
-            {
-                if (updateCommand.OriginalConcurrencyCheckPropertyValues == null)
-                {
-                    throw new ConstraintException(string.Format(ErrorMessages.Constraint_OriginalConcurrencyCheckRequierd, updateCommand.Entity));
-                }
-                else
-                {
-                    CheckConcurrencyCheckConstraint(updateCommand);
-                }
-
-                CheckRelationshipConstraint(updateCommand);
-            }
+            CheckConcurrencyCheckConstraint(updateCommand);
+            CheckRelationshipConstraint(updateCommand);
         }
 
         protected void CheckAutoIncrementConstraint(InsertCommand<T> insertCommand)
@@ -143,20 +132,18 @@ namespace XData.Data.Modification
         // overload
         protected void CheckConcurrencyCheckConstraint(DeleteCommand<T> deleteCommand)
         {
-            CheckConcurrencyCheckConstraint(deleteCommand.PropertyValues, deleteCommand.ConcurrencySchema, deleteCommand);
+            CheckConcurrencyCheckConstraint(deleteCommand.PropertyValues, deleteCommand.ConcurrencySchema);
         }
 
         // overload
         protected void CheckConcurrencyCheckConstraint(UpdateCommand<T> updateCommand)
         {
-            CheckConcurrencyCheckConstraint(updateCommand.OriginalConcurrencyCheckPropertyValues, updateCommand.ConcurrencySchema, updateCommand);
+            CheckConcurrencyCheckConstraint(updateCommand.PropertyValues, updateCommand.ConcurrencySchema);
         }
 
-        protected void CheckConcurrencyCheckConstraint(Dictionary<string, object> propertyValues,
-            XElement concurrencySchema, ExecuteCommand<T> executeCommand)
+        // DeleteCommand<T>, UpdateCommand<T>
+        protected static void CheckConcurrencyCheckConstraint(Dictionary<string, object> propertyValues, XElement concurrencySchema)
         {
-            // Assert(executeCommand.GetType() == typeof(DeleteCommand<T>) || executeCommand.GetType() == typeof(UpdateCommand<T>));
-
             if (concurrencySchema == null) return;
 
             List<string> errors = new List<string>();

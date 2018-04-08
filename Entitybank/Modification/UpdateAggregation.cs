@@ -8,7 +8,7 @@ using XData.Data.Schema;
 
 namespace XData.Data.Modification
 {
-    public abstract class UpdateAggregation<T> : ExecuteAggregation<T>
+    public abstract partial class UpdateAggregation<T> : ExecuteAggregation<T>
     {
         public UpdateAggregation(T aggreg, string entity, XElement schema) : base(aggreg, entity, schema)
         {
@@ -17,10 +17,10 @@ namespace XData.Data.Modification
             Commands.Add(node);
         }
 
-        protected UpdateCommandNode<T> Split(T obj, string entity, XElement entitySchema, XElement uniqueKeySchema, XElement concurrencySchema,
+        protected UpdateCommandNode<T> Split(T aggregNode, string entity, XElement entitySchema, XElement uniqueKeySchema, XElement concurrencySchema,
             DirectRelationship parentRelationship, Dictionary<string, object> parentPropertyValues, string path)
         {
-            UpdateCommandNode<T> executeCommand = CreateUpdateCommandNode(obj, entity);
+            UpdateCommandNode<T> executeCommand = CreateUpdateCommandNode(aggregNode, entity);
 
             executeCommand.EntitySchema = entitySchema;
             executeCommand.UniqueKeySchema = uniqueKeySchema;
@@ -32,16 +32,6 @@ namespace XData.Data.Modification
             executeCommand.PropertyValues = GetPropertyValues(executeCommand.AggregNode, executeCommand.EntitySchema);
 
             //executeCommand.FixedUpdatePropertyValues = new Dictionary<string, object>();
-
-            T original = GetOriginal(obj);
-            if (original == null)
-            {
-                executeCommand.OriginalConcurrencyCheckPropertyValues = null;
-            }
-            else
-            {
-                executeCommand.OriginalConcurrencyCheckPropertyValues = GetPropertyValues(original, GetEntitySchema(entity));
-            }
 
             //
             Dictionary<XElement, T> propertySchemaChildrenDictionary = GetPropertySchemaChildrenDictionary(executeCommand.AggregNode, executeCommand.EntitySchema);
@@ -116,7 +106,6 @@ namespace XData.Data.Modification
                 mmExecuteCommand.ParentPropertyValues = parentPropertyValues;
                 mmExecuteCommand.ParentRelationship = manyToManyRelationship.DirectRelationships[0];
                 mmExecuteCommand.FixedUpdatePropertyValues = mmUpdatePropertyValues;
-                mmExecuteCommand.OriginalConcurrencyCheckPropertyValues = null;
                 mmExecuteCommand.Path = path;
 
                 childNodes.Add(mmExecuteCommand);
@@ -125,14 +114,10 @@ namespace XData.Data.Modification
             }
         }
 
-        protected T GetOriginal(T obj)
-        {
-            return (ExecuteAggregationHelper as IUpdateAggregationHelper<T>).GetOriginal(obj);
-        }
-
         protected UpdateCommandNode<T> CreateUpdateCommandNode(T aggregNode, string entity)
         {
-            return (ExecuteAggregationHelper as IUpdateAggregationHelper<T>).CreateUpdateCommandNode(aggregNode, entity, Schema, Aggreg);
+            // default(T) is null
+            return (ExecuteAggregationHelper as IUpdateAggregationHelper<T>).CreateUpdateCommandNode(aggregNode, default(T), entity, Schema, Aggreg, default(T));
         }
 
 

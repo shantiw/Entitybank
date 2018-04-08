@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Modification</title>
+</head>
+<body>
+    <h1>Modification</h1>
+    <hr />
+
+    <h2>Create</h2>
+
+    <h2>Delete</h2>
+
+    <h2>Update</h2>
+
+    <h3>Update childern</h3>
+
+    <table border="1" cellpadding="3" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Item of Collection</th>
+                <th>Row of Table in Database</th>
+                <th>Manipulation</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Y</td>
+                <td>Y</td>
+                <td>UPDATE</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Y</td>
+                <td>N</td>
+                <td>(re)INSERT</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>N</td>
+                <td>Y</td>
+                <td>DELETE</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="4">With ConcurrencyCheck</td>
+            </tr>
+            <tr>
+                <td>Y</td>
+                <td>Y</td>
+                <td>UPDATE</td>
+                <td>ConcurrencyCheck failure: throw exception</td>
+            </tr>
+            <tr>
+                <td>Y</td>
+                <td>N</td>
+                <td>Throw Exception or INSERT</td>
+                <td>Has PK & ConcurrencyCheck<del>UPDATE</del>: throw exception(DeletedByAnotherUser),else INSERT</td>
+            </tr>
+            <tr>
+                <td>N</td>
+                <td>Y</td>
+                <td>Throw Exception</td>
+                <td><del>DELETE</del>:throw Exception(Constraint violation: Missing value(s))</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4>parameter original</h4>
+
+    <table border="1" cellpadding="3" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Item of Collection</th>
+                <th>Item of Original</th>
+                <th>Row of Table in Database</th>
+                <th>Manipulation</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Y</td>
+                <td>Y</td>
+                <td>Y</td>
+                <td>UPDATE</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Y</td>
+                <td>Y</td>
+                <td>Y</td>
+                <td>UPDATE(ConcurrencyCheck)</td>
+                <td>ConcurrencyCheck failure: throw exception</td>
+            </tr>
+            <tr>
+                <td>Y</td>
+                <td>Y</td>
+                <td>N</td>
+                <td>Throw Exception</td>
+                <td>DeletedByAnotherUser</td>
+            </tr>
+            <tr>
+                <td>Y</td>
+                <td>N</td>
+                <td>/</td>
+                <td>INSERT</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>N</td>
+                <td>Y</td>
+                <td>Y</td>
+                <td>DELETE</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>N</td>
+                <td>Y</td>
+                <td>Y</td>
+                <td>DELETE(ConcurrencyCheck)</td>
+                <td>0 rows affected(ConcurrencyCheck failure): throw exception</td>
+            </tr>
+            <tr>
+                <td>N</td>
+                <td>Y</td>
+                <td>N</td>
+                <td>DELETE</td>
+                <td>0 rows affected</td>
+            </tr>
+            <tr>
+                <td>N</td>
+                <td>N</td>
+                <td>Y</td>
+                <td>Throw Exception</td>
+                <td>InsertedByAnotherUser</td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>

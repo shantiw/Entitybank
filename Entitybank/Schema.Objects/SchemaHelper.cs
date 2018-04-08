@@ -63,6 +63,7 @@ namespace XData.Data.Schema
             IEnumerable<XElement> Properties = entitySchema.Elements(SchemaVocab.Property)
                 .Where(x => x.Elements(SchemaVocab.Annotation).Any(a =>
                     a.Attribute(SchemaVocab.Name).Value == "Timestamp" ||
+                    a.Attribute(SchemaVocab.Name).Value == "RowVersion" ||
                     a.Attribute(SchemaVocab.Name).Value == "ConcurrencyCheck"));
             concurrencySchema.Add(Properties);
             return concurrencySchema.HasElements ? concurrencySchema : null;

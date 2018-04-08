@@ -16,6 +16,10 @@ namespace XData.Data.Dynamic
         {
         }
 
+        public DynUpdateAggregation(object aggreg, object original, string entity, XElement schema) : base(aggreg, original, entity, schema)
+        {
+        }
+
         protected override IExecuteAggregationHelper<dynamic> GetExecuteAggregationHelper()
         {
             return new ExecuteAggregationHelper();

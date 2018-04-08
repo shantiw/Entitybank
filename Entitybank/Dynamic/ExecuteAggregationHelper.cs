@@ -85,15 +85,9 @@ namespace XData.Data.Dynamic
             return new UpdateCommand<dynamic>(aggregNode, entity, schema, aggreg);
         }
 
-        // json: "@original":{"property":value, ...}
-        public dynamic GetOriginal(dynamic obj)
+        public UpdateCommandNode<dynamic> CreateUpdateCommandNode(dynamic aggregNode, dynamic origNode, string entity, XElement schema, dynamic aggreg, dynamic original)
         {
-            return obj[string.Format("@{0}", SchemaVocab.Original)];
-        }
-
-        public UpdateCommandNode<dynamic> CreateUpdateCommandNode(dynamic aggregNode, string entity, XElement schema, dynamic aggreg)
-        {
-            return new UpdateCommandNode<dynamic>(aggregNode, entity, schema, aggreg);
+            return new UpdateCommandNode<dynamic>(aggregNode, origNode, entity, schema, aggreg, original);
         }
 
         private static IEnumerable<string> GetDynamicMemberNames(dynamic obj)

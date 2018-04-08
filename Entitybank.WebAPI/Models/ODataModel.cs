@@ -246,7 +246,23 @@ namespace XData.Web.Http.Models
         public void Update(string name, string entity, object value, HttpRequestMessage request)
         {
             dynamic obj = JsonConvert.DeserializeObject<dynamic>(value.ToString());
-            new DynModificationService(name, request.GetQueryNameValuePairs()).Update(obj, entity);
+            dynamic original = GetOriginal(obj);
+
+            var service = new DynModificationService(name, request.GetQueryNameValuePairs());
+            if (original == null)
+            {
+                service.Update(obj, entity);
+            }
+            else
+            {
+                service.Update(obj, original, entity);
+            }
+        }
+
+        // json: "@original":{"property":value, ...}
+        private static dynamic GetOriginal(dynamic obj)
+        {
+            return obj["original"];
         }
 
         public HttpResponseMessage Create(string name, XElement value, HttpRequestMessage request)
@@ -279,7 +295,28 @@ namespace XData.Web.Http.Models
 
         public void Update(string name, XElement value, HttpRequestMessage request)
         {
-            new XmlModificationService(name, request.GetQueryNameValuePairs()).Update(value);
+            XElement original = GetOriginal(value);
+
+            var service = new XmlModificationService(name, request.GetQueryNameValuePairs());
+            if (original == null)
+            {
+                service.Update(value);
+            }
+            else
+            {
+                service.Update(value, original);
+            }
+        }
+
+        // <element>
+        // ...
+        // <element.original>
+        //  <property>value</property> ...
+        // </element.original>
+        // </element>
+        private static XElement GetOriginal(XElement element)
+        {
+            return element.Element(string.Format("{0}.original", element.Name.LocalName));
         }
 
 

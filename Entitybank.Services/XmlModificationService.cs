@@ -38,6 +38,11 @@ namespace XData.Data.Services
             Modifier.Update(element, Schema);
         }
 
+        public void Update(XElement element, XElement original)
+        {
+            Modifier.Update(element, original, Schema);
+        }
+
         private static bool IsCollection(XElement element)
         {
             return element.Elements().All(x => x.HasElements);

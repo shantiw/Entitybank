@@ -126,14 +126,14 @@
   <data name="Constraint_InsertExplicitReadonly" xml:space="preserve">
     <value>Cannot insert explicit value for Readonly property '{0}' in '{1}'.</value>
   </data>
-  <data name="Constraint_OriginalConcurrencyCheckRequierd" xml:space="preserve">
-    <value>The value(s) of ConcurrencyCheck from original '{0}' is requierd.</value>
-  </data>
   <data name="Constraint_RelationshipConflicted" xml:space="preserve">
     <value>Conflicted relationship between entity '{0}', property(s) {1} and '{2}', property(s) {3}.</value>
   </data>
   <data name="DeletedByAnotherUser" xml:space="preserve">
     <value>Has been deleted by another user.</value>
+  </data>
+  <data name="InsertedByAnotherUser" xml:space="preserve">
+    <value>One or more rows has been inserted by another user.</value>
   </data>
   <data name="MultipleRowsAffected" xml:space="preserve">
     <value>Expect one but {0} rows affected.</value>

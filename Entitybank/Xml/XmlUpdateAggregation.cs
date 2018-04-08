@@ -15,6 +15,10 @@ namespace XData.Data.Xml
         {
         }
 
+        public XmlUpdateAggregation(XElement aggreg, XElement original, string entity, XElement schema) : base(aggreg, original, entity, schema)
+        {
+        }
+
         protected override IExecuteAggregationHelper<XElement> GetExecuteAggregationHelper()
         {
             return new ExecuteAggregationHelper();

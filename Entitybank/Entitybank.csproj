@@ -87,6 +87,7 @@
     <Compile Include="Modification\Modifier.Validate.cs" />
     <Compile Include="Modification\SqlModificationGenerator.cs" />
     <Compile Include="Modification\UpdateAggregation.cs" />
+    <Compile Include="Modification\UpdateAggregation.Original.cs" />
     <Compile Include="Modification\ValidatingEventArgs.cs" />
     <Compile Include="Dynamic\_DynDatabase.cs" />
     <Compile Include="Xml\XmlModifierExtensions.cs" />
@@ -254,6 +255,8 @@
   <ItemGroup>
     <None Include="Wiki\json.html" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Wiki\Modification.html" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

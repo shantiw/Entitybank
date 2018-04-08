@@ -10,7 +10,8 @@ namespace XData.Data.Modification
 {
     public abstract partial class ModificationGenerator
     {
-        public virtual string GenerateInsertStatement(Dictionary<string, object> propertyValues, XElement entitySchema, out IReadOnlyDictionary<string, object> dbParameterValues)
+        public virtual string GenerateInsertStatement(Dictionary<string, object> propertyValues, XElement entitySchema,
+            out IReadOnlyDictionary<string, object> dbParameterValues)
         {
             Dictionary<string, object> paramDict = new Dictionary<string, object>();
 
@@ -72,7 +73,6 @@ namespace XData.Data.Modification
         }
 
         public virtual string GenerateUpdateStatement(Dictionary<string, object> propertyValues, Dictionary<string, object> updatePropertyValues,
-            Dictionary<string, object> originalConcurrencyPropertyValues,
             XElement entitySchema, XElement keySchema, XElement concurrencySchema,
             out IReadOnlyDictionary<string, object> dbParameterValues)
         {
@@ -109,7 +109,7 @@ namespace XData.Data.Modification
             GenerateWhereItems(propertyValues, keySchema, whereList, paramDict);
             if (concurrencySchema != null)
             {
-                GenerateWhereItems(originalConcurrencyPropertyValues, concurrencySchema, whereList, paramDict);
+                GenerateWhereItems(propertyValues, concurrencySchema, whereList, paramDict);
             }
             string where = string.Join(" AND ", whereList);
 

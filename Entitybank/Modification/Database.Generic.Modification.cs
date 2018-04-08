@@ -63,7 +63,7 @@ namespace XData.Data.Objects
                     string parentProperty = executeCommand.ParentRelationship.Properties[i];
                     object value = executeCommand.ParentPropertyValues[parentProperty];
                     string property = executeCommand.ParentRelationship.RelatedProperties[i];
-                    if (executeCommand.ParentPropertyValues.ContainsKey(property))
+                    if (executeCommand.PropertyValues.ContainsKey(property))
                     {
                         executeCommand.PropertyValues[property] = value;
                     }
@@ -208,7 +208,7 @@ namespace XData.Data.Objects
             int affected = UnderlyingDatabase.ExecuteSqlCommand(sql, dbParameters);
 
             if (affected > 1) throw new SQLStatmentException(string.Format(ErrorMessages.MultipleRowsAffected, affected), sql, dbParameters);
-            if (affected == 0 && executeCommand.ConcurrencySchema != null && refetched != null)
+            if (affected == 0 && executeCommand.ConcurrencySchema != null)
             {
                 throw new OptimisticConcurrencyException(string.Format(ErrorMessages.OptimisticConcurrencyException,
                     executeCommand.Entity, GetKeyValueMessage(executeCommand)), sql, dbParameters);
@@ -266,7 +266,6 @@ namespace XData.Data.Objects
 
             //
             string sql = ModificationGenerator.GenerateUpdateStatement(executeCommand.PropertyValues, updatePropertyValues,
-                executeCommand.OriginalConcurrencyCheckPropertyValues,
                 executeCommand.EntitySchema, executeCommand.UniqueKeySchema, executeCommand.ConcurrencySchema,
                 out IReadOnlyDictionary<string, object> dbParameterValues);
             DbParameter[] dbParameters = UnderlyingDatabase.CreateParameters(dbParameterValues);

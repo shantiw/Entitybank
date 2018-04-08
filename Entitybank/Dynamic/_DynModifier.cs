@@ -33,6 +33,11 @@ namespace XData.Data.Dynamic
             ExecuteAggregations.Add(new DynUpdateAggregation(aggreg, entity, schema));
         }
 
+        public override void AppendUpdate(dynamic aggreg, dynamic original, string entity, XElement schema)
+        {
+            ExecuteAggregations.Add(new DynUpdateAggregation(aggreg, original, entity, schema));
+        }
+
         internal protected override bool IsCollection(dynamic obj)
         {
             try

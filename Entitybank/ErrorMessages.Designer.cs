@@ -88,15 +88,6 @@ namespace XData.Data {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The value(s) of ConcurrencyCheck from original &apos;{0}&apos; is requierd..
-        /// </summary>
-        internal static string Constraint_OriginalConcurrencyCheckRequierd {
-            get {
-                return ResourceManager.GetString("Constraint_OriginalConcurrencyCheckRequierd", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Conflicted relationship between entity &apos;{0}&apos;, property(s) {1} and &apos;{2}&apos;, property(s) {3}..
         /// </summary>
         internal static string Constraint_RelationshipConflicted {
@@ -111,6 +102,15 @@ namespace XData.Data {
         internal static string DeletedByAnotherUser {
             get {
                 return ResourceManager.GetString("DeletedByAnotherUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One or more rows has been inserted by another user..
+        /// </summary>
+        internal static string InsertedByAnotherUser {
+            get {
+                return ResourceManager.GetString("InsertedByAnotherUser", resourceCulture);
             }
         }
         

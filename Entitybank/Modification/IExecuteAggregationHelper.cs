@@ -25,8 +25,7 @@ namespace XData.Data.Modification
 
     public interface IUpdateAggregationHelper<T> : IExecuteAggregationHelper<T>
     {
-        T GetOriginal(T obj);
-        UpdateCommandNode<T> CreateUpdateCommandNode(T aggregNode, string entity, XElement schema, T aggreg);
+        UpdateCommandNode<T> CreateUpdateCommandNode(T aggregNode, T origNode, string entity, XElement schema, T aggreg, T original);
     }
 
 

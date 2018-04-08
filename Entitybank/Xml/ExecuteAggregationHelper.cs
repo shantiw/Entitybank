@@ -120,20 +120,9 @@ namespace XData.Data.Xml
             return new UpdateCommand<XElement>(aggregNode, entity, schema, aggreg);
         }
 
-        // <element>
-        // ...
-        // <element.original>
-        //  <property>value</property> ...
-        // </element.original>
-        // </element>
-        public XElement GetOriginal(XElement element)
+        public UpdateCommandNode<XElement> CreateUpdateCommandNode(XElement aggregNode, XElement origNode, string entity, XElement schema, XElement aggreg, XElement original)
         {
-            return element.Element(string.Format("{0}.{1}", element.Name.LocalName, SchemaVocab.Original));
-        }
-
-        public UpdateCommandNode<XElement> CreateUpdateCommandNode(XElement aggregNode, string entity, XElement schema, XElement aggreg)
-        {
-            return new UpdateCommandNode<XElement>(aggregNode, entity, schema, aggreg);
+            return new UpdateCommandNode<XElement>(aggregNode, origNode, entity, schema, aggreg, original);
         }
 
         private static object ChangeType(string value, Type dataType)

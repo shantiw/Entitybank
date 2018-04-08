@@ -19,9 +19,9 @@ namespace XData.Data.Modification
 
         public XElement EntitySchema { get; set; }
         public XElement UniqueKeySchema { get; set; } // Primary or Unique(ManyToMany) Key
-        public Dictionary<string, object> PropertyValues { get; set; } = new Dictionary<string, object>();
-        public Dictionary<string, object> ParentPropertyValues { get; set; } = null;
-        public DirectRelationship ParentRelationship { get; set; } = null; // OneToMany
+        public Dictionary<string, object> PropertyValues { get; set; }
+        public Dictionary<string, object> ParentPropertyValues { get; set; }
+        public DirectRelationship ParentRelationship { get; set; } // OneToMany
 
         public ExecuteCommand(T aggregNode, string entity, XElement schema, T aggreg)
         {
@@ -60,12 +60,26 @@ namespace XData.Data.Modification
 
         public Dictionary<string, object> FixedUpdatePropertyValues { get; set; } = new Dictionary<string, object>();
 
-        // timestamp excluded
-        public Dictionary<string, object> OriginalConcurrencyCheckPropertyValues { get; set; } = null;
-
         public UpdateCommand(T aggregNode, string entity, XElement schema, T aggreg)
               : base(aggregNode, entity, schema, aggreg)
         {
+        }
+    }
+
+    public class UpdateCommandNode<T> : UpdateCommand<T>
+    {
+        public T OrigNode { get; private set; }
+        public T Original { get; private set; }
+
+        public Dictionary<string, object> OrigPropertyValues { get; set; }
+
+        public ICollection<UpdateCommandNodeChildren<T>> ChildrenCollection { get; set; } = new List<UpdateCommandNodeChildren<T>>();
+
+        public UpdateCommandNode(T aggregNode, T origNode, string entity, XElement schema, T aggreg, T original)
+              : base(aggregNode, entity, schema, aggreg)
+        {
+            OrigNode = origNode;
+            Original = original;
         }
     }
 
@@ -79,16 +93,6 @@ namespace XData.Data.Modification
         {
             ParentRelationship = oneToManyRelationship;
             Path = path;
-        }
-    }
-
-    public class UpdateCommandNode<T> : UpdateCommand<T>
-    {
-        public ICollection<UpdateCommandNodeChildren<T>> ChildrenCollection { get; set; } = new List<UpdateCommandNodeChildren<T>>();
-
-        public UpdateCommandNode(T aggregNode, string entity, XElement schema, T aggreg)
-              : base(aggregNode, entity, schema, aggreg)
-        {
         }
     }
 

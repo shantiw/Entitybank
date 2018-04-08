@@ -41,6 +41,11 @@ namespace XData.Data.Services
             Modifier.Update(obj, entity, Schema);
         }
 
+        public void Update(T obj, T original, string entity)
+        {
+            Modifier.Update(obj, original, entity, Schema);
+        }
+
         protected static XElement GetSchema(string name, IEnumerable<KeyValuePair<string, string>> deltaKey)
         {
             SchemaProvider schemaProvider = new SchemaProvider(name);

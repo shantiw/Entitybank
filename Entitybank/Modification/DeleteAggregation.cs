@@ -117,7 +117,6 @@ namespace XData.Data.Modification
                     UpdateCommand<T> mmUpdateCommand = CreateUpdateCommand(mmChild, mmEntity);
                     mmUpdateCommand.FixedUpdatePropertyValues = mmUpdatePropertyValues;
                     mmUpdateCommand.ConcurrencySchema = mmConcurrencySchema;
-                    mmUpdateCommand.OriginalConcurrencyCheckPropertyValues = null;
 
                     mmExecuteCommand = mmUpdateCommand;
                 }
