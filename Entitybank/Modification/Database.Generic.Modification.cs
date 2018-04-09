@@ -274,15 +274,13 @@ namespace XData.Data.Objects
             if (affected > 1) throw new SQLStatmentException(string.Format(ErrorMessages.MultipleRowsAffected, affected), sql, dbParameters);
             if (affected == 0)
             {
-                if (executeCommand.ConcurrencySchema == null)
-                {
-                    throw new SQLStatmentException(ErrorMessages.DeletedByAnotherUser, sql, dbParameters);
-                }
-                else
+                if (executeCommand.ConcurrencySchema != null && args.Refetched != null)
                 {
                     throw new OptimisticConcurrencyException(string.Format(ErrorMessages.OptimisticConcurrencyException,
-                          executeCommand.Entity, GetKeyValueMessage(executeCommand)), sql, dbParameters);
+                         executeCommand.Entity, GetKeyValueMessage(executeCommand)), sql, dbParameters);
                 }
+
+                throw new SQLStatmentException(ErrorMessages.DeletedByAnotherUser, sql, dbParameters);
             }
 
             //
@@ -466,6 +464,31 @@ namespace XData.Data.Objects
                     IReadOnlyDictionary<string, object> found = Find(refetchedChildren, childKeyPropertyValues);
                     if (found == null)
                     {
+                        if (childConcurrencySchema != null)
+                        {
+                            bool hasValue = false;
+                            foreach (XElement propertySchema in childConcurrencySchema.Elements())
+                            {
+                                string property = propertySchema.Attribute(SchemaVocab.Name).Value;
+                                if (childNode.PropertyValues.ContainsKey(property))
+                                {
+                                    object value = childNode.PropertyValues[property];
+                                    if (value != null && value.ToString() != string.Empty)
+                                    {
+                                        hasValue = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (hasValue)
+                            {
+                                throw new SQLStatmentException(ErrorMessages.DeletedByAnotherUser,
+                                    string.Format("insert '{0}' into '{1}'", childNode.AggregNode.ToString(),
+                                        childNode.EntitySchema.Attribute(SchemaVocab.Collection).Value));
+                            }
+                        }
+
                         Insert(childNode, relationship, propertyValues, modifier);
                     }
                     else
@@ -493,6 +516,13 @@ namespace XData.Data.Objects
                     deleteCommands.Add(deleteCommand);
 
                     index--;
+                }
+
+                // constraint violation: missing ConcurrencyCheck value(s)
+                if (childConcurrencySchema != null && refetchedChildren.Count > 0)
+                {
+                    throw new OptimisticConcurrencyException(string.Format(ErrorMessages.OptimisticConcurrencyException,
+                        deleteCommands[0].Entity, GetKeyValueMessage(deleteCommands[0])), "DELETE...");
                 }
 
                 //
