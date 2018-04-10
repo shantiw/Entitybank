@@ -159,10 +159,29 @@ namespace XData.Data.Objects
 
         internal protected int Execute(DeleteCommand<T> executeCommand, Modifier<T> modifier)
         {
-            IReadOnlyDictionary<string, object> refetched = FetchSingleFromDb(executeCommand);
-            if (refetched == null) return 0;
+            // DeletingEventArgs
+            Dictionary<string, object> refetch() => FetchSingleFromDb(executeCommand); // Func<IReadOnlyDictionary<string, object>> refetch = () => FetchSingleFromDb(executeCommand);
+            Dictionary<string, object> refetched = null;
+            bool hasBeenRefetched = false;
 
             // foreign key constraint check
+            Dictionary<string, object> relPropertyValues;
+            IEnumerable<string> relProps = executeCommand.ChildRelationships.SelectMany(r => r.Properties).Distinct();
+            IEnumerable<string> keyProps = executeCommand.EntitySchema.Elements(SchemaVocab.Property).Select(x => x.Attribute(SchemaVocab.Name).Value);
+            int keyPropCount = keyProps.Count();
+            if (relProps.Count() == keyPropCount && relProps.Union(keyProps).Count() == keyPropCount)
+            {
+                relPropertyValues = executeCommand.PropertyValues;
+            }
+            else
+            {
+                refetched = refetch();
+                hasBeenRefetched = true;
+                if (refetched == null) return 0;
+
+                relPropertyValues = refetched;
+            }
+
             foreach (DirectRelationship relationship in executeCommand.ChildRelationships)
             {
                 XElement relatedEntitySchema = executeCommand.Schema.GetEntitySchema(relationship.RelatedEntity);
@@ -176,7 +195,7 @@ namespace XData.Data.Objects
                     relatedKeySchema.Add(relatedPropertySchema);
 
                     string property = relationship.Properties[i];
-                    relatedPropertyValues.Add(relatedProperty, refetched[property]);
+                    relatedPropertyValues.Add(relatedProperty, relPropertyValues[property]);
                 }
 
                 bool hasChild = HasChildInDb(relatedPropertyValues, relatedEntitySchema, relatedKeySchema);
@@ -193,6 +212,8 @@ namespace XData.Data.Objects
             // raise deleting event
             DeletingEventArgs<T> args = new DeletingEventArgs<T>(executeCommand.AggregNode, executeCommand.Entity, executeCommand.Schema, executeCommand.Path, executeCommand.Aggreg)
             {
+                Refetch = refetch,
+                HasBeenRefetched = hasBeenRefetched,
                 Refetched = refetched
             };
             OnDeleting(args);
@@ -208,7 +229,7 @@ namespace XData.Data.Objects
             int affected = UnderlyingDatabase.ExecuteSqlCommand(sql, dbParameters);
 
             if (affected > 1) throw new SQLStatmentException(string.Format(ErrorMessages.MultipleRowsAffected, affected), sql, dbParameters);
-            if (affected == 0 && executeCommand.ConcurrencySchema != null)
+            if (affected == 0 && executeCommand.ConcurrencySchema != null && args.RefetchedPropertyValues != null)
             {
                 throw new OptimisticConcurrencyException(string.Format(ErrorMessages.OptimisticConcurrencyException,
                     executeCommand.Entity, GetKeyValueMessage(executeCommand)), sql, dbParameters);
@@ -274,7 +295,7 @@ namespace XData.Data.Objects
             if (affected > 1) throw new SQLStatmentException(string.Format(ErrorMessages.MultipleRowsAffected, affected), sql, dbParameters);
             if (affected == 0)
             {
-                if (executeCommand.ConcurrencySchema != null && args.Refetched != null)
+                if (executeCommand.ConcurrencySchema != null && args.RefetchedPropertyValues != null)
                 {
                     throw new OptimisticConcurrencyException(string.Format(ErrorMessages.OptimisticConcurrencyException,
                          executeCommand.Entity, GetKeyValueMessage(executeCommand)), sql, dbParameters);

@@ -47,7 +47,23 @@ namespace XData.Data.Objects
 
     public class DeletingEventArgs<T> : ExecuteEventArgs<T>
     {
-        public IReadOnlyDictionary<string, object> Refetched { get; internal set; }
+        internal Func<Dictionary<string, object>> Refetch { private get; set; }
+        internal bool HasBeenRefetched { private get; set; }
+        internal Dictionary<string, object> Refetched { private get; set; }
+
+        // deferred, one time
+        public IReadOnlyDictionary<string, object> RefetchedPropertyValues
+        {
+            get
+            {
+                if (!HasBeenRefetched)
+                {
+                    Refetched = Refetch();
+                    HasBeenRefetched = true;
+                }
+                return Refetched;
+            }
+        }
 
         // sql, parameters
         public IList<SQLStatment> Before { get; private set; } = new List<SQLStatment>();
@@ -60,9 +76,23 @@ namespace XData.Data.Objects
 
     public class UpdatingEventArgs<T> : ExecuteEventArgs<T>
     {
-        //internal Func<IReadOnlyDictionary<string, object>> Refetch;
-        internal Func<IReadOnlyDictionary<string, object>> Refetch = null;
-        public IReadOnlyDictionary<string, object> Refetched { get => Refetch(); }
+        internal Func<Dictionary<string, object>> Refetch { private get; set; }
+        private bool HasBeenRefetched = false;
+        private Dictionary<string, object> Refetched;
+
+        // one time
+        public IReadOnlyDictionary<string, object> RefetchedPropertyValues
+        {
+            get
+            {
+                if (!HasBeenRefetched)
+                {
+                    Refetched = Refetch();
+                    HasBeenRefetched = true;
+                }
+                return Refetched;
+            }
+        }
 
         // sql, parameters
         public IList<SQLStatment> Before { get; private set; } = new List<SQLStatment>();
