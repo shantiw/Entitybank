@@ -74,6 +74,7 @@
     <Compile Include="Modification\CreateAggregation.cs" />
     <Compile Include="Modification\Database.Generic.Batch.cs" />
     <Compile Include="Modification\Database.Generic.cs" />
+    <Compile Include="Modification\Database.Generic.Modification.Original.cs" />
     <Compile Include="Modification\DeleteAggregation.cs" />
     <Compile Include="Modification\ExecuteAggregation.cs" />
     <Compile Include="Modification\ExecuteAggregation.partial.cs" />

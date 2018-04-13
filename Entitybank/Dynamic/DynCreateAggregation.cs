@@ -16,6 +16,12 @@ namespace XData.Data.Dynamic
         {
         }
 
+        internal protected DynCreateAggregation(object aggreg, string entity, XElement schema,
+            DirectRelationship parentRelationship, Dictionary<string, object> parentPropertyValues, string path)
+            : base(aggreg, entity, schema, parentRelationship, parentPropertyValues, path)
+        {
+        }
+
         protected override IExecuteAggregationHelper<dynamic> GetExecuteAggregationHelper()
         {
             return new ExecuteAggregationHelper();

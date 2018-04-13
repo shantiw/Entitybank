@@ -23,6 +23,11 @@ namespace XData.Data.Modification
         public Dictionary<string, object> ParentPropertyValues { get; set; }
         public DirectRelationship ParentRelationship { get; set; } // OneToMany
 
+        internal void SetAggregNode(T aggregNode)
+        {
+            AggregNode = aggregNode;
+        }
+
         public ExecuteCommand(T aggregNode, string entity, XElement schema, T aggreg)
         {
             AggregNode = aggregNode;

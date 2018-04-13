@@ -9,7 +9,7 @@ namespace XData.Data.Modification
         IEnumerable<T> GetChildren(T obj);
         void ResetObjectValues(T obj, Dictionary<string, object> propertyValues);
         Dictionary<string, object> GetPropertyValues(T obj, XElement entitySchema);
-        Dictionary<XElement, T> GetPropertySchemaChildrenDictionary(T obj, XElement entitySchema);
+        IEnumerable<KeyValuePair<XElement, T>> GetPropertySchemaChildrens(T obj, XElement entitySchema);
     }
 
     public interface ICreateAggregationHelper<T> : IExecuteAggregationHelper<T>

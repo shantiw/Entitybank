@@ -71,9 +71,9 @@ namespace XData.Data.Xml
             return propertyValues;
         }
 
-        public Dictionary<XElement, XElement> GetPropertySchemaChildrenDictionary(XElement element, XElement entitySchema)
+        public IEnumerable<KeyValuePair<XElement, XElement>> GetPropertySchemaChildrens(XElement element, XElement entitySchema)
         {
-            Dictionary<XElement, XElement> dict = new Dictionary<XElement, XElement>();
+            List<KeyValuePair<XElement, XElement>> list = new List<KeyValuePair<XElement, XElement>>();
             foreach (XElement child in element.Elements())
             {
                 XElement propertySchema = entitySchema.Elements(SchemaVocab.Property).FirstOrDefault(x =>
@@ -81,9 +81,9 @@ namespace XData.Data.Xml
                 if (propertySchema == null) continue;
 
                 // preliminary screening
-                dict.Add(propertySchema, child); // OneToMany
+                list.Add(new KeyValuePair<XElement, XElement>(propertySchema, child)); // OneToMany
             }
-            return dict;
+            return list;
         }
 
         public void ResetObjectValues(XElement element, Dictionary<string, object> propertyValues)

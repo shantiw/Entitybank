@@ -15,7 +15,10 @@ namespace XData.Data.Xml
         {
         }
 
-        public XmlUpdateAggregation(XElement aggreg, XElement original, string entity, XElement schema) : base(aggreg, original, entity, schema)
+        public XmlUpdateAggregation(XElement aggreg, XElement original, string entity, XElement schema)
+            : base(aggreg, original, entity, schema,
+                  (p0, p1, p2, p3, p4, p5) => new XmlCreateAggregation(p0, p1, p2, p3, p4, p5),
+                  (p0, p1, p2, p3) => new XmlDeleteAggregation(p0, p1, p2, p3))
         {
         }
 

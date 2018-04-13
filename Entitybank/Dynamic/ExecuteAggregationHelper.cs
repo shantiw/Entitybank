@@ -54,9 +54,9 @@ namespace XData.Data.Dynamic
             return propertyValues;
         }
 
-        public Dictionary<XElement, dynamic> GetPropertySchemaChildrenDictionary(dynamic obj, XElement entitySchema)
+        public IEnumerable<KeyValuePair<XElement, dynamic>> GetPropertySchemaChildrens(dynamic obj, XElement entitySchema)
         {
-            Dictionary<XElement, dynamic> dict = new Dictionary<XElement, dynamic>();
+            List<KeyValuePair<XElement, dynamic>> list = new List<KeyValuePair<XElement, dynamic>>();
             IEnumerable<string> dynamicMemberNames = GetDynamicMemberNames(obj);
             foreach (string member in dynamicMemberNames)
             {
@@ -65,9 +65,9 @@ namespace XData.Data.Dynamic
                 if (propertySchema == null) continue;
 
                 // preliminary screening
-                dict.Add(propertySchema, obj[member]); // OneToMany
+                list.Add(new KeyValuePair<XElement, dynamic>(propertySchema, obj[member])); // OneToMany
             }
-            return dict;
+            return list;
         }
 
         public InsertCommand<dynamic> CreateInsertCommand(dynamic aggregNode, string entity, XElement schema, dynamic aggreg)

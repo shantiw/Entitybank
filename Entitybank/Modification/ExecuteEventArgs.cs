@@ -48,8 +48,8 @@ namespace XData.Data.Objects
     public class DeletingEventArgs<T> : ExecuteEventArgs<T>
     {
         internal Func<Dictionary<string, object>> Refetch { private get; set; }
-        internal bool HasBeenRefetched { private get; set; }
-        internal Dictionary<string, object> Refetched { private get; set; }
+        private bool HasBeenRefetched = false;
+        internal Dictionary<string, object> Refetched { get; set; }
 
         // deferred, one time
         public IReadOnlyDictionary<string, object> RefetchedPropertyValues

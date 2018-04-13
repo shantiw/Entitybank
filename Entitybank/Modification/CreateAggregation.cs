@@ -10,10 +10,15 @@ namespace XData.Data.Modification
 {
     public abstract class CreateAggregation<T> : ExecuteAggregation<T>
     {
-        public CreateAggregation(T aggreg, string entity, XElement schema) : base(aggreg, entity, schema)
+        public CreateAggregation(T aggreg, string entity, XElement schema) : this(aggreg, entity, schema, null, null, "/")
+        {
+        }
+
+        internal protected CreateAggregation(T aggreg, string entity, XElement schema,
+            DirectRelationship parentRelationship, Dictionary<string, object> parentPropertyValues, string path) : base(aggreg, entity, schema)
         {
             XElement entitySchema = GetEntitySchema(entity);
-            Split(aggreg, entity, entitySchema, GetKeySchema(entitySchema), null, null, "/");
+            Split(aggreg, entity, entitySchema, GetKeySchema(entitySchema), parentRelationship, parentPropertyValues, path);
         }
 
         protected void Split(T obj, string entity, XElement entitySchema, XElement uniqueKeySchema,
@@ -36,8 +41,8 @@ namespace XData.Data.Modification
             Commands.Add(executeCommand);
 
             //
-            Dictionary<XElement, T> propertySchemaChildrenDictionary = GetPropertySchemaChildrenDictionary(executeCommand.AggregNode, executeCommand.EntitySchema);
-            foreach (KeyValuePair<XElement, T> childrenPair in propertySchemaChildrenDictionary)
+            IEnumerable<KeyValuePair<XElement, T>> propertySchemaChildrens = GetPropertySchemaChildrens(executeCommand.AggregNode, executeCommand.EntitySchema);
+            foreach (KeyValuePair<XElement, T> childrenPair in propertySchemaChildrens)
             {
                 XElement propertySchema = childrenPair.Key;
                 IEnumerable<T> children = GetChildren(childrenPair.Value);

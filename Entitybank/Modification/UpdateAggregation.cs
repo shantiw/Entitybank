@@ -29,13 +29,13 @@ namespace XData.Data.Modification
             executeCommand.ParentRelationship = parentRelationship;
             executeCommand.Path = path;
 
-            executeCommand.PropertyValues = GetPropertyValues(executeCommand.AggregNode, executeCommand.EntitySchema);
+            executeCommand.PropertyValues = GetPropertyValues(aggregNode, entitySchema);
 
             //executeCommand.FixedUpdatePropertyValues = new Dictionary<string, object>();
 
             //
-            Dictionary<XElement, T> propertySchemaChildrenDictionary = GetPropertySchemaChildrenDictionary(executeCommand.AggregNode, executeCommand.EntitySchema);
-            foreach (KeyValuePair<XElement, T> childrenPair in propertySchemaChildrenDictionary)
+            IEnumerable<KeyValuePair<XElement, T>> propertySchemaChildrens = GetPropertySchemaChildrens(aggregNode, entitySchema);
+            foreach (KeyValuePair<XElement, T> childrenPair in propertySchemaChildrens)
             {
                 XElement propertySchema = childrenPair.Key;
                 IEnumerable<T> children = GetChildren(childrenPair.Value);

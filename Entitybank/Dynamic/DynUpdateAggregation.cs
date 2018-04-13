@@ -16,7 +16,10 @@ namespace XData.Data.Dynamic
         {
         }
 
-        public DynUpdateAggregation(object aggreg, object original, string entity, XElement schema) : base(aggreg, original, entity, schema)
+        internal protected DynUpdateAggregation(object aggreg, object original, string entity, XElement schema)
+            : base(aggreg, original, entity, schema,
+                  (p0, p1, p2, p3, p4, p5) => new DynCreateAggregation(p0, p1, p2, p3, p4, p5),
+                  (p0, p1, p2, p3) => new DynDeleteAggregation(p0, p1, p2, p3))
         {
         }
 

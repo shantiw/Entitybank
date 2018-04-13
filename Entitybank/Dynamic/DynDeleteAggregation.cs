@@ -13,7 +13,11 @@ namespace XData.Data.Dynamic
     public class DynDeleteAggregation : DeleteAggregation<dynamic>
     {
         public DynDeleteAggregation(object aggreg, string entity, XElement schema) : base(aggreg, entity, schema)
-        {           
+        {
+        }
+
+        internal protected DynDeleteAggregation(object aggreg, string entity, XElement schema, string path) : base(aggreg, entity, schema, path)
+        {
         }
 
         protected override IExecuteAggregationHelper<dynamic> GetExecuteAggregationHelper()

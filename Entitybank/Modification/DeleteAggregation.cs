@@ -10,11 +10,15 @@ namespace XData.Data.Modification
 {
     public abstract class DeleteAggregation<T> : ExecuteAggregation<T>
     {
-        public DeleteAggregation(T aggreg, string entity, XElement schema) : base(aggreg, entity, schema)
+        public DeleteAggregation(T aggreg, string entity, XElement schema) : this(aggreg, entity, schema, "/")
+        {
+        }
+
+        internal protected DeleteAggregation(T aggreg, string entity, XElement schema, string path) : base(aggreg, entity, schema)
         {
             XElement entitySchema = GetEntitySchema(entity);
             IEnumerable<DirectRelationship> relationships = GetDirectRelationships(entity);
-            Split(aggreg, Entity, entitySchema, GetKeySchema(entitySchema), GetConcurrencySchema(entitySchema), relationships, null, null, "/");
+            Split(aggreg, Entity, entitySchema, GetKeySchema(entitySchema), GetConcurrencySchema(entitySchema), relationships, null, null, path);
 
             Commands = Commands.Reverse().ToList();
         }
@@ -37,8 +41,8 @@ namespace XData.Data.Modification
             Commands.Add(executeCommand);
 
             //
-            Dictionary<XElement, T> propertySchemaChildrenDictionary = GetPropertySchemaChildrenDictionary(executeCommand.AggregNode, executeCommand.EntitySchema);
-            foreach (KeyValuePair<XElement, T> childrenPair in propertySchemaChildrenDictionary)
+            IEnumerable<KeyValuePair<XElement, T>> propertySchemaChildrens = GetPropertySchemaChildrens(executeCommand.AggregNode, executeCommand.EntitySchema);
+            foreach (KeyValuePair<XElement, T> childrenPair in propertySchemaChildrens)
             {
                 XElement propertySchema = childrenPair.Key;
                 IEnumerable<T> children = GetChildren(childrenPair.Value);

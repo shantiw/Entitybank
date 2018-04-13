@@ -161,27 +161,12 @@ namespace XData.Data.Objects
         {
             // DeletingEventArgs
             Dictionary<string, object> refetch() => FetchSingleFromDb(executeCommand); // Func<IReadOnlyDictionary<string, object>> refetch = () => FetchSingleFromDb(executeCommand);
-            Dictionary<string, object> refetched = null;
-            bool hasBeenRefetched = false;
-
-            // foreign key constraint check
-            Dictionary<string, object> relPropertyValues;
-            IEnumerable<string> relProps = executeCommand.ChildRelationships.SelectMany(r => r.Properties).Distinct();
-            IEnumerable<string> keyProps = executeCommand.EntitySchema.Elements(SchemaVocab.Property).Select(x => x.Attribute(SchemaVocab.Name).Value);
-            int keyPropCount = keyProps.Count();
-            if (relProps.Count() == keyPropCount && relProps.Union(keyProps).Count() == keyPropCount)
+            DeletingEventArgs<T> args = new DeletingEventArgs<T>(executeCommand.AggregNode, executeCommand.Entity, executeCommand.Schema, executeCommand.Path, executeCommand.Aggreg)
             {
-                relPropertyValues = executeCommand.PropertyValues;
-            }
-            else
-            {
-                refetched = refetch();
-                hasBeenRefetched = true;
-                if (refetched == null) return 0;
+                Refetch = refetch,
+            };
 
-                relPropertyValues = refetched;
-            }
-
+            Dictionary<string, object> relPropertyValues = executeCommand.PropertyValues;
             foreach (DirectRelationship relationship in executeCommand.ChildRelationships)
             {
                 XElement relatedEntitySchema = executeCommand.Schema.GetEntitySchema(relationship.RelatedEntity);
@@ -195,7 +180,14 @@ namespace XData.Data.Objects
                     relatedKeySchema.Add(relatedPropertySchema);
 
                     string property = relationship.Properties[i];
-                    relatedPropertyValues.Add(relatedProperty, relPropertyValues[property]);
+
+                    if (!relPropertyValues.ContainsKey(property) || relPropertyValues[property] == null)
+                    {
+                        relPropertyValues = args.Refetched;
+                    }
+
+                    object value = relPropertyValues[property];
+                    relatedPropertyValues.Add(relatedProperty, value);
                 }
 
                 bool hasChild = HasChildInDb(relatedPropertyValues, relatedEntitySchema, relatedKeySchema);
@@ -210,12 +202,6 @@ namespace XData.Data.Objects
             }
 
             // raise deleting event
-            DeletingEventArgs<T> args = new DeletingEventArgs<T>(executeCommand.AggregNode, executeCommand.Entity, executeCommand.Schema, executeCommand.Path, executeCommand.Aggreg)
-            {
-                Refetch = refetch,
-                HasBeenRefetched = hasBeenRefetched,
-                Refetched = refetched
-            };
             OnDeleting(args);
 
             foreach (SQLStatment statment in args.Before)
@@ -244,6 +230,7 @@ namespace XData.Data.Objects
             {
                 Refetch = () => FetchSingleFromDb(executeCommand)
             };
+            OnUpdating(args);
 
             // synchronize propertyValues with modified aggregNode OnUpdating
             SynchronizePropertyValues(executeCommand, modifier);
@@ -419,6 +406,8 @@ namespace XData.Data.Objects
         //
         internal protected int Execute(UpdateCommandNode<T> node, Modifier<T> modifier)
         {
+            if (node.Original != null) return Execute_Original(node, modifier);
+
             List<DeleteCommand<T>> deleteCommands = new List<DeleteCommand<T>>();
             int affected = Execute(node, deleteCommands, modifier);
 
@@ -437,7 +426,7 @@ namespace XData.Data.Objects
             if (node.ChildrenCollection.Count == 0) return affected;
 
             //
-            Dictionary<string, object> propertyValues = FetchFromDb(node.PropertyValues, node.EntitySchema, node.UniqueKeySchema).First();
+            Dictionary<string, object> dbPropertyValues = FetchFromDb(node.PropertyValues, node.EntitySchema, node.UniqueKeySchema).First();
 
             foreach (UpdateCommandNodeChildren<T> nodeChildren in node.ChildrenCollection)
             {
@@ -445,7 +434,7 @@ namespace XData.Data.Objects
                 string childrenPath = nodeChildren.Path;
                 ICollection<UpdateCommandNode<T>> childNodes = nodeChildren.UpdateCommandNodes;
 
-                Dictionary<string, object> relatedPropertyValues = GetRelatedPropertyValues(relationship, propertyValues);
+                Dictionary<string, object> relatedPropertyValues = GetRelatedPropertyValues(relationship, dbPropertyValues);
 
                 // establishing relationship
                 foreach (UpdateCommandNode<T> childNode in childNodes)
@@ -462,7 +451,7 @@ namespace XData.Data.Objects
                 IEnumerable<IReadOnlyDictionary<string, object>> relatedRecords = FetchRelatedCommands(
                     relatedPropertyValues, relationship.RelatedEntity, node.Schema);
 
-                // route                
+                // decide
                 List<IReadOnlyDictionary<string, object>> refetchedChildren = new List<IReadOnlyDictionary<string, object>>(relatedRecords);
 
                 string childEntity = relationship.RelatedEntity;
@@ -510,7 +499,7 @@ namespace XData.Data.Objects
                             }
                         }
 
-                        Insert(childNode, relationship, propertyValues, modifier);
+                        Insert(childNode, relationship, dbPropertyValues, modifier);
                     }
                     else
                     {

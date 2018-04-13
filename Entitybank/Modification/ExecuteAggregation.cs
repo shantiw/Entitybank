@@ -42,9 +42,9 @@ namespace XData.Data.Modification
             return ExecuteAggregationHelper.GetPropertyValues(obj, entitySchema);
         }
 
-        protected Dictionary<XElement, T> GetPropertySchemaChildrenDictionary(T obj, XElement entitySchema)
+        protected IEnumerable<KeyValuePair<XElement, T>> GetPropertySchemaChildrens(T obj, XElement entitySchema)
         {
-            return ExecuteAggregationHelper.GetPropertySchemaChildrenDictionary(obj, entitySchema);
+            return ExecuteAggregationHelper.GetPropertySchemaChildrens(obj, entitySchema);
         }
 
         protected abstract IExecuteAggregationHelper<T> GetExecuteAggregationHelper();
