@@ -172,7 +172,7 @@
     <value>optimistic concurrency exception at entity '{0}', key {1}.</value>
   </data>
   <data name="OriginalNotMatch" xml:space="preserve">
-    <value>The argument 'original' does not match the argument 'obj'.</value>
+    <value>Argument 'original' does not match argument 'obj'.</value>
   </data>
   <data name="RelationshipKeyConflicted" xml:space="preserve">
     <value>Conflicted relationship between entity '{0}', key:{1} and '{2}', property(s) {3}.</value>

@@ -58,28 +58,29 @@ namespace XData.Data.Modification
 
                 if (childRelationship is ManyToManyRelationship)
                 {
-                    Split(children, childRelationship as ManyToManyRelationship, executeCommand.PropertyValues, path, nodeChildren.UpdateCommandNodes);
+                    Split(children, childRelationship as ManyToManyRelationship, executeCommand.PropertyValues, childPath, nodeChildren.UpdateCommandNodes);
                 }
-
-                //
-                XElement childKeySchema = GetKeySchema(childEntitySchema);
-                XElement childConcurrencySchema = GetConcurrencySchema(childEntitySchema);
-
-                int index = 0;
-                foreach (T child in children)
+                else
                 {
-                    UpdateCommandNode<T> childNode = Split(child, childEntity, childEntitySchema, childKeySchema, childConcurrencySchema,
-                        childRelationship.DirectRelationships[0], executeCommand.PropertyValues,
-                        string.Format("{0}[{1}]", childPath, index));
-                    nodeChildren.UpdateCommandNodes.Add(childNode);
-                    index++;
+                    XElement childKeySchema = GetKeySchema(childEntitySchema);
+                    XElement childConcurrencySchema = GetConcurrencySchema(childEntitySchema);
+
+                    int index = 0;
+                    foreach (T child in children)
+                    {
+                        UpdateCommandNode<T> childNode = Split(child, childEntity, childEntitySchema, childKeySchema, childConcurrencySchema,
+                            childRelationship.DirectRelationships[0], executeCommand.PropertyValues,
+                            string.Format("{0}[{1}]", childPath, index));
+                        nodeChildren.UpdateCommandNodes.Add(childNode);
+                        index++;
+                    }
                 }
             }
 
             return executeCommand;
         }
 
-        protected void Split(IEnumerable<T> children, ManyToManyRelationship manyToManyRelationship, Dictionary<string, object> parentPropertyValues, string path,
+        protected void Split(IEnumerable<T> children, ManyToManyRelationship manyToManyRelationship, Dictionary<string, object> parentPropertyValues, string childPath,
             ICollection<UpdateCommandNode<T>> childNodes)
         {
             XElement mmKeySchema = TransKeySchema(manyToManyRelationship, out XElement mmEntitySchema);
@@ -106,10 +107,9 @@ namespace XData.Data.Modification
                 mmExecuteCommand.ParentPropertyValues = parentPropertyValues;
                 mmExecuteCommand.ParentRelationship = manyToManyRelationship.DirectRelationships[0];
                 mmExecuteCommand.FixedUpdatePropertyValues = mmUpdatePropertyValues;
-                mmExecuteCommand.Path = path;
+                mmExecuteCommand.Path = string.Format("{0}[{1}]", childPath, index);
 
                 childNodes.Add(mmExecuteCommand);
-
                 index++;
             }
         }

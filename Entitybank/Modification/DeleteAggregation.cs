@@ -10,28 +10,25 @@ namespace XData.Data.Modification
 {
     public abstract class DeleteAggregation<T> : ExecuteAggregation<T>
     {
-        public DeleteAggregation(T aggreg, string entity, XElement schema) : this(aggreg, entity, schema, "/")
+        public DeleteAggregation(T aggreg, string entity, XElement schema) : base(aggreg, entity, schema)
         {
-        }
+            if (aggreg == null) return; // UpdateAggregation.Original
 
-        internal protected DeleteAggregation(T aggreg, string entity, XElement schema, string path) : base(aggreg, entity, schema)
-        {
             XElement entitySchema = GetEntitySchema(entity);
-            IEnumerable<DirectRelationship> relationships = GetDirectRelationships(entity);
-            Split(aggreg, Entity, entitySchema, GetKeySchema(entitySchema), GetConcurrencySchema(entitySchema), relationships, null, null, path);
+            Split(aggreg, entitySchema, null, null, "/");
 
-            Commands = Commands.Reverse().ToList();
+            Commands.Reverse();
         }
 
-        protected void Split(T obj, string entity, XElement entitySchema, XElement uniqueKeySchema, XElement concurrencySchema,
-            IEnumerable<DirectRelationship> childRelationships, DirectRelationship parentRelationship, Dictionary<string, object> parentPropertyValues, string path)
+        internal protected void Split(T obj, XElement entitySchema, DirectRelationship parentRelationship, Dictionary<string, object> parentPropertyValues, string path)
         {
-            DeleteCommand<T> executeCommand = CreateDeleteCommand(obj, entity);
+            string entity = entitySchema.Attribute(SchemaVocab.Name).Value;
 
+            DeleteCommand<T> executeCommand = CreateDeleteCommand(obj, entity);
             executeCommand.EntitySchema = entitySchema;
-            executeCommand.UniqueKeySchema = uniqueKeySchema;
-            executeCommand.ConcurrencySchema = concurrencySchema;
-            executeCommand.ChildRelationships = childRelationships;
+            executeCommand.UniqueKeySchema = GetKeySchema(entitySchema);
+            executeCommand.ConcurrencySchema = GetConcurrencySchema(entitySchema);
+            executeCommand.ChildRelationships = GetDirectRelationships(entity);
             executeCommand.ParentPropertyValues = parentPropertyValues;
             executeCommand.ParentRelationship = parentRelationship;
             executeCommand.Path = path;
@@ -48,7 +45,7 @@ namespace XData.Data.Modification
                 IEnumerable<T> children = GetChildren(childrenPair.Value);
 
                 //
-                string childPath = path + propertySchema.Attribute(SchemaVocab.Name).Value;
+                string childrenPath = path + propertySchema.Attribute(SchemaVocab.Name).Value;
 
                 //
                 XElement childEntitySchema = GetEntitySchemaByCollection(propertySchema.Attribute(SchemaVocab.Collection).Value);
@@ -61,26 +58,21 @@ namespace XData.Data.Modification
 
                 if (childRelationship is ManyToManyRelationship)
                 {
-                    Split(children, childRelationship as ManyToManyRelationship, executeCommand.PropertyValues, path);
+                    Split(children, childRelationship as ManyToManyRelationship, executeCommand.PropertyValues, childrenPath);
                     return;
                 }
-
-                XElement childKeySchema = GetKeySchema(childEntitySchema);
-                XElement childConcurrencySchema = GetConcurrencySchema(childEntitySchema);
-                IEnumerable<DirectRelationship> childDirectRelationships = GetDirectRelationships(childEntity);
 
                 int index = 0;
                 foreach (T child in children)
                 {
-                    Split(child, childEntity, childEntitySchema, childKeySchema, childConcurrencySchema, childDirectRelationships,
-                        childRelationship.DirectRelationships[0], executeCommand.PropertyValues,
-                        string.Format("{0}[{1}]", childPath, index));
+                    Split(child, childEntitySchema, childRelationship.DirectRelationships[0], executeCommand.PropertyValues,
+                        string.Format("{0}[{1}]", childrenPath, index));
                     index++;
                 }
             }
         }
 
-        protected void Split(IEnumerable<T> children, ManyToManyRelationship manyToManyRelationship, Dictionary<string, object> parentPropertyValues, string path)
+        internal protected void Split(IEnumerable<T> children, ManyToManyRelationship manyToManyRelationship, Dictionary<string, object> parentPropertyValues, string childrenPath)
         {
             XElement mmKeySchema = TransKeySchema(manyToManyRelationship, out XElement mmEntitySchema);
             string mmEntity = mmEntitySchema.Name.LocalName;
@@ -138,7 +130,7 @@ namespace XData.Data.Modification
                 mmExecuteCommand.PropertyValues = mmPropertyValues;
                 mmExecuteCommand.ParentPropertyValues = parentPropertyValues;
                 mmExecuteCommand.ParentRelationship = manyToManyRelationship.DirectRelationships[0];
-                mmExecuteCommand.Path = path;
+                mmExecuteCommand.Path = string.Format("{0}[{1}]", childrenPath, index);
 
                 Commands.Add(mmExecuteCommand);
 

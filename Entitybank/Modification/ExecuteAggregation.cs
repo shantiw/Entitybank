@@ -13,7 +13,7 @@ namespace XData.Data.Modification
         public string Entity { get; private set; }
         public XElement Schema { get; private set; }
 
-        protected ICollection<ExecuteCommand<T>> Commands = new List<ExecuteCommand<T>>();
+        protected List<ExecuteCommand<T>> Commands = new List<ExecuteCommand<T>>();
         internal IEnumerable<ExecuteCommand<T>> ExecuteCommands { get => Commands; }
 
         protected IExecuteAggregationHelper<T> ExecuteAggregationHelper { get; private set; }

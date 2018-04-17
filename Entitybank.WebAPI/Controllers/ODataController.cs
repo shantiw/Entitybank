@@ -77,21 +77,21 @@ namespace XData.Web.Http.Controllers
 
         [HttpPost]
         [Route("{name}")]
-        public HttpResponseMessage PostElement(string name, [FromBody]XElement value)
+        public HttpResponseMessage PostXml(string name, [FromBody]XElement value)
         {
             return ODataModel.Create(name, value, Request);
         }
 
         [HttpDelete]
         [Route("{name}")]
-        public void DeleteElement(string name, [FromBody]XElement value)
+        public void DeleteXml(string name, [FromBody]XElement value)
         {
             ODataModel.Delete(name, value, Request);
         }
 
         [HttpPut]
         [Route("{name}")]
-        public void PutElement(string name, [FromBody]XElement value)
+        public void PutXml(string name, [FromBody]XElement value)
         {
             ODataModel.Update(name, value, Request);
         }

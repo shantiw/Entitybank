@@ -223,7 +223,7 @@ namespace XData.Data {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The argument &apos;original&apos; does not match the argument &apos;obj&apos;..
+        ///   Looks up a localized string similar to Argument &apos;original&apos; does not match argument &apos;obj&apos;..
         /// </summary>
         internal static string OriginalNotMatch {
             get {

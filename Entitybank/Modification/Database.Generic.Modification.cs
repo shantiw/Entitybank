@@ -426,15 +426,13 @@ namespace XData.Data.Objects
             if (node.ChildrenCollection.Count == 0) return affected;
 
             //
-            Dictionary<string, object> dbPropertyValues = FetchFromDb(node.PropertyValues, node.EntitySchema, node.UniqueKeySchema).First();
-
             foreach (UpdateCommandNodeChildren<T> nodeChildren in node.ChildrenCollection)
             {
                 DirectRelationship relationship = nodeChildren.ParentRelationship;
                 string childrenPath = nodeChildren.Path;
                 ICollection<UpdateCommandNode<T>> childNodes = nodeChildren.UpdateCommandNodes;
 
-                Dictionary<string, object> relatedPropertyValues = GetRelatedPropertyValues(relationship, dbPropertyValues);
+                Dictionary<string, object> relatedPropertyValues = GetRelatedPropertyValues(relationship, node, out Dictionary<string, object> dbPropertyValues);
 
                 // establishing relationship
                 foreach (UpdateCommandNode<T> childNode in childNodes)
@@ -545,14 +543,23 @@ namespace XData.Data.Objects
             return affected;
         }
 
-        private Dictionary<string, object> GetRelatedPropertyValues(DirectRelationship relationship, IReadOnlyDictionary<string, object> parentPropertyValues)
+        private Dictionary<string, object> GetRelatedPropertyValues(DirectRelationship relationship, UpdateCommandNode<T> parent, out Dictionary<string, object> dbParentPropertyValues)
         {
+            dbParentPropertyValues = parent.PropertyValues;
             Dictionary<string, object> relatedPropertyValues = new Dictionary<string, object>();
             for (int i = 0; i < relationship.Properties.Length; i++)
             {
                 string propertyName = relationship.Properties[i];
                 string relatedPropertyName = relationship.RelatedProperties[i];
-                relatedPropertyValues.Add(relatedPropertyName, parentPropertyValues[propertyName]);
+
+                if (!dbParentPropertyValues.ContainsKey(propertyName) || dbParentPropertyValues[propertyName] == null)
+                {
+                    dbParentPropertyValues = FetchFromDb(parent.PropertyValues, parent.EntitySchema, parent.UniqueKeySchema).First();
+
+                }
+
+                object value = dbParentPropertyValues[propertyName];
+                relatedPropertyValues.Add(relatedPropertyName, value);
             }
 
             return relatedPropertyValues;

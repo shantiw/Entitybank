@@ -16,12 +16,6 @@ namespace XData.Data.Xml
         {
         }
 
-        internal protected XmlCreateAggregation(XElement aggreg, string entity, XElement schema,
-            DirectRelationship parentRelationship, Dictionary<string, object> parentPropertyValues, string path)
-            : base(aggreg, entity, schema, parentRelationship, parentPropertyValues, path)
-        {
-        }
-
         protected override IExecuteAggregationHelper<XElement> GetExecuteAggregationHelper()
         {
             return new ExecuteAggregationHelper();

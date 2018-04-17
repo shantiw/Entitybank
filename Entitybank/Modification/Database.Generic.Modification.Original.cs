@@ -21,8 +21,6 @@ namespace XData.Data.Objects
             if (node.ChildrenCollection.Count == 0) return affected;
 
             //
-            Dictionary<string, object> dbPropertyValues = FetchFromDb(node.PropertyValues, node.EntitySchema, node.UniqueKeySchema).First();
-
             foreach (UpdateCommandNodeChildren<T> nodeChildren in node.ChildrenCollection)
             {
                 string childrenPath = nodeChildren.Path;
@@ -32,11 +30,11 @@ namespace XData.Data.Objects
                 XElement childEntitySchema = node.Schema.GetEntitySchema(childEntity);
                 XElement childKeySchema = SchemaHelper.GetKeySchema(childEntitySchema);
 
-                Dictionary<string, object> relatedPropertyValues = GetRelatedPropertyValues(relationship, dbPropertyValues);
+                Dictionary<string, object> relatedPropertyValues = GetRelatedPropertyValues(relationship, node, out Dictionary<string, object> dbPropertyValues);
 
                 //
                 IEnumerable<IReadOnlyDictionary<string, object>> refetchedChildPVs = FetchRelatedCommands(relatedPropertyValues, relationship.RelatedEntity, node.Schema);
-                IEnumerable<IReadOnlyDictionary<string, object>> childPVs = nodeChildren.UpdateCommandNodes.Select(n => n.PropertyValues);
+                IEnumerable<IReadOnlyDictionary<string, object>> origChildPVs = nodeChildren.UpdateCommandNodes.Select(n => n.OrigPropertyValues);
                 foreach (IReadOnlyDictionary<string, object> refetchedChildPV in refetchedChildPVs)
                 {
                     Dictionary<string, object> refetchedKeyChildPV = new Dictionary<string, object>();
@@ -45,7 +43,7 @@ namespace XData.Data.Objects
                         refetchedKeyChildPV.Add(property, refetchedChildPV[property]);
                     }
 
-                    IReadOnlyDictionary<string, object> found = Find(childPVs, refetchedKeyChildPV);
+                    IReadOnlyDictionary<string, object> found = Find(origChildPVs, refetchedKeyChildPV);
                     if (found == null)
                     {
                         throw new ConstraintException(ErrorMessages.InsertedByAnotherUser);
@@ -55,6 +53,8 @@ namespace XData.Data.Objects
                 //
                 foreach (UpdateCommandNode<T> childNode in nodeChildren.UpdateCommandNodes)
                 {
+                    if (childNode.AggregNode == null) continue;
+
                     // establishing relationship
                     foreach (KeyValuePair<string, object> propertyValue in relatedPropertyValues)
                     {

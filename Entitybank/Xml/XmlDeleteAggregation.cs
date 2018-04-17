@@ -15,10 +15,6 @@ namespace XData.Data.Xml
         {
         }
 
-        public XmlDeleteAggregation(XElement aggreg, string entity, XElement schema, string path) : base(aggreg, entity, schema, path)
-        {
-        }
-
         protected override IExecuteAggregationHelper<XElement> GetExecuteAggregationHelper()
         {
             return new ExecuteAggregationHelper();

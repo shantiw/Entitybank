@@ -10,24 +10,22 @@ namespace XData.Data.Modification
 {
     public abstract class CreateAggregation<T> : ExecuteAggregation<T>
     {
-        public CreateAggregation(T aggreg, string entity, XElement schema) : this(aggreg, entity, schema, null, null, "/")
+        public CreateAggregation(T aggreg, string entity, XElement schema) : base(aggreg, entity, schema)
         {
-        }
+            if (aggreg == null) return; // UpdateAggregation.Original
 
-        internal protected CreateAggregation(T aggreg, string entity, XElement schema,
-            DirectRelationship parentRelationship, Dictionary<string, object> parentPropertyValues, string path) : base(aggreg, entity, schema)
-        {
             XElement entitySchema = GetEntitySchema(entity);
-            Split(aggreg, entity, entitySchema, GetKeySchema(entitySchema), parentRelationship, parentPropertyValues, path);
+            Split(aggreg, entitySchema, null, null, "/");
         }
 
-        protected void Split(T obj, string entity, XElement entitySchema, XElement uniqueKeySchema,
-            DirectRelationship parentRelationship, Dictionary<string, object> parentPropertyValues, string path)
+        internal protected void Split(T obj, XElement entitySchema, DirectRelationship parentRelationship, Dictionary<string, object> parentPropertyValues, string path)
         {
+            string entity = entitySchema.Attribute(SchemaVocab.Name).Value;
+
             InsertCommand<T> executeCommand = CreateInsertCommand(obj, entity);
 
             executeCommand.EntitySchema = entitySchema;
-            executeCommand.UniqueKeySchema = uniqueKeySchema;
+            executeCommand.UniqueKeySchema = GetKeySchema(entitySchema);
             executeCommand.ParentPropertyValues = parentPropertyValues;
             executeCommand.ParentRelationship = parentRelationship;
             executeCommand.Path = path;
@@ -48,7 +46,7 @@ namespace XData.Data.Modification
                 IEnumerable<T> children = GetChildren(childrenPair.Value);
 
                 //
-                string childPath = path + propertySchema.Attribute(SchemaVocab.Name).Value;
+                string childrenPath = path + propertySchema.Attribute(SchemaVocab.Name).Value;
 
                 //
                 XElement childEntitySchema = GetEntitySchemaByCollection(propertySchema.Attribute(SchemaVocab.Collection).Value);
@@ -61,26 +59,21 @@ namespace XData.Data.Modification
 
                 if (childRelationship is ManyToManyRelationship)
                 {
-                    Split(children, childRelationship as ManyToManyRelationship, executeCommand.PropertyValues, path);
+                    Split(children, childRelationship as ManyToManyRelationship, executeCommand.PropertyValues, childrenPath);
                     return;
                 }
-                else
-                {
-                    XElement childKeySchema = GetKeySchema(childEntitySchema);
 
-                    int index = 0;
-                    foreach (T child in children)
-                    {
-                        Split(child, childEntity, childEntitySchema, childKeySchema,
-                            childRelationship.DirectRelationships[0], executeCommand.PropertyValues,
-                            string.Format("{0}[{1}]", childPath, index));
-                        index++;
-                    }
+                int index = 0;
+                foreach (T child in children)
+                {
+                    Split(child, childEntitySchema, childRelationship.DirectRelationships[0], executeCommand.PropertyValues,
+                        string.Format("{0}[{1}]", childrenPath, index));
+                    index++;
                 }
             }
         }
 
-        protected void Split(IEnumerable<T> children, ManyToManyRelationship manyToManyRelationship, Dictionary<string, object> parentPropertyValues, string path)
+        internal protected void Split(IEnumerable<T> children, ManyToManyRelationship manyToManyRelationship, Dictionary<string, object> parentPropertyValues, string childrenPath)
         {
             XElement mmKeySchema = TransKeySchema(manyToManyRelationship, out XElement mmEntitySchema);
             string mmEntity = mmEntitySchema.Name.LocalName;
@@ -95,12 +88,11 @@ namespace XData.Data.Modification
                 ResetObjectValues(mmChild, mmPropertyValues);
 
                 InsertCommand<T> mmExecuteCommand = CreateInsertCommand(mmChild, mmEntity);
-
                 mmExecuteCommand.EntitySchema = mmEntitySchema;
                 mmExecuteCommand.UniqueKeySchema = mmKeySchema;
                 mmExecuteCommand.ParentPropertyValues = parentPropertyValues;
                 mmExecuteCommand.ParentRelationship = manyToManyRelationship.DirectRelationships[0];
-                mmExecuteCommand.Path = path;
+                mmExecuteCommand.Path = string.Format("{0}[{1}]", childrenPath, index);
                 mmExecuteCommand.PropertyValues = mmPropertyValues;
 
                 SetDefaultValues(mmExecuteCommand);
