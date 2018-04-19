@@ -58,7 +58,7 @@ namespace XData.Data.Modification
 
                 if (childRelationship is ManyToManyRelationship)
                 {
-                    Split(children, childRelationship as ManyToManyRelationship, executeCommand.PropertyValues, childPath, nodeChildren.UpdateCommandNodes);
+                    Split(children, childEntitySchema, childRelationship as ManyToManyRelationship, executeCommand.PropertyValues, childPath, nodeChildren.UpdateCommandNodes);
                 }
                 else
                 {
@@ -80,17 +80,17 @@ namespace XData.Data.Modification
             return executeCommand;
         }
 
-        protected void Split(IEnumerable<T> children, ManyToManyRelationship manyToManyRelationship, Dictionary<string, object> parentPropertyValues, string childPath,
+        protected void Split(IEnumerable<T> children, XElement childEntitySchema, ManyToManyRelationship manyToManyRelationship, Dictionary<string, object> parentPropertyValues, string childPath,
             ICollection<UpdateCommandNode<T>> childNodes)
         {
             XElement mmKeySchema = TransKeySchema(manyToManyRelationship, out XElement mmEntitySchema);
-            string mmEntity = mmEntitySchema.Name.LocalName;
+            string mmEntity = mmEntitySchema.Attribute(SchemaVocab.Name).Value;
             XElement mmConcurrencySchema = GetConcurrencySchema(mmEntitySchema);
 
             int index = 0;
             foreach (T child in children)
             {
-                Dictionary<string, object> childPropertyValues = GetPropertyValues(child, mmEntitySchema);
+                Dictionary<string, object> childPropertyValues = GetPropertyValues(child, childEntitySchema);
                 Dictionary<string, object> mmPropertyValues = TransPropertyValues(manyToManyRelationship, parentPropertyValues, childPropertyValues);
 
                 Dictionary<string, object> mmUpdatePropertyValues = new Dictionary<string, object>(mmPropertyValues);

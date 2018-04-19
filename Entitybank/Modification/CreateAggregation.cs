@@ -59,7 +59,7 @@ namespace XData.Data.Modification
 
                 if (childRelationship is ManyToManyRelationship)
                 {
-                    Split(children, childRelationship as ManyToManyRelationship, executeCommand.PropertyValues, childrenPath);
+                    Split(children, childEntitySchema, childRelationship as ManyToManyRelationship, executeCommand.PropertyValues, childrenPath);
                     return;
                 }
 
@@ -73,15 +73,15 @@ namespace XData.Data.Modification
             }
         }
 
-        internal protected void Split(IEnumerable<T> children, ManyToManyRelationship manyToManyRelationship, Dictionary<string, object> parentPropertyValues, string childrenPath)
+        internal protected void Split(IEnumerable<T> children, XElement childEntitySchema, ManyToManyRelationship manyToManyRelationship, Dictionary<string, object> parentPropertyValues, string childrenPath)
         {
             XElement mmKeySchema = TransKeySchema(manyToManyRelationship, out XElement mmEntitySchema);
-            string mmEntity = mmEntitySchema.Name.LocalName;
+            string mmEntity = mmEntitySchema.Attribute(SchemaVocab.Name).Value;
 
             int index = 0;
             foreach (T child in children)
             {
-                Dictionary<string, object> childPropertyValues = GetPropertyValues(child, mmEntitySchema);
+                Dictionary<string, object> childPropertyValues = GetPropertyValues(child, childEntitySchema);
                 Dictionary<string, object> mmPropertyValues = TransPropertyValues(manyToManyRelationship, parentPropertyValues, childPropertyValues);
 
                 T mmChild = child;
