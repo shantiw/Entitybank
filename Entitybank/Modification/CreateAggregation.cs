@@ -75,6 +75,8 @@ namespace XData.Data.Modification
 
         internal protected void Split(IEnumerable<T> children, XElement childEntitySchema, ManyToManyRelationship manyToManyRelationship, Dictionary<string, object> parentPropertyValues, string childrenPath)
         {
+            string childEntity = childEntitySchema.Attribute(SchemaVocab.Name).Value;
+
             XElement mmKeySchema = TransKeySchema(manyToManyRelationship, out XElement mmEntitySchema);
             string mmEntity = mmEntitySchema.Attribute(SchemaVocab.Name).Value;
 
@@ -84,10 +86,7 @@ namespace XData.Data.Modification
                 Dictionary<string, object> childPropertyValues = GetPropertyValues(child, childEntitySchema);
                 Dictionary<string, object> mmPropertyValues = TransPropertyValues(manyToManyRelationship, parentPropertyValues, childPropertyValues);
 
-                T mmChild = child;
-                ResetObjectValues(mmChild, mmPropertyValues);
-
-                InsertCommand<T> mmExecuteCommand = CreateInsertCommand(mmChild, mmEntity);
+                InsertCommand<T> mmExecuteCommand = CreateInsertCommand(child, childEntity);
                 mmExecuteCommand.EntitySchema = mmEntitySchema;
                 mmExecuteCommand.UniqueKeySchema = mmKeySchema;
                 mmExecuteCommand.ParentPropertyValues = parentPropertyValues;

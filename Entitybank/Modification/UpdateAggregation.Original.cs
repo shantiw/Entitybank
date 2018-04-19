@@ -64,69 +64,69 @@ namespace XData.Data.Modification
 
                     origPropSchemaChildrenDict.Remove(property);
                 }
-                else
-                {
-                    // create
-                    string childrenPath = updateCommandNode.Path + propertySchema.Attribute(SchemaVocab.Name).Value;
-                    XElement childEntitySchema = GetEntitySchemaByCollection(propertySchema.Attribute(SchemaVocab.Collection).Value);
-                    string childEntity = childEntitySchema.Attribute(SchemaVocab.Name).Value;
+                //else
+                //{
+                //    // create
+                //    string childrenPath = updateCommandNode.Path + propertySchema.Attribute(SchemaVocab.Name).Value;
+                //    XElement childEntitySchema = GetEntitySchemaByCollection(propertySchema.Attribute(SchemaVocab.Collection).Value);
+                //    string childEntity = childEntitySchema.Attribute(SchemaVocab.Name).Value;
 
-                    //
-                    string relationshipString = propertySchema.Attribute(SchemaVocab.Relationship).Value;
-                    Relationship childRelationship = GetParentChildrenRelationship(relationshipString, updateCommandNode.Entity, childEntity);
-                    if (childRelationship == null) return;
+                //    //
+                //    string relationshipString = propertySchema.Attribute(SchemaVocab.Relationship).Value;
+                //    Relationship childRelationship = GetParentChildrenRelationship(relationshipString, updateCommandNode.Entity, childEntity);
+                //    if (childRelationship == null) return;
 
-                    if (childRelationship is ManyToManyRelationship)
-                    {
-                        ManyToManyRelationship manyToManyRelationship = childRelationship as ManyToManyRelationship;
-                        IEnumerable<ExecuteCommand<T>> commands = GetCreateAggregationCommands(GetChildren(childrenT), childEntitySchema, manyToManyRelationship,
-                            updateCommandNode.PropertyValues, childrenPath, updateCommandNode.Entity, updateCommandNode.Schema);
-                        Commands.AddRange(commands);
-                    }
-                    else
-                    {
-                        int index = 0;
-                        foreach (T child in GetChildren(childrenT))
-                        {
-                            Create(child, childEntitySchema, childRelationship.DirectRelationships[0], updateCommandNode.PropertyValues,
-                                string.Format("{0}[{1}]", childrenPath, index), childEntity, updateCommandNode.Schema);
-                            index++;
-                        }
-                    }
-                }
+                //    if (childRelationship is ManyToManyRelationship)
+                //    {
+                //        ManyToManyRelationship manyToManyRelationship = childRelationship as ManyToManyRelationship;
+                //        IEnumerable<ExecuteCommand<T>> commands = GetCreateAggregationCommands(GetChildren(childrenT), childEntitySchema, manyToManyRelationship,
+                //            updateCommandNode.PropertyValues, childrenPath, updateCommandNode.Entity, updateCommandNode.Schema);
+                //        Commands.AddRange(commands);
+                //    }
+                //    else
+                //    {
+                //        int index = 0;
+                //        foreach (T child in GetChildren(childrenT))
+                //        {
+                //            Create(child, childEntitySchema, childRelationship.DirectRelationships[0], updateCommandNode.PropertyValues,
+                //                string.Format("{0}[{1}]", childrenPath, index), childEntity, updateCommandNode.Schema);
+                //            index++;
+                //        }
+                //    }
+                //}
             }
 
-            // delete
-            foreach (var pair in origPropSchemaChildrenDict)
-            {
-                XElement propertySchema = pair.Value.Key;
-                string childrenPath = updateCommandNode.Path + propertySchema.Attribute(SchemaVocab.Name).Value;
-                XElement childEntitySchema = GetEntitySchemaByCollection(propertySchema.Attribute(SchemaVocab.Collection).Value);
-                string childEntity = childEntitySchema.Attribute(SchemaVocab.Name).Value;
+            //// delete
+            //foreach (var pair in origPropSchemaChildrenDict)
+            //{
+            //    XElement propertySchema = pair.Value.Key;
+            //    string childrenPath = updateCommandNode.Path + propertySchema.Attribute(SchemaVocab.Name).Value;
+            //    XElement childEntitySchema = GetEntitySchemaByCollection(propertySchema.Attribute(SchemaVocab.Collection).Value);
+            //    string childEntity = childEntitySchema.Attribute(SchemaVocab.Name).Value;
 
-                //
-                string relationshipString = propertySchema.Attribute(SchemaVocab.Relationship).Value;
-                Relationship childRelationship = GetParentChildrenRelationship(relationshipString, updateCommandNode.Entity, childEntity);
-                if (childRelationship == null) return;
+            //    //
+            //    string relationshipString = propertySchema.Attribute(SchemaVocab.Relationship).Value;
+            //    Relationship childRelationship = GetParentChildrenRelationship(relationshipString, updateCommandNode.Entity, childEntity);
+            //    if (childRelationship == null) return;
 
-                if (childRelationship is ManyToManyRelationship)
-                {
-                    ManyToManyRelationship manyToManyRelationship = childRelationship as ManyToManyRelationship;
-                    IEnumerable<ExecuteCommand<T>> commands = GetDeleteAggregationCommands(GetChildren(pair.Value.Value), childEntitySchema, manyToManyRelationship,
-                        updateCommandNode.PropertyValues, childrenPath, updateCommandNode.Entity, updateCommandNode.Schema);
-                    DeleteCommands.AddRange(commands);
-                }
-                else
-                {
-                    int index = 0;
-                    foreach (T child in GetChildren(pair.Value.Value))
-                    {
-                        Delete(child, childEntitySchema, childRelationship.DirectRelationships[0], updateCommandNode.PropertyValues,
-                            string.Format("{0}[+{1}]", childrenPath, index), childEntity, updateCommandNode.Schema);
-                        index++;
-                    }
-                }
-            }
+            //    if (childRelationship is ManyToManyRelationship)
+            //    {
+            //        ManyToManyRelationship manyToManyRelationship = childRelationship as ManyToManyRelationship;
+            //        IEnumerable<ExecuteCommand<T>> commands = GetDeleteAggregationCommands(GetChildren(pair.Value.Value), childEntitySchema, manyToManyRelationship,
+            //            updateCommandNode.PropertyValues, childrenPath, updateCommandNode.Entity, updateCommandNode.Schema);
+            //        DeleteCommands.AddRange(commands);
+            //    }
+            //    else
+            //    {
+            //        int index = 0;
+            //        foreach (T child in GetChildren(pair.Value.Value))
+            //        {
+            //            Delete(child, childEntitySchema, childRelationship.DirectRelationships[0], updateCommandNode.PropertyValues,
+            //                string.Format("{0}[+{1}]", childrenPath, index), childEntity, updateCommandNode.Schema);
+            //            index++;
+            //        }
+            //    }
+            //}
         }
 
         protected void Update(XElement propertySchema, IEnumerable<T> children, IEnumerable<T> origChildren, UpdateCommandNode<T> updateCommandNode)
@@ -219,6 +219,8 @@ namespace XData.Data.Modification
             Dictionary<string, object> parentPropertyValues, string childrenPath, string parentEntity, XElement schema,
             ICollection<UpdateCommandNode<T>> updateCommandNodes)
         {
+            string childEntity = childEntitySchema.Attribute(SchemaVocab.Name).Value;
+
             XElement mmKeySchema = TransKeySchema(manyToManyRelationship, out XElement mmEntitySchema);
             string mmEntity = mmEntitySchema.Attribute(SchemaVocab.Name).Value;
             XElement mmConcurrencySchema = GetConcurrencySchema(mmEntitySchema);
@@ -231,10 +233,7 @@ namespace XData.Data.Modification
 
                 Dictionary<string, object> mmUpdatePropertyValues = new Dictionary<string, object>(mmPropertyValues);
 
-                T mmChild = origChild;
-                ResetObjectValues(mmChild, mmPropertyValues);
-
-                UpdateCommandNode<T> mmExecuteCommand = CreateUpdateCommandNode(default(T), mmChild, mmEntity);
+                UpdateCommandNode<T> mmExecuteCommand = CreateUpdateCommandNode(default(T), origChild, childEntity);
                 mmExecuteCommand.EntitySchema = mmEntitySchema;
                 mmExecuteCommand.UniqueKeySchema = mmKeySchema;
                 mmExecuteCommand.ConcurrencySchema = mmConcurrencySchema;
@@ -268,10 +267,7 @@ namespace XData.Data.Modification
                 else
                 {
                     // update
-                    T mmChild = child;
-                    ResetObjectValues(mmChild, mmPropertyValues);
-
-                    SetUpdateCommandNode(origChildCommandNode, mmChild);
+                    SetUpdateCommandNode(origChildCommandNode, child);
                     origChildCommandNode.Path = string.Format("{0}[{1}]", childrenPath, index);
                     origChildCommandNode.PropertyValues = mmPropertyValues;
                 }
@@ -290,7 +286,7 @@ namespace XData.Data.Modification
 
             // delete
             UpdateCommandNode<T>[] deleteNodes = updateCommandNodes.Where(p => p.AggregNode == null).ToArray();
-            ExecuteCommand<T>[] deleteCommands = GetDeleteAggregationCommands(deleteNodes.Select(p => p.AggregNode), childEntitySchema, manyToManyRelationship, parentPropertyValues, childrenPath, parentEntity, schema).ToArray();
+            ExecuteCommand<T>[] deleteCommands = GetDeleteAggregationCommands(deleteNodes.Select(p => p.OrigNode), childEntitySchema, manyToManyRelationship, parentPropertyValues, childrenPath, parentEntity, schema).ToArray();
 
             // reset path
             for (int i = 0; i < deleteCommands.Length; i++)

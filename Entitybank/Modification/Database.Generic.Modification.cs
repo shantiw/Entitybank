@@ -110,8 +110,12 @@ namespace XData.Data.Objects
             InsertingEventArgs<T> args = new InsertingEventArgs<T>(executeCommand.AggregNode, executeCommand.Entity, executeCommand.Schema, executeCommand.Path, executeCommand.Aggreg);
             OnInserting(args);
 
-            // synchronize propertyValues with modified aggregNode OnInserting
-            SynchronizePropertyValues(executeCommand, modifier);
+            // non-ManyToMany
+            if (executeCommand.EntitySchema.Attribute(SchemaVocab.Name).Value == executeCommand.Entity)
+            {
+                // synchronize propertyValues with modified aggregNode OnInserting
+                SynchronizePropertyValues(executeCommand, modifier);
+            }
 
             //
             modifier.CheckConstraints(executeCommand);
@@ -232,19 +236,23 @@ namespace XData.Data.Objects
             };
             OnUpdating(args);
 
-            // synchronize propertyValues with modified aggregNode OnUpdating
-            SynchronizePropertyValues(executeCommand, modifier);
-
-            foreach (KeyValuePair<string, object> pair in executeCommand.FixedUpdatePropertyValues)
+            // non-ManyToMany
+            if (executeCommand.EntitySchema.Attribute(SchemaVocab.Name).Value == executeCommand.Entity)
             {
-                string propertyName = pair.Key;
-                object propertyValue = pair.Value;
-                if (executeCommand.PropertyValues.ContainsKey(propertyName))
-                {
-                    object value = executeCommand.PropertyValues[propertyName];
-                    if (object.Equals(propertyValue, value)) continue;
+                // synchronize propertyValues with modified aggregNode OnUpdating
+                SynchronizePropertyValues(executeCommand, modifier);
 
-                    throw new ConstraintException(string.Format(ErrorMessages.NotChangeFixedValue, propertyName, executeCommand.Entity));
+                foreach (KeyValuePair<string, object> pair in executeCommand.FixedUpdatePropertyValues)
+                {
+                    string propertyName = pair.Key;
+                    object propertyValue = pair.Value;
+                    if (executeCommand.PropertyValues.ContainsKey(propertyName))
+                    {
+                        object value = executeCommand.PropertyValues[propertyName];
+                        if (object.Equals(propertyValue, value)) continue;
+
+                        throw new ConstraintException(string.Format(ErrorMessages.NotChangeFixedValue, propertyName, executeCommand.Entity));
+                    }
                 }
             }
 
@@ -304,7 +312,7 @@ namespace XData.Data.Objects
         {
             // Assert(executeCommand.GetType() == typeof(InsertCommand<T>) || executeCommand.GetType() == typeof(UpdateCommand<T>));
 
-            Dictionary<string, object> dict = modifier.GetPropertyValues(executeCommand.AggregNode, executeCommand.Entity, executeCommand.Schema);
+            Dictionary<string, object> dict = modifier.GetPropertyValues(executeCommand.AggregNode, executeCommand.EntitySchema);
             foreach (KeyValuePair<string, object> pair in dict)
             {
                 string propertyName = pair.Key;

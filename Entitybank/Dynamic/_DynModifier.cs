@@ -62,9 +62,8 @@ namespace XData.Data.Dynamic
             return obj;
         }
 
-        internal protected override Dictionary<string, object> GetPropertyValues(dynamic obj, string entity, XElement schema)
+        internal protected override Dictionary<string, object> GetPropertyValues(dynamic obj, XElement entitySchema)
         {
-            XElement entitySchema = schema.GetEntitySchema(entity);
             return new ExecuteAggregationHelper().GetPropertyValues(obj, entitySchema);
         }
 

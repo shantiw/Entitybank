@@ -263,7 +263,7 @@ namespace XData.Data.Modification
         public abstract void AppendUpdate(T aggreg, T original, string entity, XElement schema);
 
         internal protected abstract T CreateObject(Dictionary<string, object> propertyValues, string entity);
-        internal protected abstract Dictionary<string, object> GetPropertyValues(T obj, string entity, XElement schema);
+        internal protected abstract Dictionary<string, object> GetPropertyValues(T obj, XElement entitySchema);
         internal protected abstract void SetObjectValue(T obj, string property, object value);
 
         internal protected abstract bool IsCollection(T obj);

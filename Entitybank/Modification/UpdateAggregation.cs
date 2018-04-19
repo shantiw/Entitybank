@@ -83,6 +83,8 @@ namespace XData.Data.Modification
         protected void Split(IEnumerable<T> children, XElement childEntitySchema, ManyToManyRelationship manyToManyRelationship, Dictionary<string, object> parentPropertyValues, string childPath,
             ICollection<UpdateCommandNode<T>> childNodes)
         {
+            string childEntity = childEntitySchema.Attribute(SchemaVocab.Name).Value;
+
             XElement mmKeySchema = TransKeySchema(manyToManyRelationship, out XElement mmEntitySchema);
             string mmEntity = mmEntitySchema.Attribute(SchemaVocab.Name).Value;
             XElement mmConcurrencySchema = GetConcurrencySchema(mmEntitySchema);
@@ -95,10 +97,7 @@ namespace XData.Data.Modification
 
                 Dictionary<string, object> mmUpdatePropertyValues = new Dictionary<string, object>(mmPropertyValues);
 
-                T mmChild = child;
-                ResetObjectValues(mmChild, mmPropertyValues);
-
-                UpdateCommandNode<T> mmExecuteCommand = CreateUpdateCommandNode(mmChild, mmEntity);
+                UpdateCommandNode<T> mmExecuteCommand = CreateUpdateCommandNode(child, childEntity);
 
                 mmExecuteCommand.EntitySchema = mmEntitySchema;
                 mmExecuteCommand.UniqueKeySchema = mmKeySchema;

@@ -7,7 +7,6 @@ namespace XData.Data.Modification
     public interface IExecuteAggregationHelper<T>
     {
         IEnumerable<T> GetChildren(T obj);
-        void ResetObjectValues(T obj, Dictionary<string, object> propertyValues);
         Dictionary<string, object> GetPropertyValues(T obj, XElement entitySchema);
         IEnumerable<KeyValuePair<XElement, T>> GetPropertySchemaChildrens(T obj, XElement entitySchema);
     }

@@ -32,11 +32,6 @@ namespace XData.Data.Modification
             return ExecuteAggregationHelper.GetChildren(obj);
         }
 
-        protected void ResetObjectValues(T obj, Dictionary<string, object> propertyValues)
-        {
-            ExecuteAggregationHelper.ResetObjectValues(obj, propertyValues);
-        }
-
         protected Dictionary<string, object> GetPropertyValues(T obj, XElement entitySchema)
         {
             return ExecuteAggregationHelper.GetPropertyValues(obj, entitySchema);

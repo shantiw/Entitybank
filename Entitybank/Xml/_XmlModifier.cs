@@ -83,9 +83,8 @@ namespace XData.Data.Xml
             return element;
         }
 
-        internal protected override Dictionary<string, object> GetPropertyValues(XElement obj, string entity, XElement schema)
+        internal protected override Dictionary<string, object> GetPropertyValues(XElement obj, XElement entitySchema)
         {
-            XElement entitySchema = schema.GetEntitySchema(entity);
             return new ExecuteAggregationHelper().GetPropertyValues(obj, entitySchema);
         }
 

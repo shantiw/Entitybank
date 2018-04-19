@@ -86,25 +86,6 @@ namespace XData.Data.Xml
             return list;
         }
 
-        public void ResetObjectValues(XElement element, Dictionary<string, object> propertyValues)
-        {
-            element.RemoveNodes();
-
-            foreach (KeyValuePair<string, object> propertyValue in propertyValues)
-            {
-                if (propertyValue.Value == null)
-                {
-                    element.SetElementValue(propertyValue.Key, string.Empty);
-                    element.Element(propertyValue.Key).SetAttributeValue(XSINamespace + "nil", "true");
-                }
-                else
-                {
-                    element.SetElementValue(propertyValue.Key, propertyValue.Value);
-                }
-
-            }
-        }
-
         public InsertCommand<XElement> CreateInsertCommand(XElement aggregNode, string entity, XElement schema, XElement aggreg)
         {
             return new InsertCommand<XElement>(aggregNode, entity, schema, aggreg);

@@ -18,19 +18,6 @@ namespace XData.Data.Dynamic
             return obj as IEnumerable<dynamic>;
         }
 
-        public void ResetObjectValues(dynamic obj, Dictionary<string, object> propertyValues)
-        {
-            foreach (string member in GetDynamicMemberNames(obj))
-            {
-                obj.Remove(member);
-            }
-
-            foreach (KeyValuePair<string, object> propertyValue in propertyValues)
-            {
-                obj[propertyValue.Key] = propertyValue.Value;
-            }
-        }
-
         public Dictionary<string, object> GetPropertyValues(dynamic obj, XElement entitySchema)
         {
             Dictionary<string, object> propertyValues = new Dictionary<string, object>();

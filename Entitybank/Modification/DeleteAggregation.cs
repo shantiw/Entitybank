@@ -74,6 +74,8 @@ namespace XData.Data.Modification
 
         internal protected void Split(IEnumerable<T> children, XElement childEntitySchema, ManyToManyRelationship manyToManyRelationship, Dictionary<string, object> parentPropertyValues, string childrenPath)
         {
+            string childEntity = childEntitySchema.Attribute(SchemaVocab.Name).Value;
+
             XElement mmKeySchema = TransKeySchema(manyToManyRelationship, out XElement mmEntitySchema);
             string mmEntity = mmEntitySchema.Attribute(SchemaVocab.Name).Value;
             XElement mmConcurrencySchema = GetConcurrencySchema(mmEntitySchema);
@@ -104,13 +106,10 @@ namespace XData.Data.Modification
                 Dictionary<string, object> childPropertyValues = GetPropertyValues(child, childEntitySchema);
                 Dictionary<string, object> mmPropertyValues = TransPropertyValues(manyToManyRelationship, parentPropertyValues, childPropertyValues);
 
-                T mmChild = child;
-                ResetObjectValues(mmChild, mmPropertyValues);
-
                 ExecuteCommand<T> mmExecuteCommand;
                 if (mmDeleteTransSetNull)
                 {
-                    UpdateCommand<T> mmUpdateCommand = CreateUpdateCommand(mmChild, mmEntity);
+                    UpdateCommand<T> mmUpdateCommand = CreateUpdateCommand(child, childEntity);
                     mmUpdateCommand.FixedUpdatePropertyValues = mmUpdatePropertyValues;
                     mmUpdateCommand.ConcurrencySchema = mmConcurrencySchema;
 
@@ -118,7 +117,7 @@ namespace XData.Data.Modification
                 }
                 else
                 {
-                    DeleteCommand<T> mmDeleteCommand = CreateDeleteCommand(mmChild, mmEntity);
+                    DeleteCommand<T> mmDeleteCommand = CreateDeleteCommand(child, childEntity);
                     mmDeleteCommand.ConcurrencySchema = mmConcurrencySchema;
                     mmDeleteCommand.ChildRelationships = mmRelationships;
 
