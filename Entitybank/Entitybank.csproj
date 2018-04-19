@@ -202,9 +202,6 @@
     <Compile Include="Xml\XmlUpdateAggregation.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Wiki\entitybank.config" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Helpers\HelpersMessages.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>HelpersMessages.Designer.cs</LastGenOutput>
@@ -232,13 +229,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Wiki\data-type.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Wiki\Example.cs" />
-    <None Include="Wiki\odata.html" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Helpers\Entitybank.Helpers.dll.txt" />
     <None Include="Schema\Entitybank.Schema.dll.txt" />
   </ItemGroup>
@@ -246,18 +236,7 @@
     <None Include="Objects\DataConverter.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Wiki\example.xml">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Objects\DateFormatter.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Wiki\json.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Wiki\Modification.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
