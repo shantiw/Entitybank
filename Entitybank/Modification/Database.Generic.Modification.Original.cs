@@ -33,7 +33,7 @@ namespace XData.Data.Objects
                 Dictionary<string, object> relatedPropertyValues = GetRelatedPropertyValues(relationship, node, out Dictionary<string, object> dbPropertyValues);
 
                 //
-                IEnumerable<IReadOnlyDictionary<string, object>> refetchedChildPVs = FetchRelatedCommands(relatedPropertyValues, relationship.RelatedEntity, node.Schema);
+                IEnumerable<IReadOnlyDictionary<string, object>> refetchedChildPVs = FetchRelatedRecords(relatedPropertyValues, relationship.RelatedEntity, node.Schema);
                 IEnumerable<IReadOnlyDictionary<string, object>> origChildPVs = nodeChildren.UpdateCommandNodes.Select(n => n.OrigPropertyValues);
                 foreach (IReadOnlyDictionary<string, object> refetchedChildPV in refetchedChildPVs)
                 {

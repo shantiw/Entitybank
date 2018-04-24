@@ -100,10 +100,14 @@ namespace XData.Data.Objects
                 modifier.SetObjectValue(executeCommand.AggregNode, propertyName, sequence);
             }
 
-            // patch up SetDefaultValues
-            foreach (KeyValuePair<string, object> pair in executeCommand.PropertyValues)
+            // non-ManyToMany
+            if (executeCommand.EntitySchema.Attribute(SchemaVocab.Name).Value == executeCommand.Entity)
             {
-                modifier.SetObjectValue(executeCommand.AggregNode, pair.Key, pair.Value);
+                // patch up SetDefaultValues
+                foreach (KeyValuePair<string, object> pair in executeCommand.PropertyValues)
+                {
+                    modifier.SetObjectValue(executeCommand.AggregNode, pair.Key, pair.Value);
+                }
             }
 
             // raise inserting event
@@ -146,7 +150,12 @@ namespace XData.Data.Objects
                 {
                     executeCommand.PropertyValues.Add(propertyName, autoIncrementValue);
                 }
-                modifier.SetObjectValue(executeCommand.AggregNode, propertyName, autoIncrementValue);
+
+                // non-ManyToMany
+                if (executeCommand.EntitySchema.Attribute(SchemaVocab.Name).Value == executeCommand.Entity)
+                {
+                    modifier.SetObjectValue(executeCommand.AggregNode, propertyName, autoIncrementValue);
+                }
             }
 
             // raise inserted event
@@ -170,6 +179,7 @@ namespace XData.Data.Objects
                 Refetch = refetch,
             };
 
+            //
             Dictionary<string, object> relPropertyValues = executeCommand.PropertyValues;
             foreach (DirectRelationship relationship in executeCommand.ChildRelationships)
             {
@@ -454,7 +464,7 @@ namespace XData.Data.Objects
                     }
                 }
 
-                IEnumerable<IReadOnlyDictionary<string, object>> relatedRecords = FetchRelatedCommands(
+                IEnumerable<IReadOnlyDictionary<string, object>> relatedRecords = FetchRelatedRecords(
                     relatedPropertyValues, relationship.RelatedEntity, node.Schema);
 
                 // decide
@@ -573,7 +583,7 @@ namespace XData.Data.Objects
             return relatedPropertyValues;
         }
 
-        protected virtual IEnumerable<IReadOnlyDictionary<string, object>> FetchRelatedCommands(Dictionary<string, object> relatedPropertyValues,
+        protected virtual IEnumerable<IReadOnlyDictionary<string, object>> FetchRelatedRecords(Dictionary<string, object> relatedPropertyValues,
             string relatedEntity, XElement schema)
         {
             XElement entitySchema = schema.GetEntitySchema(relatedEntity);

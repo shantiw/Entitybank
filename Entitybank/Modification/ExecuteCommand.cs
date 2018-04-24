@@ -63,6 +63,7 @@ namespace XData.Data.Modification
     {
         public XElement ConcurrencySchema { get; set; } = null; // include timestampSchema;
 
+        // relationship
         public Dictionary<string, object> FixedUpdatePropertyValues { get; set; } = new Dictionary<string, object>();
 
         public UpdateCommand(T aggregNode, string entity, XElement schema, T aggreg)
