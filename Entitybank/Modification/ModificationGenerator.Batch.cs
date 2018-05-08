@@ -20,6 +20,25 @@ namespace XData.Data.Modification
             string tableName = DecorateTableName(entitySchema.Attribute(SchemaVocab.Table).Value);
             Dictionary<string, Tuple<string, Type>> propertyColumns = Batch_GetPropertyColumns(objects[0], entitySchema);
 
+            //
+            Dictionary<string, string> propertySequences = new Dictionary<string, string>();
+            foreach (XElement propertySchema in entitySchema.Elements(SchemaVocab.Property).Where(p => p.Attribute(SchemaVocab.Sequence) != null))
+            {
+                if (propertySchema.Attribute(SchemaVocab.AutoIncrement) != null && propertySchema.Attribute(SchemaVocab.AutoIncrement).Value == "true") continue;
+
+                string propertyName = propertySchema.Attribute(SchemaVocab.Name).Value;
+                string sequenceName = propertySchema.Attribute(SchemaVocab.Sequence).Value;
+
+                if (objects[0].ContainsKey(propertyName))
+                {
+                    object val = objects[0][propertyName];
+                    if (val != null && val != DBNull.Value) continue;
+                }
+
+                propertySequences.Add(propertyName, sequenceName);
+            }
+
+            //
             int pageSize;
             int nonIntColCount = propertyColumns.Count - propertyColumns.Values.Where(v => IsInteger(v.Item2)).Count();
             if (nonIntColCount == 0)
@@ -39,7 +58,7 @@ namespace XData.Data.Modification
             List<BatchStatement> result = new List<BatchStatement>();
             foreach (KeyValuePair<int, int> partition in partitions)
             {
-                result.Add(GenerateBatchInsertStatement(partition.Key, partition.Value, objects, propertyColumns, tableName));
+                result.Add(GenerateBatchInsertStatement(partition.Key, partition.Value, objects, propertyColumns, propertySequences, tableName));
             }
 
             return result;
@@ -84,7 +103,7 @@ namespace XData.Data.Modification
         //(1, 'Name 1', ...),
         //(2, 'Name 2', ...)...
         protected virtual BatchStatement GenerateBatchInsertStatement(int startIndex, int endIndex,
-            Dictionary<string, object>[] array, Dictionary<string, Tuple<string, Type>> propertyColumns, string tableName)
+            Dictionary<string, object>[] array, Dictionary<string, Tuple<string, Type>> propertyColumns, Dictionary<string, string> propertySequences, string tableName)
         {
             int dbParamIndex = 1;
             Dictionary<string, object> paramDict = new Dictionary<string, object>();
@@ -96,6 +115,12 @@ namespace XData.Data.Modification
                 foreach (KeyValuePair<string, Tuple<string, Type>> propertyColumn in propertyColumns)
                 {
                     string property = propertyColumn.Key;
+                    if (propertySequences.ContainsKey(property))
+                    {
+                        valuesClause.Add(GenerateFetchSequenceFunction(propertySequences[property]));
+                        continue;
+                    }
+
                     Type type = propertyColumn.Value.Item2;
                     object value = propertyValues[property];
                     valueList.Add(Batch_GetValueExpr(value, type, paramDict, dbParamIndex));

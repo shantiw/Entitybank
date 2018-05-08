@@ -169,10 +169,6 @@ namespace XData.Data.Objects
 
         internal protected abstract int ExecuteInsertCommand(string sql, object[] parameters, out object autoIncrementValue);
 
-        internal protected abstract object FetchSequence(string sequenceName);
-
-        internal protected abstract object[] FetchSequences(string sequenceName, int size);
-
 
     }
 }

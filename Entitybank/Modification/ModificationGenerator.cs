@@ -121,6 +121,9 @@ namespace XData.Data.Modification
             return sql;
         }
 
+        public abstract string GenerateFetchSequenceFunction(string sequenceName);
+        public abstract string GenerateFetchSequenceStatement(string sequenceName);
+
         protected void GenerateWhereItems(Dictionary<string, object> propertyValues, XElement whereSchema,
             List<string> whereItems, Dictionary<string, object> dbParameterValues)
         {

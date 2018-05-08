@@ -84,16 +84,6 @@ namespace XData.Data.Objects
             }
         }
 
-        protected override object FetchSequence(string sequenceName)
-        {
-            throw new NotSupportedException();
-        }
-
-        protected override object[] FetchSequences(string sequenceName, int size)
-        {
-            throw new NotSupportedException();
-        }
-
 
     }
 }

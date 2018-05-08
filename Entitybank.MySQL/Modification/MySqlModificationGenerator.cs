@@ -26,6 +26,16 @@ namespace XData.Data.Modification
             return "?" + parameter;
         }
 
+        public override string GenerateFetchSequenceFunction(string sequenceName)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override string GenerateFetchSequenceStatement(string sequenceName)
+        {
+            throw new NotSupportedException();
+        }
+
         public override string GenerateHasChildStatement(Dictionary<string, object> propertyValues, XElement entitySchema, XElement keySchema,
             out IReadOnlyDictionary<string, object> dbParameterValues)
         {

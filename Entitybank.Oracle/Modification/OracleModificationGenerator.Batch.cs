@@ -21,7 +21,7 @@ namespace XData.Data.Modification
         //UNION ALL
         //SELECT...
         protected override BatchStatement GenerateBatchInsertStatement(int startIndex, int endIndex,
-            Dictionary<string, object>[] array, Dictionary<string, Tuple<string, Type>> propertyColumns, string tableName)
+            Dictionary<string, object>[] array, Dictionary<string, Tuple<string, Type>> propertyColumns, Dictionary<string, string> propertySequences, string tableName)
         {
             int index = 0;
             Dictionary<string, object> paramDict = new Dictionary<string, object>();
@@ -32,8 +32,16 @@ namespace XData.Data.Modification
                 List<string> valueList = new List<string>();
                 foreach (KeyValuePair<string, Tuple<string, Type>> propertyColumn in propertyColumns)
                 {
-                    object value = propertyValues[propertyColumn.Key];
+                    string property = propertyColumn.Key;
+                    if (propertySequences.ContainsKey(property))
+                    {
+                        valuesClause.Add(GenerateFetchSequenceFunction(propertySequences[property]));
+                        continue;
+                    }
+
+                    object value = propertyValues[property];
                     valueList.Add(Batch_GetValueExpr(value, propertyColumn.Value.Item2, paramDict, index));
+                    index++;
                 }
                 valuesClause.Add(string.Format("SELECT {0} FROM DUAL", string.Join(",", valueList)));
             }

@@ -19,8 +19,25 @@ namespace XData.Data.Objects
 
             Dictionary<string, object>[] dicts = ToDictionaries(objects, entitySchema);
 
-            SetSequenceValues(dicts, entitySchema);
+            // check AutoIncrement
+            foreach (string property in entitySchema.Elements(SchemaVocab.Property)
+                .Where(x => x.Attribute(SchemaVocab.AutoIncrement) != null && x.Attribute(SchemaVocab.AutoIncrement).Value == "true")
+                .Select(x => x.Attribute(SchemaVocab.Name).Value))
+            {
+                foreach (Dictionary<string, object> dict in dicts.Where(d => d.ContainsKey(property)))
+                {
+                    if (dict[property] == null || dict[property] == DBNull.Value)
+                    {
+                        dict.Remove(property); // important
+                        continue;
+                    }
 
+                    string errorMessage = string.Format(ErrorMessages.Constraint_InsertExplicitAutoIncrement, property, entity);
+                    throw new ConstraintException(errorMessage);
+                }
+            }
+
+            //
             IEnumerable<BatchStatement> statments =
                 ModificationGenerator.GenerateBatchInsertStatements(dicts, entitySchema);
             Persist(statments, false, null, null, null);
@@ -79,67 +96,6 @@ namespace XData.Data.Objects
                 dicts.Add(ToDictionary(obj, entitySchema));
             }
             return dicts.ToArray();
-        }
-
-        protected void SetSequenceValues(IEnumerable<Dictionary<string, object>> objects, XElement entitySchema)
-        {
-            Dictionary<string, string> propertySequenceNames = GetPropertySequenceNames(entitySchema);
-            if (propertySequenceNames.Count == 0) return;
-
-            Dictionary<string, object> first = objects.First();
-
-            foreach (string property in propertySequenceNames.Keys.ToArray())
-            {
-                if (first.ContainsKey(property))
-                {
-                    if (!string.IsNullOrWhiteSpace(first[property]?.ToString()))
-                    {
-                        propertySequenceNames.Remove(property);
-                    }
-                }
-            }
-
-            int size = objects.Count();
-            Dictionary<string, object[]> propertySequences = new Dictionary<string, object[]>();
-            foreach (KeyValuePair<string, string> propertySequenceName in propertySequenceNames)
-            {
-                object[] values = UnderlyingDatabase.FetchSequences(propertySequenceName.Value, size);
-                propertySequences.Add(propertySequenceName.Key, values);
-            }
-
-            int index = 0;
-            foreach (Dictionary<string, object> obj in objects)
-            {
-                foreach (KeyValuePair<string, object[]> propertySequence in propertySequences)
-                {
-                    string key = propertySequence.Key;
-                    object value = propertySequence.Value[index];
-                    if (obj.ContainsKey(propertySequence.Key))
-                    {
-                        obj[key] = value;
-                    }
-                    else
-                    {
-                        obj.Add(key, value);
-                    }
-                }
-                index++;
-            }
-        }
-
-        private static Dictionary<string, string> GetPropertySequenceNames(XElement entitySchema)
-        {
-            Dictionary<string, string> propertySequenceNames = new Dictionary<string, string>();
-            foreach (XElement propertySchema in entitySchema.Elements(SchemaVocab.Property).Where(p => p.Attribute(SchemaVocab.Sequence) != null))
-            {
-                if (propertySchema.Attribute(SchemaVocab.AutoIncrement) != null && propertySchema.Attribute(SchemaVocab.AutoIncrement).Value == "true") continue;
-
-                string propertyName = propertySchema.Attribute(SchemaVocab.Name).Value;
-                string sequenceName = propertySchema.Attribute(SchemaVocab.Sequence).Value;
-                propertySequenceNames.Add(propertyName, sequenceName);
-            }
-
-            return propertySequenceNames;
         }
 
         protected void Persist(IEnumerable<BatchStatement> statments, bool concurrencyCheck, Dictionary<string, object>[] objects, string entity, XElement keySchema)

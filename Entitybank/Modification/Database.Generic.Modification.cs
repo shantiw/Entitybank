@@ -88,7 +88,10 @@ namespace XData.Data.Objects
                 }
 
                 string sequenceName = propertySchema.Attribute(SchemaVocab.Sequence).Value;
-                object sequence = UnderlyingDatabase.FetchSequence(sequenceName);
+
+                string seq_sql = ModificationGenerator.GenerateFetchSequenceStatement(sequenceName);
+                object sequence = UnderlyingDatabase.ExecuteScalar(seq_sql);
+
                 if (executeCommand.PropertyValues.ContainsKey(propertyName))
                 {
                     executeCommand.PropertyValues[propertyName] = sequence;

@@ -55,25 +55,6 @@ namespace XData.Data.Objects
             throw new NotSupportedException();
         }
 
-        protected override object FetchSequence(string sequenceName)
-        {
-            string sql = string.Format("SELECT \"{0}\".NEXTVAL FROM DUAL", sequenceName);
-            return ExecuteScalar(sql);
-        }
-
-        protected override object[] FetchSequences(string sequenceName, int size)
-        {
-            // SELECT {sequenceName}.NEXTVAL FROM DUAL CONNECT BY LEVEL/ROWNUM <= {size};
-            string sql = string.Format("SELECT \"{0}\".NEXTVAL FROM DUAL CONNECT BY LEVEL <= {1}", sequenceName, size);
-            DataTable table = ExecuteDataTable(sql);
-            List<object> list = new List<object>();
-            foreach (DataRow row in table.Rows)
-            {
-                list.Add(row[0]);
-            }
-            return list.ToArray();
-        }
-
 
     }
 }

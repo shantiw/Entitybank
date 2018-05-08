@@ -24,6 +24,17 @@ namespace XData.Data.Modification
             return ":" + parameter;
         }
 
+        public override string GenerateFetchSequenceFunction(string sequenceName)
+        {
+            return string.Format("\"{0}\".NEXTVAL", sequenceName);
+        }
+
+        public override string GenerateFetchSequenceStatement(string sequenceName)
+        {
+            string sql = string.Format("SELECT {0} FROM DUAL", GenerateFetchSequenceFunction(sequenceName));
+            return sql;
+        }
+
         public override string GenerateHasChildStatement(Dictionary<string, object> propertyValues, XElement entitySchema, XElement keySchema,
             out IReadOnlyDictionary<string, object> dbParameterValues)
         {
