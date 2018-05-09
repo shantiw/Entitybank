@@ -467,7 +467,7 @@ namespace XData.Data.Objects
                     }
                 }
 
-                IEnumerable<IReadOnlyDictionary<string, object>> relatedRecords = FetchRelatedRecords(
+                IEnumerable<IReadOnlyDictionary<string, object>> relatedRecords = FetchRelatedFromDb(
                     relatedPropertyValues, relationship.RelatedEntity, node.Schema);
 
                 // decide
@@ -586,7 +586,7 @@ namespace XData.Data.Objects
             return relatedPropertyValues;
         }
 
-        protected virtual IEnumerable<IReadOnlyDictionary<string, object>> FetchRelatedRecords(Dictionary<string, object> relatedPropertyValues,
+        protected virtual IEnumerable<IReadOnlyDictionary<string, object>> FetchRelatedFromDb(Dictionary<string, object> relatedPropertyValues,
             string relatedEntity, XElement schema)
         {
             XElement entitySchema = schema.GetEntitySchema(relatedEntity);
