@@ -19,7 +19,15 @@ namespace XData.Data.Objects
 
             Dictionary<string, object>[] dicts = ToDictionaries(objects, entitySchema);
 
-            // check AutoIncrement
+            CheckAutoIncrement(dicts, entity, entitySchema);
+
+            IEnumerable<BatchStatement> statments =
+                ModificationGenerator.GenerateBatchInsertStatements(dicts, entitySchema);
+            Persist(statments, false, null, null, null);
+        }
+
+        protected void CheckAutoIncrement(Dictionary<string, object>[] dicts, string entity, XElement entitySchema)
+        {
             foreach (string property in entitySchema.Elements(SchemaVocab.Property)
                 .Where(x => x.Attribute(SchemaVocab.AutoIncrement) != null && x.Attribute(SchemaVocab.AutoIncrement).Value == "true")
                 .Select(x => x.Attribute(SchemaVocab.Name).Value))
@@ -28,7 +36,7 @@ namespace XData.Data.Objects
                 {
                     if (dict[property] == null || dict[property] == DBNull.Value)
                     {
-                        dict.Remove(property); // important
+                        dict.Remove(property);
                         continue;
                     }
 
@@ -36,11 +44,6 @@ namespace XData.Data.Objects
                     throw new ConstraintException(errorMessage);
                 }
             }
-
-            //
-            IEnumerable<BatchStatement> statments =
-                ModificationGenerator.GenerateBatchInsertStatements(dicts, entitySchema);
-            Persist(statments, false, null, null, null);
         }
 
         public virtual void BatchDelete(IEnumerable<T> objects, string entity, XElement schema)
@@ -113,16 +116,9 @@ namespace XData.Data.Objects
                 {
                     string sql = statment.Sql;
                     DbParameter[] parameters = CreateParameters(statment.Parameters);
-                    int affected = ExecuteSqlCommand(sql, parameters);
-                    if (concurrencyCheck)
-                    {
-                        if (statment.EndIndex - statment.StartIndex + 1 != affected)
-                        {
-                            string valueMessage = GetKeyValueMessage(objects, statment.StartIndex, statment.EndIndex, keySchema);
-                            throw new OptimisticConcurrencyException(
-                                string.Format(ErrorMessages.OptimisticConcurrencyException, entity, valueMessage), sql, parameters);
-                        }
-                    }
+                    int affected = UnderlyingDatabase.ExecuteSqlCommand(sql, parameters);
+
+                    CheckConcurrency(affected, sql, parameters, statment, concurrencyCheck, objects, entity, keySchema);
                 }
 
                 if (state == ConnectionState.Closed)
@@ -145,6 +141,19 @@ namespace XData.Data.Objects
                 {
                     Connection.Close();
                     Transaction = null;
+                }
+            }
+        }
+
+        protected void CheckConcurrency(int affected, string sql, DbParameter[] parameters, BatchStatement statment, bool concurrencyCheck, Dictionary<string, object>[] objects, string entity, XElement keySchema)
+        {
+            if (concurrencyCheck)
+            {
+                if (statment.EndIndex - statment.StartIndex + 1 != affected)
+                {
+                    string valueMessage = GetKeyValueMessage(objects, statment.StartIndex, statment.EndIndex, keySchema);
+                    throw new OptimisticConcurrencyException(
+                        string.Format(ErrorMessages.OptimisticConcurrencyException, entity, valueMessage), sql, parameters);
                 }
             }
         }

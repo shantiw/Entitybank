@@ -72,6 +72,8 @@
     <Compile Include="Helpers\ValidationExceptionHelper.cs" />
     <Compile Include="Modification\BatchStatement.cs" />
     <Compile Include="Modification\CreateAggregation.cs" />
+    <Compile Include="Modification\Database.Generic.async.cs" />
+    <Compile Include="Modification\Database.Generic.Batch.async.cs" />
     <Compile Include="Modification\Database.Generic.Batch.cs" />
     <Compile Include="Modification\Database.Generic.cs" />
     <Compile Include="Modification\Database.Generic.Modification.Original.cs" />
@@ -91,6 +93,7 @@
     <Compile Include="Modification\UpdateAggregation.Original.cs" />
     <Compile Include="Modification\ValidatingEventArgs.cs" />
     <Compile Include="Dynamic\_DynDatabase.cs" />
+    <Compile Include="Objects\Database.async.cs" />
     <Compile Include="Xml\XmlModifierExtensions.cs" />
     <Compile Include="Xml\_XmlDatabase.cs" />
     <Compile Include="Objects\BuiltIn.Designer.cs">
