@@ -232,7 +232,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Helpers\Entitybank.Helpers.dll.txt" />
+    <None Include="Helpers\Entitybase.Helpers.dll.txt" />
     <None Include="Schema\Entitybase.Schema.dll.txt" />
   </ItemGroup>
   <ItemGroup>
