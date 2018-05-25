@@ -1,2 +1,0 @@
-﻿References:
-Entitybank.Accessories.dll

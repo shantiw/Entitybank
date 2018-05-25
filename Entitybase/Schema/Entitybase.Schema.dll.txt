@@ -1,0 +1,2 @@
+﻿References:
+Entitybase.Accessories.dll

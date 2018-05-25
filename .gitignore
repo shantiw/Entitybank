@@ -5,25 +5,25 @@
 /.vs
 /packages
 
-/Entitybank/obj
-/Entitybank/bin
-/Entitybank/*.nupkg
-/Entitybank/Entitybank.nuspec
-/Entitybank/nuget.exe
+/Entitybase/obj
+/Entitybase/bin
+/Entitybase/*.nupkg
+/Entitybase/Entitybase.nuspec
+/Entitybase/nuget.exe
 
-/Entitybank.Services/obj
-/Entitybank.Services/bin
+/Entitybase.Services/obj
+/Entitybase.Services/bin
 
-/Entitybank.WebApi/bin
-/Entitybank.WebApi/obj
+/Entitybase.WebApi/bin
+/Entitybase.WebApi/obj
 
-/Entitybank.MySQL/obj
-/Entitybank.MySQL/bin
+/Entitybase.MySQL/obj
+/Entitybase.MySQL/bin
 
-/Entitybank.Oracle/obj
-/Entitybank.Oracle/bin
+/Entitybase.Oracle/obj
+/Entitybase.Oracle/bin
 
-/Entitybank.Json
-/Entitybank.Json/Entitybank.Json/obj
-/Entitybank.Json/Entitybank.Json/bin
+/Entitybase.Json
+/Entitybase.Json/Entitybase.Json/obj
+/Entitybase.Json/Entitybase.Json/bin
 
